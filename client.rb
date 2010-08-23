@@ -1,6 +1,6 @@
-#! /usr/bin/ruby1.9.1
-
 require "email/config.rb"
+
+require "util/error.rb"
 
 # Get the player to choose which mod we are to play
 def choose_mod
@@ -12,15 +12,14 @@ def choose_mod
       mods.each_index do |mod_index|
          puts "#{mods[mod_index]}, mod number #{mod_index}"
       end
-      puts "Enter the number of the mod you wish to play"
-      return mods[gets]
+      puts "\nEnter the number of the mod you wish to play.  If you don't enter a number, mod 0 will be chosen."
+      return mods[gets.to_i]
    elsif mods.length == 1
       mod = mods[0]
       puts "The only mod available is #{mod}.  Not much choice..."
       return mod
    else
-      puts "No mods are available.  Try installing one first..."
-      exit
+      fatal "Error: No mods are available.  Try installing one first..."
    end
 end
 
@@ -29,6 +28,7 @@ def receive_invitation account, mod
    # Do this until we break out of the loop
    # *sigh* it's just not haskell
    while true 
+      puts "\nWaiting for an invitation to a game... go phone the DM :p"
       email = account.imap.read
       subject_matches = /Invitation #{mod} (.+)/.match email.subject
       if subject_matches != nil
@@ -40,22 +40,22 @@ def receive_invitation account, mod
          puts "Do you want to join? (Type anything beginning with y to join)"
          join = gets
          if join[0] == "y"
-            return Game.new mod, dm, code, account
+            return Game.new
          end
       end
    end   
 end
 
-# Run the client
+# Run the client 
 def main
    # Get the player to choose the mod we're going to run
    mod = choose_mod
+
+   # Read the mod
+   require "mods/#{mod}/game.rb"   
+
    # Get the client's email information
    account = EmailConfig.new
    # Wait for an invitation to a game
    game = receive_invitation account, mod
 end
-
-
-# Run the client program
-main
