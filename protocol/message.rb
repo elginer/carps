@@ -1,5 +1,5 @@
 require "util/log.rb"
-require "service/metadata.rb"
+require "service/game.rb"
 
 # Parse, choosing from a number of alternative messages, return the first one that suceeds
 def choose messages, blob
@@ -20,7 +20,7 @@ class MessageParser
    # Decode the text into a class and its arguments
    def decode text
       input = text
-      text = text.gsub /\s/, " "
+      text = text.gsub "\r\n", ""
       begin
          forget, after = text.find init, 2
          klass, blob = choose choices, after 
@@ -47,18 +47,6 @@ class ServerParser < MessageParser
    end
 end
 
-# Construct messages
-class MessageFactory
-end
-
-# Construct messages for the client
-class ClientMessage < MessageFactory
-end
-
-# Construct messages for the server
-class ServerMessage < MessageFactory
-end
-
 # A message
 class Message
 end
@@ -82,7 +70,7 @@ class Invite < ClientMessage
 
    def Invite.parse blob
       forget, blob = find carp_invite, blob
-      info, blob = GameInfo.parse blob
+      info, blob = Game.parse blob
       [Invite.new(info), blob]
    end
 

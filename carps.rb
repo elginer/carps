@@ -1,32 +1,38 @@
 require "email/config.rb"
 require "protocol/message.rb"
 
+require "service/game/config.rb"
 require "yaml"
 
 # Choose which game we are to play
 def choose_game
    game_files = Dir.open("games").entries.reject do |game_file|
-      File.fttype "games/" + game_file != "file" 
+      game_file[0] == "." or File.ftype("games/" + game_file) != "file" 
    end
-   game_files.map do |game_file|
-      cs = YAML
+   if game_files.empty?
+      fatal "You need to create a game inside the games directory first."
    end
-end
-
-# Invite players
-def invite_players
-   invitees = []
-   invite_player invitees
+   games = game_files.map do |game_file|
+      GameConfig.new "games/" + game_file
+   end
+   games.each_index do |game_i|
+      puts "\nGame number: #{game_i}"
+      games[game_i].display
+   end
+   puts "\nEnter number of game to begin."
+   games[gets.to_i]
 end
 
 # Carps server
 def main
-   # Load email account
-   account = EmailConfig.new "server_email.yaml", ServerParser, ServerMessage
    # Choose game
-   game_info = choose_game 
+   game_config = choose_game
+   # Load email account
+   account = EmailConfig.new "server_email.yaml", ServerParser
+   # Give the game account information
+   game_info = game_config.publish account
    # Invite players
-   invite_players account game_info
+   game_info.invite_players
    # Begin game
    game_info.start_game account
 end

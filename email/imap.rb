@@ -1,37 +1,64 @@
 require "protocol/message.rb"
+require "util/log.rb"
+
 require "net/imap.rb"
+
 
 # Administer IMAP connections
 class IMAP
 
    # Connect to the server with username and password
-   def initialize server, username, password, message_factory
-      begin
-         puts "Making IMAP connection to " + username
-         @imap = Net::IMAP.new(server, 993, true)
-         @imap.login(username, password)
-         @imap.select("inbox")
-      rescue
-         fatal "Could not connect to IMAP server"
-      end
-      @factory = message_factory
+   def initialize server, username, password, parser
+      @server = server
+      @username = username
+      @password = password
+      @parser = parser
+      connect
+
    end
 
-   # Return the next email message
-   def read
-      # Block 'till we get one
-      while true
-         messages = @imap.search(["UNSEEN"])
-         if not messages.empty?
-            msg = messages[0]
-            body = @imap.fetch msg, "BODY[TEXT]"
-            msg = @factory.parse
-            # U HAS MALE
-            puts "\a"
-            if msg != nil
-               return msg
+   # Connect to imap server
+   def connect
+      until false 
+         begin
+            puts "Making IMAP connection for " + @username
+            @imap = Net::IMAP.new(@server, 993, true)
+            @imap.login(@username, @password)
+            @imap.select("inbox")
+            return
+         rescue
+            log "Could not connect to IMAP server", "Attempting to reconnect."
+         end 
+      end
+   end
+
+   # Return the next email message of a given type
+   def read type
+      # A reader
+      reader = lambda do
+         # Block 'till we get one
+         while true
+            messages = @imap.search(["UNSEEN"])
+            if messages.empty?
+               sleep 60
+            else
+               msg = messages[0]
+               body = @imap.fetch msg, "BODY[TEXT]"
+               msg = @factory.parse
+               # U HAS MALE
+               puts "\a"
+               if msg != nil and msg.type == type
+                  return msg
+               end
             end
-            sleep 60
+         end
+      end
+      until false 
+         begin
+            return reader.call
+         rescue
+            log "Could not receive IMAP messages", "Attempting to reconnect" 
+            connect
          end
       end
    end

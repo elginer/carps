@@ -2,25 +2,26 @@ require "service/mods.rb"
 require "protocol/keywords.rb"
 require "email/string.rb"
 
-# Game information
-class GameInfo
+# A game 
+class Game
 
-   # The first parameter is the dungeon master,
-   # the second is the mod
-   # the third is the game code
-   # the fourth is the description
-   def initialize dm, mod, code, desc
-      @dm = dm
+   # The first parameter is email account information.
+   # The second is the mod.
+   # The third is the description.
+   # The fourth is a list of email addresses of players to be invited
+   def initialize account, mod, desc, players
+      @dm = account.username
+      @smtp = account.smtp
+      @imap = account.imap
       @mod = mod
-      @code = code
       @about = desc
+      @players = players
    end
 
    # Print game information
    def display
       puts "Game master: " + @dm
       puts "Mod: " + @mod
-      puts "Code: " + @code
       puts "Description:"
       puts @about
    end
@@ -35,18 +36,24 @@ class GameInfo
    end
 
    # Parse this from semi-structured text
-   def GameInfo.parse blob
+   def Game.parse blob
       dm, blob = find carp_master, blob
       mod, blob = find carp_mod, blob
-      code, blob = find carp_code, blob
       about, blob = find carp_about, blob
-      [GameInfo.new(dm, mod, code, about), blob] 
+      [Game.new(dm, mod, code, about), blob] 
    end
 
    # Emit this as semi-structured text
    def emit
-      carp_master @dm + carp_mod @mod + carp_code @code + carp_about MailString.new @about
+      (carp_master @dm) + (carp_mod @mod) + (carp_about MailString.new @about)
    end
-   
+  
+   # Invite players to this game
+   def invite_players
+      invite = Invite.new self 
+      @players.each do |player|
+         @smtp.send player, invite 
+      end
+   end 
 
 end
