@@ -1,0 +1,8 @@
+# The address of the imap server
+imap: imap.gmail.com
+# The address of the smtp server
+smtp: smtp.gmail.com
+# The username
+username: carpsserver@gmail.com
+# The password, in plain text.  Yes, this is rather unsecure.
+password: "snoogle!"
