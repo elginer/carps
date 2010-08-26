@@ -1,11 +1,13 @@
 require "util/log.rb"
 require "service/game.rb"
 
+require "crypt/handshake.rb"
+
 # Parse, choosing from a number of alternative messages, return the first one that suceeds
-def choose messages, blob
+def choose from, messages, blob
    messages.each do |message|
       begin
-         result, blob = message.parse blob
+         result, blob = message.parse from, blob
          return [result, blob] 
       rescue Expected
       end
@@ -17,11 +19,15 @@ end
 # Subclasses must create a method called choices which is a list of classes supporting a parse method 
 class MessageParser
 
+   def system_choices
+      [Handshake]
+   end
+
    # Parse the text into a message 
-   def parse text
+   def parse from, text
       input = text
       begin
-         msg, blob = choose choices, text 
+         msg, blob = choose from, (choices + system_choices), text 
          return msg
       rescue Expected
          log "An invalid email was received:", input
@@ -41,19 +47,23 @@ end
 # Receive messages for the server
 class ServerParser < MessageParser
    def choices
+      []
    end
 end
 
 # A message
 class Message
-end
-
-# A client message
-class ClientMessage
-
    # We don't know what type the message will be when we ask for it, so we'll have to check
-   # "Oh Johnny that's not very OO" - STFU!
    def type
       nil
    end
+
+   # Parse.
+   #
+   # The first parameter is the email address this text is from
+   # The second parameter is the text itself.
+   def parse from, text
+      nil
+   end
+
 end

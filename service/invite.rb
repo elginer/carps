@@ -2,7 +2,7 @@ require "service/mod"
 require "protocol/message"
 
 # An invitation
-class Invite < ClientMessage
+class Invite < Message
 
    # We are part of the protocol :)
    protoword "invite"

@@ -1,27 +1,13 @@
 require "protocol/keyword"
 require "util/log"
-require "crypt/key_info"
+require "crypt/handshake"
 
 require "openssl"
 
-# High level mail client supporting strong crypto signing through dsa
+# High level mail client supporting strong crypto signing through dsa.
+#
+# You *must* have completed a handshake with a client before sending or receiving email from them
 class Mailer
-
-# This is basically a finite state machine where peers can be one of 3 states:
-#
-# Unauthorized.
-#
-# This is the state of peers which have just communicated with us for the first time.
-#
-# Handshake
-#
-# This is the state of peers with whom we have shared public keys, but with whom we have not shared secrets.
-#
-# Authorized
-#
-# This is the state of peers with whom we have shared secrets.  Communication with these peers is cryptographically secure.
-#
-# The implementation of the transition from unauthorized to authorized should be implemented transparently from the user.
 
    # Peers  
    class Peer
@@ -52,6 +38,7 @@ class Mailer
             if @peer_key.sysverify dig, sig
                return blob
             else
+               log "Someone has attempted to spoof an email from #{@addr}", blob
                return nil
             end
          else
@@ -65,8 +52,6 @@ class Mailer
    protoval "sig"
    # Extend protocol for sending random digests
    protoval "digest"
-   # Extend protocol for sharing public key
-   protoval "key"
    # Extend protocol for sharing our address
    protoval "addr" 
 
@@ -84,6 +69,7 @@ class Mailer
       @peers = {}
       @parser = parser
       @private_key = keygen
+      @public_key = private_key.public_key
       # We use these to create the digest
       @randoms = ("!".."~").to_a
    end
@@ -98,7 +84,7 @@ class Mailer
       # Create a new peer
       peer = @peers[addr] = Peer.new addr
       # Send our key to the peer
-      send addr, Handshake.new @public_key
+      send addr, Handshake.new @addr, @public_key
       # Get the peer's key
       their_key = read :handshake, addr
       peer.your_key their_key.key
@@ -135,7 +121,7 @@ class Mailer
             # Find who sent the message
             who, blob = find K.addr, mail
          rescue Expected
-            log "Mail message could not be decoded at the cryptographic layer", text   
+            log "Mail message did not contain sender", blob 
             continue
          end
          # Abort if incorrect address
@@ -144,11 +130,15 @@ class Mailer
          end
 
          # Find the peer who sent the message
-         peer = @peers[who]
-         # The peer will decrypt the text
-         if blob = peer.decrypt blob
+         unless peer = @peers[who]
+            log "Mail received from unregistered peer #{who}", blob
+            next
+         end
+         
+         # The peer will verify the signature at the start of the text and pass on the rest
+         if blob = peer.verify blob
             # Parse a message
-            msg = @parser.parse blob
+            msg = @parser.parse who, blob
             # Ding!
             puts "\a"
             if msg != nil and msg.type == type
