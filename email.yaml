@@ -1,6 +1,0 @@
-# The address of the imap server
-imap: imap.gmail.com
-# The address of the smtp server
-smtp: smtp.gmail.com
-# The username
-username: sillyskynet@gmail.com
