@@ -15,6 +15,9 @@ def choose_game
    games = game_files.map do |game_file|
       GameConfig.new "games/" + game_file
    end
+   if games.size == 1
+      return games[0]
+   end
    games.each_index do |game_i|
       puts "\nGame number: #{game_i}"
       games[game_i].display
@@ -28,7 +31,7 @@ def main
    # Choose game
    game_config = choose_game
    # Load email account
-   account = EmailConfig.new "server_email.yaml", ServerParser
+   account = EmailConfig.new "server_email.yaml", ServerParser.new
    # Give the game account information
    game_info = game_config.publish account
    # Invite players

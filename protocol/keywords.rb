@@ -1,39 +1,39 @@
+require "email/string"
+
 # All keywords are prefixed by \30carp.  \30 is an illegal character for users to type
 def carp_prefix
-   "\30carp_"
+   "\x1Ecarp_"
+end
+
+# Class containing message keywords.  Its name is short :)
+class K
+end
+
+# Class containing message keywords which are associated with values.
+class V
 end
 
 # Declare a new protocol keyword which is associated with a value
-def def_info keyword
-   define_singleton_method keyword, proc {carp_prefix + keyword}
-   define_singleton_method "new_" + keyword, proc {|data| carp_prefix + keyword + data + carp_end}
+def protoval keyword
+   K.define_singleton_method keyword, proc {carp_prefix + keyword}
+   V.define_singleton_method keyword, do |data|
+      data = data.match(/^\s*((\S+\s+)*?\S+)\s*$/)[1]
+      data = MailString.safe data
+      carp_prefix + keyword + crlf + data + crlf + K.end + crlf
+   end
 end
 
-# Declare a new protocol keyword which is not associated with a value: it is a marker or a flag or a record separator
-def def_mark keyword
-   define_singleton_method keyword, proc {mark_carp_prefix + keyword}
-   define_singleton_method "new_" + keyword, proc {|data| mark_carp_prefix + word + data}
+# Declare a new protocol keyword which is a flag or marker 
+def protoword keyword
+   K.define_singleton_method keyword, proc {mark_carp_prefix + keyword}
 end
 
-# Marker keywords are prefixed with carp_prefix + "mark"
 def mark_carp_prefix
    carp_prefix + "mark_"
 end
 
-# The protocol follows:
-def_mark "init"
-
-def_mark "end"
-
-def_mark "invite"
-
-def_info "master"
-
-def_info "mod"
-
-def_info "code"
-
-def_info "about"
+# End keyword 
+protoword "end"
 
 class Expected < StandardError
 end
@@ -54,8 +54,8 @@ def find field, text
    elsif field.start_with? carp_prefix
       forget, blob = text.split field, 2
       check blob, field
-      value, blob = blob.split carp_end, 2
-      check value, carp_end
+      value, blob = blob.split K.end, 2
+      check value, K.end
       return [value, blob] 
    else
       throw StandardError "Invalid keyword"

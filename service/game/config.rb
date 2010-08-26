@@ -23,9 +23,9 @@ class GameConfig < YamlConfig
    end
 
    # Receive email account information and return a
-   # Game object that can communicate with players 
+   # GameServer object that can communicate with players 
    def publish account
-      Game.new account, @mod, @about, @players
+      GameServer.new account, @mod, @about, @players
    end
 
 end

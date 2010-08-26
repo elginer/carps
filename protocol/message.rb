@@ -17,14 +17,12 @@ end
 # Subclasses must create a method called choices which is a list of classes supporting a parse method 
 class MessageParser
 
-   # Decode the text into a class and its arguments
-   def decode text
+   # Parse the text into a message 
+   def parse text
       input = text
       text = text.gsub "\r\n", ""
       begin
-         forget, after = text.find init, 2
-         klass, blob = choose choices, after 
-         msg, rest = klass.parse blob
+         msg, blob = choose choices, text 
          return msg
       rescue Expected
          log "An invalid email was received:", input
@@ -37,7 +35,7 @@ end
 # Receive messages for the client
 class ClientParser < MessageParser
    def choices
-      [[carp_invite,Invite]]
+      [Invite]
    end
 end
 
@@ -64,18 +62,32 @@ end
 # An invitation
 class Invite < ClientMessage
 
+   # We are part of the protocol :)
+   protoword "invite"
+
    def initialize game_info
       @game_info = game_info
    end
 
    def Invite.parse blob
-      forget, blob = find carp_invite, blob
-      info, blob = Game.parse blob
+      forget, blob = find K.invite, blob
+      info, blob = GameClient.parse blob
       [Invite.new(info), blob]
    end
 
+   # Interact with the player - ask if he wants to accept this invitation
+   def speak account
+      puts "You have been invited to a game!"
+      @game_info.display
+      puts "Do you want to join? (Type anything beginning with y to join)"
+      join = gets
+      if join[0] == "y"
+         @game_info.join_game account
+      end
+   end
+
    def emit 
-      carp_invite @game_info.emit
+      K.invite + crlf + @game_info.emit
    end
 
    def type

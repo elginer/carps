@@ -24,7 +24,6 @@ class IMAP
             puts "Making IMAP connection for " + @username
             @imap = Net::IMAP.new(@server, 993, true)
             @imap.login(@username, @password)
-            @imap.select("inbox")
             return
          rescue
             log "Could not connect to IMAP server", "Attempting to reconnect."
@@ -38,13 +37,15 @@ class IMAP
       reader = lambda do
          # Block 'till we get one
          while true
+            @imap.select("inbox")
             messages = @imap.search(["UNSEEN"])
             if messages.empty?
-               sleep 60
+               sleep 60 
             else
                msg = messages[0]
-               body = @imap.fetch msg, "BODY[TEXT]"
-               msg = @factory.parse
+               mails = @imap.fetch msg, "BODY[TEXT]"
+               body = mails[0].attr["BODY[TEXT]"]
+               msg = @parser.parse body
                # U HAS MALE
                puts "\a"
                if msg != nil and msg.type == type
@@ -54,12 +55,12 @@ class IMAP
          end
       end
       until false 
-         begin
+      #   begin
             return reader.call
-         rescue
-            log "Could not receive IMAP messages", "Attempting to reconnect" 
-            connect
-         end
+       #  rescue
+          #  log "Could not receive IMAP messages", "Attempting to reconnect" 
+         #   connect
+        # end
       end
    end
 

@@ -3,18 +3,18 @@ class MailString < String
 
    # Safely create a mail string
    def MailString.safe msg
-      MailString.new mail_lines msg
+      MailString.new MailString.mail_lines msg
    end
 
    # Join two strings into a new piece of mail text
    def + other
-      MailString.new super mail_lines other
+      MailString.new super MailString.mail_lines other
    end
 
    # If the second string is greater than 78 characters long
    # Split it into multiple lines
    # See http://www.faqs.org/rfcs/rfc2822.html
-   def mail_lines msg
+   def MailString.mail_lines msg
       msg = msg.gsub /\s/, " "
       lines = [msg]
       while lines.last.size > 78
