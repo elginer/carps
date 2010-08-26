@@ -8,11 +8,10 @@ require "net/imap.rb"
 class IMAP
 
    # Connect to the server with username and password
-   def initialize server, username, password, parser
+   def initialize server, username, password
       @server = server
       @username = username
       @password = password
-      @parser = parser
       connect
 
    end
@@ -31,8 +30,10 @@ class IMAP
       end
    end
 
-   # Return the next email message of a given type
-   def read type
+   # Return the next email message
+   #
+   # If the inbox is empty, wait delay seconds before polling it again
+   def read 
       # A reader
       reader = lambda do
          # Block 'till we get one
@@ -40,17 +41,12 @@ class IMAP
             @imap.select("inbox")
             messages = @imap.search(["UNSEEN"])
             if messages.empty?
-               sleep 60 
+               sleep 60
             else
                msg = messages[0]
                mails = @imap.fetch msg, "BODY[TEXT]"
-               body = mails[0].attr["BODY[TEXT]"]
-               msg = @parser.parse body
-               # U HAS MALE
-               puts "\a"
-               if msg != nil and msg.type == type
-                  return msg
-               end
+               msg = mails[0].attr["BODY[TEXT]"]
+               return msg.gsub "\r\n", ""
             end
          end
       end

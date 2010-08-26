@@ -1,11 +1,10 @@
 require "net/smtp"
 require "socket"
 
+require "email/string"
+
 require "util/log.rb"
-# TODO: very similar to IMAP code.  Refactor?
-# Reasons why not:
-# What would be abstracted away would be the control structures... 
-# ..and we'd have to abstract them into essentially the SAME control structures
+
 # SMTP connection
 class SMTP
    
@@ -37,7 +36,7 @@ class SMTP
    def send to, message 
       until false
         # begin
-            @smtp.send_message message.emit, @username, [to]
+            @smtp.send_message MailString.new(message), @username, [to]
             return 
         # rescue
          #   log "Could not send email with SMTP", "Attempting to reconnect"

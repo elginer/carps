@@ -1,8 +1,13 @@
 require "email/string"
 
-# All keywords are prefixed by \30carp.  \30 is an illegal character for users to type
-def carp_prefix
-   "\x1Ecarp_"
+# All carp keywords associated with values are prefixed by ASCII record separator.
+def value_prefix
+   "\x1E"
+end
+
+# Carp marks are prefixed with ASCII group separator 
+def mark_prefix
+   "\x1D"
 end
 
 # Class containing message keywords.  Its name is short :)
@@ -15,21 +20,16 @@ end
 
 # Declare a new protocol keyword which is associated with a value
 def protoval keyword
-   K.define_singleton_method keyword, proc {carp_prefix + keyword}
+   K.define_singleton_method keyword, proc {val_prefix + keyword}
    V.define_singleton_method keyword, do |data|
       data = data.match(/^\s*((\S+\s+)*?\S+)\s*$/)[1]
-      data = MailString.safe data
-      carp_prefix + keyword + crlf + data + crlf + K.end + crlf
+      val_prefix + keyword + data + K.end
    end
 end
 
 # Declare a new protocol keyword which is a flag or marker 
 def protoword keyword
-   K.define_singleton_method keyword, proc {mark_carp_prefix + keyword}
-end
-
-def mark_carp_prefix
-   carp_prefix + "mark_"
+   K.define_singleton_method keyword, proc {mark_prefix + keyword}
 end
 
 # End keyword 

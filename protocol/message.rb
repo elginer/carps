@@ -20,7 +20,6 @@ class MessageParser
    # Parse the text into a message 
    def parse text
       input = text
-      text = text.gsub "\r\n", ""
       begin
          msg, blob = choose choices, text 
          return msg
@@ -57,41 +56,4 @@ class ClientMessage
    def type
       nil
    end
-end
-
-# An invitation
-class Invite < ClientMessage
-
-   # We are part of the protocol :)
-   protoword "invite"
-
-   def initialize game_info
-      @game_info = game_info
-   end
-
-   def Invite.parse blob
-      forget, blob = find K.invite, blob
-      info, blob = GameClient.parse blob
-      [Invite.new(info), blob]
-   end
-
-   # Interact with the player - ask if he wants to accept this invitation
-   def speak account
-      puts "You have been invited to a game!"
-      @game_info.display
-      puts "Do you want to join? (Type anything beginning with y to join)"
-      join = gets
-      if join[0] == "y"
-         @game_info.join_game account
-      end
-   end
-
-   def emit 
-      K.invite + crlf + @game_info.emit
-   end
-
-   def type
-      :invite
-   end
-
 end

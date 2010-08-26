@@ -1,8 +1,10 @@
-require "email/imap.rb"
-require "email/smtp.rb"
+require "email/imap"
+require "email/smtp"
 
-require "util/error.rb"
-require "util/config.rb"
+require "util/error"
+require "util/config"
+
+require "service/mailer"
 
 require "yaml"
 
@@ -19,32 +21,23 @@ class EmailConfig < YamlConfig
 
    # Parse the email config file
    def parse_yaml conf
-      @username = read_conf conf, "username"
+      username = read_conf conf, "username"
       password = read_conf conf, "password"
       imap_server = read_conf conf, "imap"
       smtp_server = read_conf conf, "smtp"
-      [imap_server, smtp_server, password]        
+      [imap_server, smtp_server, username, password]        
    end
 
    # Connect to the imap and smtp servers
-   def load_resources imap_server, smtp_server, password 
-      @imap = IMAP.new imap_server, @username, password, @message_parser
-      @smtp = SMTP.new smtp_server, @username, password
+   def load_resources imap_server, smtp_server, username, password 
+      imap = IMAP.new imap_server, username, password
+      smtp = SMTP.new smtp_server, username, password
+      @mailer = Mailer.new username, imap, smtp, @message_parser
    end
 
-   # Return the imap server
-   def imap
-      @imap
-   end
-
-   # Return the smtp server
-   def smtp
-      @smtp
-   end
-
-   # Return the user name
-   def username
-      @username
+   # Return the high level mail client
+   def mailer
+      @mailer
    end
 
 end

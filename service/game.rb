@@ -65,6 +65,11 @@ class GameClient < Game
       @about = desc
    end
 
+   # Expose the mod so the client decide if he can even think of joining
+   def mod
+      @mod
+   end
+
    # Join this game as a client
    def join_game account
       mod = load_mods[@mod]
