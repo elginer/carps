@@ -4,5 +4,3 @@ imap: imap.gmail.com
 smtp: smtp.gmail.com
 # The username
 username: carpsserver@gmail.com
-# The password, in plain text.  Yes, this is rather unsecure.
-password: "snoogle!"
