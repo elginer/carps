@@ -16,11 +16,11 @@
 # along with CARPS.  If not, see <http://www.gnu.org/licenses/>.
 
 
-require "email/config.rb"
-require "protocol/message.rb"
+require "email/config"
 
-require "service/game/config.rb"
-require "yaml"
+require "service/game/config"
+
+require "service/server_parser"
 
 # Choose which game we are to play
 def choose_game
@@ -34,7 +34,12 @@ def choose_game
       GameConfig.new "games/" + game_file
    end
    if games.size == 1
-      return games[0]
+      game = games[0]
+      puts "The only game available is:"
+      puts "\n"
+      game.display
+      puts "\n"
+      return game
    end
    games.each_index do |game_i|
       puts "\nGame number: #{game_i}"
@@ -49,11 +54,11 @@ def main
    # Choose game
    game_config = choose_game
    # Load email account
-   account = EmailConfig.new "server_email.yaml", ServerParser.new
-   # Give the game account information
-   game_info = game_config.publish account
+   account = EmailConfig.new "server_email.yaml", server_parser 
+   # Get the mailer
+   mailer = account.mailer
+   # We can create the game as soon as we have the mailer 
+   game = game_config.spawn mailer
    # Invite players
-   game_info.invite_players
-   # Begin game
-   game_info.start_game account
+   game.invite_players
 end

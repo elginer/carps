@@ -18,14 +18,9 @@
 
 require "email/string"
 
-# All carp keywords associated with values are prefixed by ASCII record separator.
-def value_prefix
-   "\x1E"
-end
-
-# Carp marks are prefixed with ASCII group separator 
-def mark_prefix
-   "\x1D"
+# All carp keywords protocol keywords are prefixed by ASCII start of heading.
+def prefix
+   "\2"
 end
 
 # Class containing message keywords.  Its name is short :)
@@ -38,16 +33,15 @@ end
 
 # Declare a new protocol keyword which is associated with a value
 def protoval keyword
-   K.define_singleton_method keyword, proc {val_prefix + keyword}
+   K.define_singleton_method keyword, proc {prefix + keyword}
    V.define_singleton_method keyword, do |data|
-      data = data.match(/^\s*((\S+\s+)*?\S+)\s*$/)[1]
-      val_prefix + keyword + data + K.end
+      prefix + keyword + data + K.end
    end
 end
 
 # Declare a new protocol keyword which is a flag or marker 
 def protoword keyword
-   K.define_singleton_method keyword, proc {mark_prefix + keyword}
+   K.define_singleton_method keyword, proc {prefix + keyword}
 end
 
 # End keyword 
@@ -65,11 +59,11 @@ end
 
 # Find a field in semi-structured text
 def find field, text
-   if field.start_with? mark_carp_prefix
+   if field.start_with? prefix
       forget, blob = text.split field, 2
       check blob, field
       return ["", blob]
-   elsif field.start_with? carp_prefix
+   elsif field.start_with? prefix
       forget, blob = text.split field, 2
       check blob, field
       value, blob = blob.split K.end, 2

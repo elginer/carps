@@ -46,7 +46,7 @@ class YamlConfig
          contents = File.read filepath
       rescue
          # On failure, write a message to stderr and exit
-         fatal "Could not find configuration file: " + conf
+         fatal "Could not read configuration file: " + filepath 
       end
 
       # Try to parse the file

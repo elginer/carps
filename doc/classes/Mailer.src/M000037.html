@@ -1,0 +1,17 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <title>send (Mailer)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre><span class="ruby-comment cmt"># File crypt/mailer.rb, line 158</span>
+   <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">send</span> <span class="ruby-identifier">to</span>, <span class="ruby-identifier">message</span>
+      <span class="ruby-identifier">digest</span> = ((<span class="ruby-value">0</span><span class="ruby-operator">..</span><span class="ruby-value">19</span>).<span class="ruby-identifier">map</span> {<span class="ruby-operator">|</span><span class="ruby-identifier">n</span><span class="ruby-operator">|</span> <span class="ruby-identifier">rs</span>[<span class="ruby-identifier">rand</span>(<span class="ruby-identifier">rs</span>.<span class="ruby-identifier">size</span>)]}).<span class="ruby-identifier">join</span>
+      <span class="ruby-identifier">sig</span> = <span class="ruby-ivar">@private_key</span>.<span class="ruby-identifier">syssign</span> <span class="ruby-identifier">digest</span> 
+      <span class="ruby-ivar">@sender</span>.<span class="ruby-identifier">send</span> <span class="ruby-identifier">to</span>, (<span class="ruby-constant">V</span>.<span class="ruby-identifier">addr</span> <span class="ruby-ivar">@addr</span>) <span class="ruby-operator">+</span> (<span class="ruby-constant">V</span>.<span class="ruby-identifier">sig</span> <span class="ruby-identifier">sig</span>) <span class="ruby-operator">+</span> (<span class="ruby-constant">V</span>.<span class="ruby-identifier">digest</span> <span class="ruby-identifier">digest</span>) <span class="ruby-operator">+</span> <span class="ruby-identifier">message</span>.<span class="ruby-identifier">emit</span>
+   <span class="ruby-keyword kw">end</span></pre>
+</body>
+</html>

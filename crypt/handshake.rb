@@ -15,8 +15,9 @@
 # You should have received a copy of the GNU General Public License
 # along with CARPS.  If not, see <http://www.gnu.org/licenses/>.
 
-
 require "protocol/message"
+
+require "openssl"
 
 # A cryptographic handshake request
 class Handshake < Message
@@ -26,19 +27,30 @@ class Handshake < Message
 
    # Create a new handshake
    def initialize from, public_key
-      @from = from
+      super from
       @public_key = public_key
    end
 
    # Parse from text
    def parse from, blob
-      forget, blob = find K.handshake, blob
-      [Handshake.new(from, key), blob]
+      key, blob = find K.handshake, blob
+      pkey = OpenSSL::PKey
+      begin
+         pkey::DSA.new key
+         return [Handshake.new(from, key), blob]
+      rescue pkey::DSAError
+         throw Expected "Public key"
+      end
    end
 
    # Emit the handshake as text
    def emit
-      V.public_key @public_key
+      V.handshake @public_key.to_pem
+   end
+
+   # Share the public key
+   def key
+      @public_key
    end
 
 end 

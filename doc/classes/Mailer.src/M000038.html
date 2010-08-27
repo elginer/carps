@@ -1,0 +1,48 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <title>read (Mailer)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre><span class="ruby-comment cmt"># File crypt/mailer.rb, line 165</span>
+   <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">read</span> <span class="ruby-identifier">type</span>, <span class="ruby-identifier">must_be_from</span> = <span class="ruby-keyword kw">nil</span>
+      <span class="ruby-comment cmt"># Loop until we get a message of the correct type</span>
+      <span class="ruby-keyword kw">while</span> <span class="ruby-keyword kw">true</span>
+         <span class="ruby-identifier">mail</span> = <span class="ruby-ivar">@receiver</span>.<span class="ruby-identifier">read</span>
+         <span class="ruby-identifier">who</span> = <span class="ruby-keyword kw">nil</span>
+         <span class="ruby-identifier">blob</span> = <span class="ruby-keyword kw">nil</span>
+         <span class="ruby-keyword kw">begin</span>
+            <span class="ruby-comment cmt"># Find who sent the message</span>
+            <span class="ruby-identifier">who</span>, <span class="ruby-identifier">blob</span> = <span class="ruby-identifier">find</span> <span class="ruby-constant">K</span>.<span class="ruby-identifier">addr</span>, <span class="ruby-identifier">mail</span>
+         <span class="ruby-keyword kw">rescue</span> <span class="ruby-constant">Expected</span>
+            <span class="ruby-identifier">log</span> <span class="ruby-value str">&quot;Mail message did not contain sender&quot;</span>, <span class="ruby-identifier">blob</span> 
+            <span class="ruby-identifier">continue</span>
+         <span class="ruby-keyword kw">end</span>
+         <span class="ruby-comment cmt"># Abort if incorrect address</span>
+         <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">must_be_from</span> <span class="ruby-keyword kw">and</span> <span class="ruby-identifier">must_be_from</span> <span class="ruby-operator">!=</span> <span class="ruby-identifier">who</span>
+            <span class="ruby-keyword kw">next</span>
+         <span class="ruby-keyword kw">end</span>
+
+         <span class="ruby-comment cmt"># Find the peer who sent the message</span>
+         <span class="ruby-keyword kw">unless</span>(<span class="ruby-identifier">peer</span> = <span class="ruby-ivar">@peers</span>[<span class="ruby-identifier">who</span>])
+            <span class="ruby-identifier">log</span> <span class="ruby-node">&quot;Mail received from unregistered peer #{who}&quot;</span>, <span class="ruby-identifier">blob</span>
+            <span class="ruby-keyword kw">next</span>
+         <span class="ruby-keyword kw">end</span>
+         
+         <span class="ruby-comment cmt"># The peer will verify the signature at the start of the text and pass on the rest</span>
+         <span class="ruby-keyword kw">if</span>(<span class="ruby-identifier">blob</span> = <span class="ruby-identifier">peer</span>.<span class="ruby-identifier">verify</span> <span class="ruby-identifier">blob</span>)
+            <span class="ruby-comment cmt"># Parse a message</span>
+            <span class="ruby-identifier">msg</span> = <span class="ruby-ivar">@parser</span>.<span class="ruby-identifier">parse</span> <span class="ruby-identifier">who</span>, <span class="ruby-identifier">blob</span>
+            <span class="ruby-comment cmt"># Ding!</span>
+            <span class="ruby-identifier">puts</span> <span class="ruby-value str">&quot;\a&quot;</span>
+            <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">msg</span> <span class="ruby-operator">!=</span> <span class="ruby-keyword kw">nil</span> <span class="ruby-keyword kw">and</span> <span class="ruby-identifier">msg</span>.<span class="ruby-identifier">type</span> <span class="ruby-operator">==</span> <span class="ruby-identifier">type</span>
+               <span class="ruby-keyword kw">return</span> <span class="ruby-identifier">msg</span>
+            <span class="ruby-keyword kw">end</span>
+         <span class="ruby-keyword kw">end</span>
+      <span class="ruby-keyword kw">end</span>
+   <span class="ruby-keyword kw">end</span></pre>
+</body>
+</html>

@@ -1,0 +1,19 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <title>protoval (protocol/keyword.rb)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <link rel="stylesheet" href="../../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre><span class="ruby-comment cmt"># File protocol/keyword.rb, line 40</span>
+<span class="ruby-keyword kw">def</span> <span class="ruby-identifier">protoval</span> <span class="ruby-identifier">keyword</span>
+   <span class="ruby-constant">K</span>.<span class="ruby-identifier">define_singleton_method</span> <span class="ruby-identifier">keyword</span>, <span class="ruby-identifier">proc</span> {<span class="ruby-identifier">val_prefix</span> <span class="ruby-operator">+</span> <span class="ruby-identifier">keyword</span>}
+   <span class="ruby-constant">V</span>.<span class="ruby-identifier">define_singleton_method</span> <span class="ruby-identifier">keyword</span>, <span class="ruby-keyword kw">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">data</span><span class="ruby-operator">|</span>
+      <span class="ruby-identifier">data</span> = <span class="ruby-identifier">data</span>.<span class="ruby-identifier">match</span>(<span class="ruby-regexp re">/^\s*((\S+\s+)*?\S+)\s*$/</span>)[<span class="ruby-value">1</span>]
+      <span class="ruby-identifier">val_prefix</span> <span class="ruby-operator">+</span> <span class="ruby-identifier">keyword</span> <span class="ruby-operator">+</span> <span class="ruby-identifier">data</span> <span class="ruby-operator">+</span> <span class="ruby-constant">K</span>.<span class="ruby-identifier">end</span>
+   <span class="ruby-keyword kw">end</span>
+<span class="ruby-keyword kw">end</span></pre>
+</body>
+</html>

@@ -17,10 +17,12 @@
 
 
 # Log a message to stderr
-def log reason, msg
+def log reason, *msgs
    $stderr.write "An error was logged:\n"
    $stderr.write reason + "\n"
-   $stderr.write msg + "\n"
+   msgs.each do |msg|
+      $stderr.write msg + "\n"
+   end
    $stderr.write "Error raised:\n"
    if $!
       $stderr.write $!.to_s + "\n"

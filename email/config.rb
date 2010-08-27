@@ -22,7 +22,7 @@ require "email/smtp"
 require "util/error"
 require "util/config"
 
-require "service/mailer"
+require "crypt/mailer"
 
 require "yaml"
 
@@ -57,5 +57,4 @@ class EmailConfig < YamlConfig
    def mailer
       @mailer
    end
-
 end

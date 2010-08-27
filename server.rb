@@ -1,3 +1,5 @@
+#! /usr/bin/ruby1.9.1
+
 # Copyright 2010 John Morrice
  
 # This file is part of CARPS.
@@ -14,9 +16,6 @@
 
 # You should have received a copy of the GNU General Public License
 # along with CARPS.  If not, see <http://www.gnu.org/licenses/>.
-
-
-#! /usr/bin/ruby1.9.1
 
 require "carps.rb"
 

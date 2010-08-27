@@ -1,0 +1,23 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <title>ask (Invite)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre><span class="ruby-comment cmt"># File service/invite.rb, line 40</span>
+   <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">ask</span>
+      <span class="ruby-identifier">puts</span> <span class="ruby-value str">&quot;You have been invited to a game!&quot;</span>
+      <span class="ruby-keyword kw">unless</span> <span class="ruby-identifier">load_mods</span>.<span class="ruby-identifier">member?</span> <span class="ruby-ivar">@game_info</span>.<span class="ruby-identifier">mod</span>
+         <span class="ruby-identifier">puts</span> <span class="ruby-value str">&quot;But it's for the mod: &quot;</span> <span class="ruby-operator">+</span> <span class="ruby-ivar">@game_info</span>.<span class="ruby-identifier">mod</span>
+         <span class="ruby-identifier">puts</span> <span class="ruby-value str">&quot;Which you don't have installed.&quot;</span>
+         <span class="ruby-keyword kw">return</span> <span class="ruby-keyword kw">false</span>
+      <span class="ruby-keyword kw">end</span>
+      <span class="ruby-ivar">@game_info</span>.<span class="ruby-identifier">display</span>
+      <span class="ruby-identifier">puts</span> <span class="ruby-value str">&quot;Do you want to join? (Type anything beginning with y to join)&quot;</span>
+      <span class="ruby-identifier">gets</span>[<span class="ruby-value">0</span>] <span class="ruby-operator">==</span> <span class="ruby-value str">&quot;y&quot;</span>
+   <span class="ruby-keyword kw">end</span></pre>
+</body>
+</html>

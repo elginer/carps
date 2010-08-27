@@ -1,0 +1,23 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <title>send (SMTP)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre><span class="ruby-comment cmt"># File email/smtp.rb, line 54</span>
+   <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">send</span> <span class="ruby-identifier">to</span>, <span class="ruby-identifier">message</span> 
+      <span class="ruby-keyword kw">until</span> <span class="ruby-keyword kw">false</span>
+        <span class="ruby-comment cmt"># begin</span>
+            <span class="ruby-ivar">@smtp</span>.<span class="ruby-identifier">send_message</span> <span class="ruby-constant">MailString</span>.<span class="ruby-identifier">new</span>(<span class="ruby-identifier">message</span>), <span class="ruby-ivar">@username</span>, [<span class="ruby-identifier">to</span>]
+            <span class="ruby-keyword kw">return</span> 
+        <span class="ruby-comment cmt"># rescue</span>
+         <span class="ruby-comment cmt">#   log &quot;Could not send email with SMTP&quot;, &quot;Attempting to reconnect&quot;</span>
+          <span class="ruby-comment cmt"># connect</span>
+       <span class="ruby-comment cmt">#  end</span>
+      <span class="ruby-keyword kw">end</span>
+   <span class="ruby-keyword kw">end</span></pre>
+</body>
+</html>

@@ -54,7 +54,7 @@ class SMTP
    def send to, message 
       until false
         # begin
-            @smtp.send_message MailString.new(message), @username, [to]
+            @smtp.send_message("Content-Type: application/octet-stream\r\n" + MailString.safe(message), @username, [to])
             return 
         # rescue
          #   log "Could not send email with SMTP", "Attempting to reconnect"

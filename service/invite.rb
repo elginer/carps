@@ -25,14 +25,15 @@ class Invite < Message
    # We are part of the protocol :)
    protoword "invite"
 
-   def initialize game_info
+   def initialize from, game_info
       @game_info = game_info
+      super from
    end
 
-   def Invite.parse blob
+   def Invite.parse from, blob
       forget, blob = find K.invite, blob
       info, blob = GameClient.parse blob
-      [Invite.new(info), blob]
+      [Invite.new(from, info), blob]
    end
 
    # Ask if the player wants to accept this invitation

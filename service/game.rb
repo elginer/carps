@@ -16,9 +16,9 @@
 # along with CARPS.  If not, see <http://www.gnu.org/licenses/>.
 
 
-require "service/mods.rb"
-require "protocol/keywords.rb"
-require "email/string.rb"
+require "service/mod"
+require "protocol/keyword"
+require "email/string"
 
 # A game
 # Subclasses must write the variables @dm, @mod, @about in their constructors
@@ -52,10 +52,9 @@ class GameServer < Game
    # The second is the mod.
    # The third is the description.
    # The fourth is a list of email addresses of players to be invited
-   def initialize account, mod, desc, players
-      @dm = account.username
-      @smtp = account.smtp
-      @imap = account.imap
+   def initialize mailer, mod, desc, players
+      @dm = mailer.address 
+      @mailer = mailer 
       @mod = mod
       @about = desc
       @players = players
@@ -63,9 +62,14 @@ class GameServer < Game
 
    # Invite players to this game
    def invite_players
+      # Perform handshakes
+      @players.each do |player|
+         @mailer.handshake player
+      end
       invite = Invite.new self 
       @players.each do |player|
-         @smtp.send player, invite 
+         puts "Inviting " + player
+         @mailer.send player, invite 
       end
    end 
 

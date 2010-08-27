@@ -39,8 +39,8 @@ def main
    account = EmailConfig.new "email.yaml", ClientParser.new
    # Get the mailer
    mailer = account.mailer
+   # Wait for a handshake
+   mailer.expect_handshake
    # Wait for an invitation to a game
    invite = receive_invitation mailer
-   # Accept the invitation
-   invite.accept account
 end

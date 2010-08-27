@@ -1,0 +1,38 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <title>read (IMAP)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre><span class="ruby-comment cmt"># File email/imap.rb, line 54</span>
+   <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">read</span> 
+      <span class="ruby-comment cmt"># A reader</span>
+      <span class="ruby-identifier">reader</span> = <span class="ruby-identifier">lambda</span> <span class="ruby-keyword kw">do</span>
+         <span class="ruby-comment cmt"># Block 'till we get one</span>
+         <span class="ruby-keyword kw">while</span> <span class="ruby-keyword kw">true</span>
+            <span class="ruby-ivar">@imap</span>.<span class="ruby-identifier">select</span>(<span class="ruby-value str">&quot;inbox&quot;</span>)
+            <span class="ruby-identifier">messages</span> = <span class="ruby-ivar">@imap</span>.<span class="ruby-identifier">search</span>([<span class="ruby-value str">&quot;UNSEEN&quot;</span>])
+            <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">messages</span>.<span class="ruby-identifier">empty?</span>
+               <span class="ruby-identifier">sleep</span> <span class="ruby-value">60</span>
+            <span class="ruby-keyword kw">else</span>
+               <span class="ruby-identifier">msg</span> = <span class="ruby-identifier">messages</span>[<span class="ruby-value">0</span>]
+               <span class="ruby-identifier">mails</span> = <span class="ruby-ivar">@imap</span>.<span class="ruby-identifier">fetch</span> <span class="ruby-identifier">msg</span>, <span class="ruby-value str">&quot;BODY[TEXT]&quot;</span>
+               <span class="ruby-identifier">msg</span> = <span class="ruby-identifier">mails</span>[<span class="ruby-value">0</span>].<span class="ruby-identifier">attr</span>[<span class="ruby-value str">&quot;BODY[TEXT]&quot;</span>]
+               <span class="ruby-keyword kw">return</span> <span class="ruby-identifier">msg</span>.<span class="ruby-identifier">gsub</span> <span class="ruby-value str">&quot;\r\n&quot;</span>, <span class="ruby-value str">&quot;&quot;</span>
+            <span class="ruby-keyword kw">end</span>
+         <span class="ruby-keyword kw">end</span>
+      <span class="ruby-keyword kw">end</span>
+      <span class="ruby-keyword kw">until</span> <span class="ruby-keyword kw">false</span> 
+      <span class="ruby-comment cmt">#   begin</span>
+            <span class="ruby-keyword kw">return</span> <span class="ruby-identifier">reader</span>.<span class="ruby-identifier">call</span>
+       <span class="ruby-comment cmt">#  rescue</span>
+          <span class="ruby-comment cmt">#  log &quot;Could not receive IMAP messages&quot;, &quot;Attempting to reconnect&quot; </span>
+         <span class="ruby-comment cmt">#   connect</span>
+        <span class="ruby-comment cmt"># end</span>
+      <span class="ruby-keyword kw">end</span>
+   <span class="ruby-keyword kw">end</span></pre>
+</body>
+</html>

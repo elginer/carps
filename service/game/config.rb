@@ -40,10 +40,10 @@ class GameConfig < YamlConfig
       puts @players
    end
 
-   # Receive email account information and return a
-   # GameServer object that can communicate with players 
-   def publish account
-      GameServer.new account, @mod, @about, @players
+   # Receive a mailer 
+   # Return a GameServer object that can communicate with players 
+   def spawn mailer
+      GameServer.new mailer, @mod, @about, @players
    end
 
 end
