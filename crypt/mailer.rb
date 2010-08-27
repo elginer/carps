@@ -160,6 +160,7 @@ class Mailer
       send from, (Handshake.new @public_key)
       read :handshake_accepted, from
       puts "Established spoof-proof communications with #{addr}."
+      from
    end
 
    # Send a message

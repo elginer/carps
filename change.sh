@@ -2,11 +2,9 @@
 
 # Small script to run whenever I make a change
 
-# Move sensitive data out of the folder
-mv email.yaml server_email.yaml ..
-
-# Commit
-git add -A && git commit
-
-# Move the sensitive data back
-mv ../email.yaml ../server_email.yaml .
+# Move sensitive data out of the folder, commit and move it back
+mv -n email.yaml server_email.yaml .. && \
+mv -n .key ../carps_key && \
+git add -A && git commit && \
+mv -n ../email.yaml ../server_email.yaml && \
+mv -n ../carps_key .

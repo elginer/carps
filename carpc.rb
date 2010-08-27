@@ -16,8 +16,9 @@
 # along with CARPS.  If not, see <http://www.gnu.org/licenses/>.
 
 
-require "email/config.rb"
-require "util/error.rb"
+require "email/config"
+
+require "service/client_parser"
 
 # Wait for an invitation, and to see if it has been accepted by the user
 def receive_invitation mailer 
@@ -36,7 +37,7 @@ end
 # Run the client 
 def main
    # Get the client's email information
-   account = EmailConfig.new "email.yaml", ClientParser.new
+   account = EmailConfig.new "email.yaml", client_parser
    # Get the mailer
    mailer = account.mailer
    # Wait for a handshake
