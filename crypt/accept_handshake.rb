@@ -22,13 +22,10 @@ class AcceptHandshake < Message
    # Extend the protocol for this OKAY message
    protoword :accept 
 
-   def initialize from
-      @from = from
-   end
-
    # Parse from the void
-   def AcceptHandshake.parse from, forget
-      AcceptHandshake.new from
+   def AcceptHandshake.parse from, blob
+      forget, blob = find K.accept, blob
+      [AcceptHandshake.new(from), blob]
    end
 
    # Emit

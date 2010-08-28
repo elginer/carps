@@ -17,7 +17,6 @@
 
 
 require "util/log.rb"
-require "service/game.rb"
 
 # Parse, choosing from a number of alternative messages, return the first one that suceeds
 def choose from, messages, blob
@@ -28,7 +27,7 @@ def choose from, messages, blob
       rescue Expected
       end
    end
-   throw Expected.new messages 
+   raise Expected
 end
 
 # Parse a message from a block of unformatted text

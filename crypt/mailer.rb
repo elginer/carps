@@ -47,7 +47,6 @@ class Mailer
       @mailbox = Mailbox.new sender, receiver, parser
       @private_key = get_keys
       @public_key = @private_key.public_key
-      @session = nil
    end
 
    # Give our address to interested parties
@@ -90,13 +89,25 @@ class Mailer
    def send to, message
       text = message.emit
       # Sign the message
-      digest = Digest::MD5.digest text 
+      digest = Digest::MD5.digest text
       sig = @private_key.syssign digest
-      session = ""
-      if @session
-         session = V.session @session.to_s
-      end
-      mail = (V.addr @addr) + session + (V.sig sig) + (V.digest digest) + text + K.end
+      sf = File.open "sent_sig", "w"
+      sf.write sig
+      sf.close
+      mail = (V.addr @addr) + (V.sig sig) + text + K.end
+      @mailbox.send to, mail
+      puts "Message sent to " + to
+   end
+
+   # Send an evil message for testing.  The recipent should drop this.
+   def evil to, message
+      text = message.emit
+      # Sign the message
+      digest = Digest::MD5.digest text
+      puts "sent digest (as part of an evil scheme): " + digest
+      new_key = OpenSSL::PKey::DSA.new 2048
+      sig = new_key.syssign digest
+      mail = (V.addr @addr) + (V.sig sig) + text + K.end
       @mailbox.send to, mail
       puts "Message sent to " + to
    end
@@ -113,46 +124,23 @@ class ServerMailer < Mailer
 
    def initialize address, receiver, sender, parser
       super address, receiver, sender, parser
-      @session = read_session
-      @mailbox.set_session @session
-   end
-
-   # Read the session from the session file
-   def read_session
-      begin
-         session = File.read(".session").to_i
-         session = session + 1
-         File.write ".session", new_session
-         return new_session
-      rescue
-         begin
-            sessionf = File.new ".session", "w"
-            sessionf.write "42"
-            sessionf.close
-         rescue
-            log "Session file .session could not be written.  CARPS might behave strangely."
-         end
-         return 42
-      end
    end
 
    # Perform a handshake to authenticate with a peer
    def handshake to
-      puts "Making cryptographic handshake request to #{to}"
+      puts "Offering cryptographic handshake to #{to}"
       # Create a new peer
       peer = Peer.new to
-      @mailbox.add_peer @addr, peer
+      @mailbox.add_peer to, peer
       # Send our key to the peer
       send to, Handshake.new(@addr, @public_key)
       # Get the peer's key
       their_key = read Handshake, to
       peer.your_key their_key.key
-      # Send our session
-      send to, SessionHandshake.new(@addr, @session)
       # Receive an okay message
       read AcceptHandshake, to
       @mailbox.secure
-      puts "Established spoof-proof communications with #{addr}"
+      puts "Established spoof-proof communications with #{to}"
    end
 end
 
@@ -162,7 +150,7 @@ class ClientMailer < Mailer
    #
    # A British stereotype?
    def expect_handshake
-      puts "Awaiting cryptographic handshake request..."
+      puts "Awaiting cryptographic handshake..."
       # Get the email
       peer_key = read Handshake 
       # Get the peer's address
@@ -170,17 +158,14 @@ class ClientMailer < Mailer
       puts "Receiving handshake request from #{from}."
       # Create a new peer
       peer = Peer.new from
-      @mailbox.add_peer @addr, peer
+      @mailbox.add_peer from, peer
       peer.your_key peer_key.key
       # Send our key to the peer
       send from, (Handshake.new @addr, @public_key)
-      # Receive their session
-      @session = read(SessionHandshake, from).session
-      @mailbox.set_session @session 
       # Send an okay message
       send from, (AcceptHandshake.new @addr)
       @mailbox.secure
-      puts "Established spoof-proof communications with #{addr}."
+      puts "Established spoof-proof communications with #{from}."
       from
    end
 end

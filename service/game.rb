@@ -15,8 +15,8 @@
 # You should have received a copy of the GNU General Public License
 # along with CARPS.  If not, see <http://www.gnu.org/licenses/>.
 
-
 require "service/mod"
+
 require "protocol/keyword"
 
 # A game
@@ -62,13 +62,22 @@ class GameServer < Game
    # Invite players to this game
    def invite_players
       # Perform handshakes
-      @players.each do |player|
-         @mailer.handshake player
+      threads = @players.map do |player|
+         Thread.fork do
+            @mailer.handshake player
+         end
       end
-      invite = Invite.new self 
+      threads.each do |thread|
+         thread.join
+      end
+      invite = Invite.new @dm, self
       @players.each do |player|
+         # puts "Sending the player an evil message..."
+         # Evil testing 
+         # @mailer.evil player, invite 
+
          puts "Inviting " + player
-         @mailer.send player, invite 
+         @mailer.send player, invite
       end
    end 
 
@@ -107,4 +116,45 @@ class GameClient < Game
       about, blob = find K.about, blob
       [GameClient.new(dm, mod, about), blob] 
    end
+end
+
+# An invitation
+class Invite < Message
+
+   # We are part of the protocol :)
+   protoword "invite"
+
+   def initialize from, game_info
+      @game_info = game_info
+      super from
+   end
+
+   def Invite.parse from, blob
+      forget, blob = find K.invite, blob
+      info, blob = GameClient.parse blob
+      [Invite.new(from, info), blob]
+   end
+
+   # Ask if the player wants to accept this invitation
+   def ask
+      puts "You have been invited to a game!"
+      unless load_mods.member? @game_info.mod
+         puts "But it's for the mod: " + @game_info.mod
+         puts "Which you don't have installed."
+         return false
+      end
+      @game_info.display
+      puts "Do you want to join? (Type anything beginning with y to join)"
+      gets[0] == "y"
+   end
+
+   # Accept the invitation
+   def accept account
+      @game_info.join_game account
+   end
+
+   def emit 
+      K.invite + @game_info.emit
+   end
+
 end

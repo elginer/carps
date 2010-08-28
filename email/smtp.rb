@@ -21,6 +21,8 @@ require "socket"
 
 require "util/log.rb"
 
+require "email/string"
+
 # SMTP connection
 class SMTP
    
@@ -58,7 +60,8 @@ class SMTP
    def send to, message 
       until false
         # begin
-            @smtp.send_message "Content-Type: application/octet-stream\r\n" + message, @username, [to] 
+            message = to_mail "Content-Type: application/octet-stream\r\n" + message
+            @smtp.send_message message, @username, [to]
             return 
         # rescue
          #   log "Could not send email with SMTP", "Attempting to reconnect"

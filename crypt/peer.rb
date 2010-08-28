@@ -20,8 +20,6 @@ class Peer
 
    # Extend protocol for signed data
    protoval :sig 
-   # Extend protocol for sending random digests
-   protoval :digest 
 
    # Create a new peer
    def initialize addr
@@ -37,17 +35,18 @@ class Peer
    def verify blob
       if @peer_key
          sig = nil   
-         dig = nil
-         blob = nil
          begin
-         sig, blob = find K.sig, blob
-         dig, blob = find K.digest, blob
+            sig, blob = find K.sig, blob
+            sf = File.open "received_sig", "w"
+            sf.write sig
+            sf.close
          rescue
             log "Message signature was malformed", blob
             return nil
          end
          # If the digest is the hash of the message and the signature matches the digest then all is well
-         if (Digest::MD5.digest blob) and (@peer_key.sysverify dig, sig)
+         dig = Digest::MD5.digest blob
+         if @peer_key.sysverify dig, sig
             return blob
          else
             log "Someone has attempted to spoof an email from #{@addr}", blob

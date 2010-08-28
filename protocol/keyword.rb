@@ -52,10 +52,10 @@ protoword "end"
 class Expected < StandardError
 end
 
-# Check that the first argument is not nil, if so, throw an 'expected' parse error, using the second argument
+# Check that the first argument is not nil, if so, raise an 'expected' parse error, using the second argument
 def check result, expected
    if result == nil
-      throw Expected.new expected
+      raise Expected, expected
    end
 end
 
@@ -72,6 +72,6 @@ def find field, text
       check value, K.end
       return [value, blob] 
    else
-      throw StandardError "Invalid keyword"
+      raise StandardError, "Invalid keyword"
    end
 end

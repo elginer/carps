@@ -21,6 +21,7 @@ require "util/log"
 
 require "net/imap"
 
+require "email/string"
 
 # Administer IMAP connections
 class IMAP
@@ -53,7 +54,7 @@ class IMAP
    end
 
    def delay
-      30
+      10
    end
 
    # Return the a list of email message bodies
@@ -72,7 +73,7 @@ class IMAP
             else
                mails = @imap.fetch messages, "BODY[TEXT]"
                mails = mails.map do |mail|
-                  mail.attr["BODY[TEXT]"]
+                  from_mail mail.attr["BODY[TEXT]"]
                end
             end
          end

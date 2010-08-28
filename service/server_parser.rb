@@ -15,10 +15,11 @@
 # You should have received a copy of the GNU General Public License
 # along with CARPS.  If not, see <http://www.gnu.org/licenses/>.
 
-require "service/invite"
-require "crypt/handshake"
+require "protocol/default_messages"
 
 # Create a parser which parses messages for the server 
 def server_parser
-   MessageParser.new [Handshake]
+   MessageParser.new default_messages 
 end
+
+

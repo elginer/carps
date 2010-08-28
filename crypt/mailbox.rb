@@ -17,9 +17,6 @@
 
 # This mailbox receives all messages that come in
 
-# Extend protocol for session numbers
-protoval :session
- 
 class Mailbox
 
    # Create the mailbox from a simple, synchronous mail client
@@ -29,18 +26,13 @@ class Mailbox
       @sender = sender
       @mail = []
       @peers = {}
-      @session = nil
       @secure = false
+      @semaphore = Mutex.new
    end
 
    # The mail is now secure
    def secure
       @secure = true
-   end
-
-   # The mailbox has a session
-   def set_session session
-      @session = session
    end
 
    # Add a new peer
@@ -50,9 +42,6 @@ class Mailbox
 
    # Send a message
    def send to, message
-      if @secure
-         message = (V.session @session.to_s) + message
-      end
       @sender.send to, message
    end
 
@@ -60,14 +49,10 @@ class Mailbox
    def read type, must_be_from
       msg = nil
       until msg
-         result = search(type, must_be_from)
-         if result
-            msg = result
+         puts "reading..."
+         if(msg = search(type, must_be_from))
          else
             receive_new
-            @mail.each do |msg|
-               puts "Mail from #{msg.from}"
-            end
          end
       end
       # Ding!
@@ -77,17 +62,27 @@ class Mailbox
 
    # See if there is an appropriate message in the mail box
    def search type, must_be_from
-      @mail.each do |mail|
-         if mail.class == type
+      puts "Searching for #{type} from #{must_be_from}"
+      @semaphore.synchronize do
+         @mail.each_index do |index|
+            mail = @mail[index]
+            puts "Mail: #{mail.class} from #{mail.from}"
+            pass = true
+            if type
+               pass = mail.class == type
+            end
+            puts "Type correct: #{pass}"
             if must_be_from
-               if mail.from == must_be_from
-                  return mail
-               end
-            else
+               pass = pass and mail.from == must_be_from
+            end
+            puts "Sender correct: #{pass}"
+            if pass
+               @mail.delete_at index
                return mail
             end
          end
       end
+      puts "Searching failed"
       nil
    end
 
@@ -99,19 +94,12 @@ class Mailbox
            log "Unregistered peer #{who}", blob
            return nil
          end
-         # Make sure the session is correct
-         session, blob = find K.session, blob
-         unless session == @session
-            log "Invalid session from #{who}", blob
-            return nil
-         end
          # Strip the last end marker and any text after it
          blob = clean_end blob
          # The peer will verify the signature at the start of the text and pass on the rest
-         if(blob = peer.verify blob)
-            return blob
+         if(text = peer.verify blob)
+            return text
          else
-            log "Invalid cryptographic signature from #{who}", blob
             return nil
          end
       else
@@ -126,7 +114,7 @@ class Mailbox
       mail.each do |blob|
          who = nil
          begin
-         # Find who sent the message
+            # Find who sent the message
             who, blob = find K.addr, blob 
             puts "Received mail from #{who}."
          rescue Expected
@@ -138,12 +126,18 @@ class Mailbox
             next
          end
 
+         puts "Parsing:"
+         puts blob
+
          # Parse a message
          msg = @parser.parse who, blob
          unless msg
             log "Failed to parse message from #{who}", blob
          end
-         @mail.push msg
+         puts "Mail from #{who} was a #{msg.class.to_s}"
+         @semaphore.synchronize do
+            @mail.push msg
+         end
       end
    end
 

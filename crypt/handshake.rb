@@ -37,7 +37,7 @@ class Handshake < Message
       key, blob = find K.handshake, blob
       pkey = OpenSSL::PKey
       begin
-         pkey::DSA.new key
+         key = pkey::DSA.new key
          return [Handshake.new(from, key), blob]
       rescue pkey::DSAError
          throw Expected.new "Public key"

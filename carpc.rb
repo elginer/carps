@@ -18,6 +18,7 @@
 
 require "email/config"
 
+require "service/game"
 require "service/client_parser"
 
 # Wait for an invitation, and to see if it has been accepted by the user
@@ -26,7 +27,7 @@ def receive_invitation mailer
    accepted = nil
    until accepted
       puts "\nWaiting for an invitation to a game... go phone the DM :p"
-      invite = mailer.read :invite
+      invite = mailer.read Invite 
       if invite.ask
          accepted = invite
       end
