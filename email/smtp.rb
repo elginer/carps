@@ -19,33 +19,37 @@
 require "net/smtp"
 require "socket"
 
-require "email/string"
-
 require "util/log.rb"
 
 # SMTP connection
 class SMTP
    
    # Connect to the server with username and password
-   def initialize server, user, password
+   def initialize settings, user, password
+      @port = settings["port"]
       @username = user
       @password = password
-      @server = server
+      @server = settings["server"]
+      @starttls = settings["starttls"]
       connect
    end
 
    def connect
       until false 
          puts "Making SMTP connection for " + @username
+         puts "Server: #{@server}, Port: #{@port}"
          begin
             # Create smtp object
-            @smtp = Net::SMTP.new @server, 587
-            # Use an encrypted connection
-            @smtp.enable_starttls
+            @smtp = Net::SMTP.new @server, @port 
+            if @starttls
+               # Use an encrypted connection
+               @smtp.enable_starttls
+            end
             @smtp.start Socket.gethostname, @username, @password
             return
          rescue
-            log "Could not connect to SMTP server", "Attempting to reconnect"
+            log "Could not connect to SMTP server", "Attempting to reconnect in 10 seconds."
+            sleep 10
          end
       end
    end
@@ -54,7 +58,7 @@ class SMTP
    def send to, message 
       until false
         # begin
-            @smtp.send_message("Content-Type: application/octet-stream\r\n" + MailString.safe(message), @username, [to])
+            @smtp.send_message "Content-Type: application/octet-stream\r\n" + message, @username, [to] 
             return 
         # rescue
          #   log "Could not send email with SMTP", "Attempting to reconnect"

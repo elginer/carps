@@ -15,12 +15,14 @@
 # You should have received a copy of the GNU General Public License
 # along with CARPS.  If not, see <http://www.gnu.org/licenses/>.
 
-
-require "email/string"
-
-# All carp keywords protocol keywords are prefixed by ASCII start of heading.
+# CARP protocol keywords associated with values are prefixed by ASCII start of text.
 def prefix
    "\2"
+end
+
+# CARP protocol markers are associated with ASCII start of heading
+def mark_prefix
+   "\1"
 end
 
 # Class containing message keywords.  Its name is short :)
@@ -41,7 +43,7 @@ end
 
 # Declare a new protocol keyword which is a flag or marker 
 def protoword keyword
-   K.define_singleton_method keyword, proc {prefix + keyword}
+   K.define_singleton_method keyword, proc {mark_prefix + keyword}
 end
 
 # End keyword 
@@ -59,7 +61,7 @@ end
 
 # Find a field in semi-structured text
 def find field, text
-   if field.start_with? prefix
+   if field.start_with? mark_prefix
       forget, blob = text.split field, 2
       check blob, field
       return ["", blob]

@@ -18,7 +18,6 @@
 
 require "service/mod"
 require "protocol/keyword"
-require "email/string"
 
 # A game
 # Subclasses must write the variables @dm, @mod, @about in their constructors

@@ -16,42 +16,24 @@
 # along with CARPS.  If not, see <http://www.gnu.org/licenses/>.
 
 require "protocol/message"
-require "protocol/keyword"
 
-require "openssl"
+class AcceptHandshake < Message
 
-# A cryptographic handshake request
-class Handshake < Message
+   # Extend the protocol for this OKAY message
+   protoword :accept 
 
-   # Extend the protocol for cryptographic handshakes
-   protoval "handshake"
-
-   # Create a new handshake
-   def initialize from, public_key
-      super from
-      @public_key = public_key
+   def initialize from
+      @from = from
    end
 
-   # Parse from text
-   def Handshake.parse from, blob
-      key, blob = find K.handshake, blob
-      pkey = OpenSSL::PKey
-      begin
-         pkey::DSA.new key
-         return [Handshake.new(from, key), blob]
-      rescue pkey::DSAError
-         throw Expected.new "Public key"
-      end
+   # Parse from the void
+   def AcceptHandshake.parse from, forget
+      AcceptHandshake.new from
    end
 
-   # Emit the handshake as text
+   # Emit
    def emit
-      V.handshake @public_key.to_pem
+      K.accept
    end
 
-   # Share the public key
-   def key
-      @public_key
-   end
-
-end 
+end

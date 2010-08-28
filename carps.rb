@@ -18,6 +18,8 @@
 
 require "email/config"
 
+require "crypt/mailer"
+
 require "service/game/config"
 
 require "service/server_parser"
@@ -56,7 +58,7 @@ def main
    # Load email account
    account = EmailConfig.new "server_email.yaml", server_parser 
    # Get the mailer
-   mailer = account.mailer
+   mailer = account.mailer ServerMailer
    # We can create the game as soon as we have the mailer 
    game = game_config.spawn mailer
    # Invite players

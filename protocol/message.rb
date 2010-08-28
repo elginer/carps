@@ -65,11 +65,6 @@ class Message
       @from
    end
 
-   # We don't know what type the message will be when we ask for it, so we'll have to check
-   def type
-      nil
-   end
-
    # Parse.
    #
    # The first parameter is the email address this text is from

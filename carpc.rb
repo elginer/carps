@@ -39,7 +39,7 @@ def main
    # Get the client's email information
    account = EmailConfig.new "email.yaml", client_parser
    # Get the mailer
-   mailer = account.mailer
+   mailer = account.mailer ClientMailer
    # Wait for a handshake
    mailer.expect_handshake
    # Wait for an invitation to a game

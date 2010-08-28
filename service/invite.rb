@@ -58,8 +58,4 @@ class Invite < Message
       K.invite + @game_info.emit
    end
 
-   def type
-      :invite
-   end
-
 end

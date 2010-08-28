@@ -26,6 +26,8 @@ require "crypt/mailer"
 
 require "yaml"
 
+require "highline"
+
 # Class to read email config.
 class EmailConfig < YamlConfig
 
@@ -40,21 +42,29 @@ class EmailConfig < YamlConfig
    # Parse the email config file
    def parse_yaml conf
       username = read_conf conf, "username"
-      password = read_conf conf, "password"
-      imap_server = read_conf conf, "imap"
-      smtp_server = read_conf conf, "smtp"
-      [imap_server, smtp_server, username, password]        
+      address = read_conf conf, "address"
+      h = HighLine.new
+      password = h.ask("Enter password for #{username}: ") { |q| q.echo = "x" }
+      imap = read_conf conf, "imap"
+      unless imap["server"] and imap["port"] and imap["tls"]
+         throw Expected "Valid IMAP section"
+      end
+      smtp = read_conf conf, "smtp"
+      unless smtp["server"] and smtp["port"] and smtp["starttls"]
+         throw Expected "Valid SMTP section"
+      end
+      [imap, smtp, username, address, password]        
    end
 
    # Connect to the imap and smtp servers
-   def load_resources imap_server, smtp_server, username, password 
-      imap = IMAP.new imap_server, username, password
-      smtp = SMTP.new smtp_server, username, password
-      @mailer = Mailer.new username, imap, smtp, @message_parser
+   def load_resources imap_settings, smtp_settings, username, address, password
+      @address = address
+      @imap = IMAP.new imap_settings, username, password
+      @smtp = SMTP.new smtp_settings, username, password
    end
 
    # Return the high level mail client
-   def mailer
-      @mailer
+   def mailer klass
+      klass.new @address, @imap, @smtp, @message_parser 
    end
 end
