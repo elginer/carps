@@ -16,7 +16,7 @@
 # along with CARPS.  If not, see <http://www.gnu.org/licenses/>.
 
 
-require "util/log.rb"
+require "util/warn"
 
 # Parse, choosing from a number of alternative messages, return the first one that suceeds
 def choose from, messages, blob
@@ -45,7 +45,7 @@ class MessageParser
          msg, blob = choose from, @choices, text 
          return msg
       rescue Expected
-         log "An invalid email was received:", input
+         warn "An invalid email was received:", input
          return nil
       end
    end

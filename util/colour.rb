@@ -15,16 +15,7 @@
 # You should have received a copy of the GNU General Public License
 # along with CARPS.  If not, see <http://www.gnu.org/licenses/>.
 
-require "util/colour"
+require "highline"
 
-# Output an error message and quit with exit code 1
-def fatal msg
-   h = HighLine.new
-   $stderr.write h.color("\nFATAL ERROR\n#{msg}\n", :error)
-   if $!
-      $stderr.write hcolor("Error reported:\n", :error)
-      $stderr.write $!.to_s + "\n"
-   end
-   puts "\a"
-   exit 1
-end
+# Set up highline colours
+HighLine.color_scheme = HighLine::SampleColorScheme.new

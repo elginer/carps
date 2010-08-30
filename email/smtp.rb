@@ -19,7 +19,7 @@
 require "net/smtp"
 require "socket"
 
-require "util/log.rb"
+require "util/warn"
 
 require "email/string"
 
@@ -50,7 +50,7 @@ class SMTP
             @smtp.start Socket.gethostname, @username, @password
             return
          rescue
-            log "Could not connect to SMTP server", "Attempting to reconnect in 10 seconds."
+            warn "Could not connect to SMTP server", "Attempting to reconnect in 10 seconds."
             sleep 10
          end
       end
@@ -59,14 +59,14 @@ class SMTP
    # Send an email message
    def send to, message 
       until false
-        # begin
+         begin
             message = to_mail "Content-Type: application/octet-stream\r\n" + message
             @smtp.send_message message, @username, [to]
             return 
-        # rescue
-         #   log "Could not send email with SMTP", "Attempting to reconnect"
-          # connect
-       #  end
+         rescue
+            warn "Could not send email with SMTP", "Attempting to reconnect"
+            connect
+         end
       end
    end
 end

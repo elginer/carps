@@ -18,7 +18,8 @@
 
 require "protocol/keyword"
 
-require "util/log"
+require "util/warn"
+require "util/question"
 
 require "crypt/handshake"
 require "crypt/accept_handshake"
@@ -28,6 +29,8 @@ require "crypt/mailbox"
 require "digest/md5"
 
 require "openssl"
+
+require "highline"
 
 # High level CARPS mail client supporting strong cryptographic message signing.
 class Mailer
@@ -64,7 +67,7 @@ class Mailer
             pem = File.read ".key"
             return pkey::DSA.new pem
          rescue
-            log "Could not read .key file"
+            warn "Could not read .key file"
          end
       end
       keygen
@@ -80,7 +83,7 @@ class Mailer
          pri.write key.to_pem
          pri.close
       rescue
-         log "Could not save cryptographic keys in the .key file", "They will be regenerated next time the application launches: an utter waste of time."
+         warn "Could not save cryptographic keys in the .key file", "They will be regenerated next time CARPS is run."
       end
       key
    end
@@ -113,7 +116,7 @@ class Mailer
    end
 
    # Receive a message
-   def read type, must_be_from = nil
+   def read type, must_be_from=nil
       @mailbox.read type, must_be_from
    end
 
@@ -156,16 +159,25 @@ class ClientMailer < Mailer
       # Get the peer's address
       from = peer_key.from
       puts "Receiving handshake request from #{from}."
-      # Create a new peer
-      peer = Peer.new from
-      @mailbox.add_peer from, peer
-      peer.your_key peer_key.key
-      # Send our key to the peer
-      send from, (Handshake.new @addr, @public_key)
-      # Send an okay message
-      send from, (AcceptHandshake.new @addr)
-      @mailbox.secure
-      puts "Established spoof-proof communications with #{from}."
-      from
+      if @mailbox.peer? from
+         puts "#{from} is already a registered peer.  This could be an attempt to conduct a spoofing attack."
+      end
+      # See if the user accepts the handshake.
+      accept = confirm "Accept handshake from #{from}?" 
+      if accept
+         # Create a new peer
+         peer = Peer.new from
+         @mailbox.add_peer from, peer
+         peer.your_key peer_key.key
+         # Send our key to the peer
+         send from, (Handshake.new @addr, @public_key)
+         # Send an okay message
+         send from, (AcceptHandshake.new @addr)
+         @mailbox.secure
+         puts "Established spoof-proof communications with #{from}."
+         return from
+      else
+         return nil
+      end
    end
 end

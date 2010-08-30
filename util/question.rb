@@ -15,16 +15,22 @@
 # You should have received a copy of the GNU General Public License
 # along with CARPS.  If not, see <http://www.gnu.org/licenses/>.
 
-require "util/colour"
+require "highline"
 
-# Output an error message and quit with exit code 1
-def fatal msg
+# Ask a question, return a boolean
+def confirm question
    h = HighLine.new
-   $stderr.write h.color("\nFATAL ERROR\n#{msg}\n", :error)
-   if $!
-      $stderr.write hcolor("Error reported:\n", :error)
-      $stderr.write $!.to_s + "\n"
-   end
-   puts "\a"
-   exit 1
+   resp = h.ask h.color("#{question}\n(Type anything beginning with y to accept)", :green)
+   resp[0] == "y"
+end
+
+# Ask a question.  Get a string for an answer
+def question msg
+   h = HighLine.new
+   h.ask h.color(msg, :green)
+end
+# Ask a question and don't echo what is typed.
+def secret msg
+   h = HighLine.new
+   h.ask(h.color(msg, :green)) {|q| q.echo = "*"}
 end

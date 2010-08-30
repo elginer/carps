@@ -19,6 +19,8 @@ require "service/mod"
 
 require "protocol/keyword"
 
+require "util/question"
+
 # A game
 # Subclasses must write the variables @dm, @mod, @about in their constructors
 class Game
@@ -144,8 +146,7 @@ class Invite < Message
          return false
       end
       @game_info.display
-      puts "Do you want to join? (Type anything beginning with y to join)"
-      gets[0] == "y"
+      confirm "Do you want to join?"
    end
 
    # Accept the invitation

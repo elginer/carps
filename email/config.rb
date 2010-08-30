@@ -21,6 +21,7 @@ require "email/smtp"
 
 require "util/error"
 require "util/config"
+require "util/question"
 
 require "crypt/mailer"
 
@@ -44,7 +45,7 @@ class EmailConfig < YamlConfig
       username = read_conf conf, "username"
       address = read_conf conf, "address"
       h = HighLine.new
-      password = h.ask("Enter password for #{username}: ") { |q| q.echo = "x" }
+      password = secret "Enter password for #{username}:" 
       imap = read_conf conf, "imap"
       unless imap["server"] and imap["port"] and imap["tls"]
          throw Expected "Valid IMAP section"

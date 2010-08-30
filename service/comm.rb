@@ -15,18 +15,24 @@
 # You should have received a copy of the GNU General Public License
 # along with CARPS.  If not, see <http://www.gnu.org/licenses/>.
 
+# High level communications interface
+class Comm
 
-# Log a message to stderr
-def log reason, *msgs
-   $stderr.write "An error was logged:\n"
-   $stderr.write reason + "\n"
-   msgs.each do |msg|
-      $stderr.write msg + "\n"
+   # Initialize with a mailer
+   def initialize mailer
+      @mailer = mailer
+      Thread.fork do
+         handshake_loop
+      end
    end
-   $stderr.write "Error raised:\n"
-   if $!
-      $stderr.write $!.to_s + "\n"
+
+   # Expect handshakes
+   def handshake_loop
    end
-   $stderr.write "End of report.\n"
-   puts "\a" 
-end
+
+   # Read mail
+   def read type, must_be_from=nil
+      
+   end
+
+end 

@@ -17,14 +17,18 @@
 
 require "util/colour"
 
-# Output an error message and quit with exit code 1
-def fatal msg
+# Print a warning message to stderr
+def warn reason, *msgs
    h = HighLine.new
-   $stderr.write h.color("\nFATAL ERROR\n#{msg}\n", :error)
+   $stderr.write h.color("Warning:\n", :warning)
+   $stderr.write h.color(reason + "\n", :warning)
+   msgs.each do |msg|
+      $stderr.write msg + "\n"
+   end
    if $!
-      $stderr.write hcolor("Error reported:\n", :error)
+      $stderr.write h.color("Error raised:\n", :warning)
       $stderr.write $!.to_s + "\n"
    end
-   puts "\a"
-   exit 1
+   $stderr.write h.color("End of warning report.", :warning)
+   puts "\a" 
 end

@@ -17,7 +17,7 @@
 
 
 require "protocol/message"
-require "util/log"
+require "util/warn"
 
 require "net/imap"
 
@@ -47,7 +47,7 @@ class IMAP
             @imap.login @username, @password
             return
          rescue
-            log "Could not connect to IMAP server", "Attempting to reconnect in 10 seconds."
+            warn "Could not connect to IMAP server", "Attempting to reconnect in 10 seconds."
             sleep 10
          end 
       end
@@ -84,7 +84,7 @@ class IMAP
          begin
             mails = reader.call
          rescue
-            log "Could not receive IMAP messages", "Attempting to reconnect" 
+            warn "Could not receive IMAP messages", "Attempting to reconnect" 
             connect
          end
       end

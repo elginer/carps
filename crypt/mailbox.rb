@@ -17,6 +17,8 @@
 
 # This mailbox receives all messages that come in
 
+require "util/warn"
+
 class Mailbox
 
    # Create the mailbox from a simple, synchronous mail client
@@ -27,7 +29,14 @@ class Mailbox
       @mail = []
       @peers = {}
       @secure = false
-      @semaphore = Mutex.new
+      # Semaphore to make sure only one thread can send mail at any one time
+      @ssemaphore = Mutex.new
+      # Semaphore to make sure only one thread can receive mail at any one time 
+      @rsemaphore = Mutex.new
+      # Receive mail
+      Thread.fork do
+         receive_forever
+      end
    end
 
    # The mail is now secure
@@ -40,19 +49,24 @@ class Mailbox
       @peers[addr] = peer
    end
 
+   # Is this already a peer?
+   def peer? peer
+      @peers.member? peer
+   end
+
    # Send a message
    def send to, message
-      @sender.send to, message
+      @ssemaphore.synchronize do
+         @sender.send to, message
+      end
    end
 
    # Read a message 
    def read type, must_be_from
       msg = nil
       until msg
-         puts "reading..."
-         if(msg = search(type, must_be_from))
-         else
-            receive_new
+         @rsemaphore.synchronize do
+            msg = search type, must_be_from
          end
       end
       # Ding!
@@ -62,27 +76,20 @@ class Mailbox
 
    # See if there is an appropriate message in the mail box
    def search type, must_be_from
-      puts "Searching for #{type} from #{must_be_from}"
-      @semaphore.synchronize do
-         @mail.each_index do |index|
-            mail = @mail[index]
-            puts "Mail: #{mail.class} from #{mail.from}"
-            pass = true
-            if type
-               pass = mail.class == type
-            end
-            puts "Type correct: #{pass}"
-            if must_be_from
-               pass = pass and mail.from == must_be_from
-            end
-            puts "Sender correct: #{pass}"
-            if pass
-               @mail.delete_at index
-               return mail
-            end
+      @mail.each_index do |index|
+         mail = @mail[index]
+         pass = true
+         if type
+            pass = mail.class == type
+         end
+         if must_be_from
+            pass = pass and mail.from == must_be_from
+         end
+         if pass
+            @mail.delete_at index
+            return mail
          end
       end
-      puts "Searching failed"
       nil
    end
 
@@ -91,7 +98,7 @@ class Mailbox
       # If we're in a secure state...
       if @secure
          unless(peer = @peers[who])
-           log "Unregistered peer #{who}", blob
+           warn "Unregistered peer #{who}", blob
            return nil
          end
          # Strip the last end marker and any text after it
@@ -107,6 +114,13 @@ class Mailbox
       end
    end
 
+   # Receive new mail
+   def receive_forever
+      while true
+         receive_new
+      end
+   end
+
    # Read new mail messages into the mail box
    def receive_new 
       mail = @receiver.read
@@ -116,9 +130,8 @@ class Mailbox
          begin
             # Find who sent the message
             who, blob = find K.addr, blob 
-            puts "Received mail from #{who}."
          rescue Expected
-            log "Mail message did not contain sender.", blob 
+            warn "Mail message did not contain sender.", blob 
             next
          end
 
@@ -126,16 +139,13 @@ class Mailbox
             next
          end
 
-         puts "Parsing:"
-         puts blob
-
          # Parse a message
          msg = @parser.parse who, blob
          unless msg
-            log "Failed to parse message from #{who}", blob
-         end
-         puts "Mail from #{who} was a #{msg.class.to_s}"
-         @semaphore.synchronize do
+            warn "Failed to parse message from #{who}", blob
+         end 
+         puts "Mail from #{who}: #{msg.class.to_s}"
+         @rsemaphore.synchronize do
             @mail.push msg
          end
       end
