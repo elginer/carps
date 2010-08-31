@@ -27,7 +27,7 @@ class Mailbox
    include DRbUndumped
 
    # Create the mailbox from a simple, synchronous mail client
-   def initialize sender, receiver, parser 
+   def initialize sender, receiver, parser
       @receiver = receiver
       @parser = parser
       @sender = sender
@@ -39,14 +39,7 @@ class Mailbox
       # Semaphore to make sure only one thread can receive mail at any one time 
       @rsemaphore = Mutex.new
       # Receive mail
-      Thread.fork do
-         receive_forever
-      end
-   end
-
-   # The mail is now secure
-   def secure
-      @secure = true
+      receive_forever
    end
 
    # Add a new peer
@@ -66,93 +59,96 @@ class Mailbox
       end
    end
 
-   # A container
-   class Container
-     
-      include DRbUndumped
- 
-      def empty?
-         @contents == nil
+   # Securely read a message 
+   def read type, must_be_from=nil
+      msg = nil
+      until msg
+         msg = search type, must_be_from
+         sleep 1
       end
-      
-      def push a
-         @contents = a
-      end
-
-      def contents
-         @contents
-      end
-   end
-
-   # Read a message 
-   def read type, must_be_from
-      msgc = Container.new
-      puts "Attempting to read #{type.to_s}"
-      mailc = Container.new 
-      child = spawn_mail_reader type, must_be_from, [self, mailc]
-      puts "Waiting for #{type} from #{child} process"
-      Process.wait child
-      puts "Received message..."
       # Ding!
       puts "\a"
-      msgc.contents
+      return msg
+   end
+
+   # Insecurely read a message
+   def insecure_read type, must_be_from=nil
+      msg = nil
+      until msg
+         msg = insecure_search type, must_be_from
+         sleep 1
+      end
+      # Ding!
+      puts "\a"
+      return msg
    end
 
    # See if there is an appropriate message in the mail box
    def search type, must_be_from
-      puts "Mail size: #{@mail.size}"
-      sleep 1
-      @mail.each_index do |index|
-         puts "Attempting to find: #{type.to_s}"
-         puts "This mail: #{@mail[index].class.to_s}"
-         puts "Number of mails: #{@mail.size}"
-         mail = @mail[index]
-         pass = true
-
-         if type
-            pass = mail.class == type
+      @rsemaphore.synchronize do
+         @mail.each_index do |index|
+            mail = @mail[index]
+            from = mail.from
+            pass = false 
+            if secure from
+               unless @peers[from].verify mail
+                  @mail.delete_at index
+                  next
+               end
+            end
+            if type
+               pass = mail.class == type
+            end
+            if must_be_from
+               pass = pass and mail.from == must_be_from
+            end
+            if pass
+               @mail.delete_at index
+               return mail
+            end
          end
-         if must_be_from
-            pass = pass and mail.from == must_be_from
-         end
-         if pass
-            @mail.delete_at index
-            return mail
-         end
+         nil
       end
-      nil
    end
 
-   # Check if a blob is valid
-   def valid who, blob
-      # If we're in a secure state...
-      if @secure
-         unless(peer = @peers[who])
-           warn "Unregistered peer #{who}", blob
-           return nil
+   # Communication with someone is secure if there is a peer for them
+   def secure addr
+      @peers.member? addr
+   end
+
+   # Insecurely see if there is an appropriate message in the mail box
+   def insecure_search type, must_be_from
+      @rsemaphore.synchronize do
+         @mail.each_index do |index|
+            mail = @mail[index]
+            pass = true
+
+            if type
+               pass = mail.class == type
+            end
+            if must_be_from
+               pass = pass and mail.from == must_be_from
+            end
+            if pass
+               @mail.delete_at index
+               return mail
+            end
          end
-         # Strip the last end marker and any text after it
-         blob = clean_end blob
-         # The peer will verify the signature at the start of the text and pass on the rest
-         if(text = peer.verify blob)
-            return text
-         else
-            return nil
-         end
-      else
-         return blob
+         nil
       end
    end
 
    # Receive new mail
    def receive_forever
-      loop do
-         receive_new
+      Thread.fork do
+         loop do
+            receive_new
+         end
       end
    end
 
    # Read new mail messages into the mail box
-   def receive_new 
+   def receive_new
       mail = @receiver.read
 
       mail.each do |blob|
@@ -165,12 +161,11 @@ class Mailbox
             next
          end
 
-         unless(blob = valid(who, blob))
-            next
-         end
+         # Get the security information from the mail
+         delayed_crypt, blob = security_info blob
 
          # Parse a message
-         msg = @parser.parse who, blob
+         msg = @parser.parse who, blob, delayed_crypt
          unless msg
             warn "Failed to parse message from #{who}", blob
          end 
@@ -181,31 +176,4 @@ class Mailbox
       end
    end
 
-   # Clean the end of an email
-   #
-   # Strip the last end marker and any text after it 
-   def clean_end blob
-      rb = blob.reverse
-      before, after = rb.split K.end.reverse, 2
-      if after
-         return after.reverse
-      end
-      nil
-   end
-
-end
-
-def spawn_mail_reader type, must_be_from, maild
-   mail = maild[0]
-   mailc = maild[1]
-   ashare mailc, lambda {|uri|
-         mailcontainer = DRbObject.new nil, uri
-         msgc = mailcontainer.msg
-         mail = mailcontainer.mail
-         puts "Waiting for msgc to be full"
-         while msgc.empty?
-            msgc.push mail.search type, must_be_from
-         end
-         puts "Ace, got the message"
-   }
 end

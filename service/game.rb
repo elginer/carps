@@ -77,12 +77,13 @@ class GameServer < Game
       end
       invite = Invite.new @dm, self
       @players.each do |player|
-         # puts "Sending the player an evil message..."
-         # Evil testing 
-         # @mailer.evil player, invite 
-
-         puts "Inviting " + player
-         @mailer.send player, invite
+         puts "Inviting #{player}"
+         if $evil
+            puts "Sending evil message..."
+            @mailer.evil player, invite 
+         else
+            @mailer.send player, invite
+         end
       end
    end 
 
@@ -109,8 +110,8 @@ class GameClient < Game
    def join_game mailer
       mod = load_mods[@mod]
       if mod
-         main = mod + "/" + "main.rb"
-         process.launch ModInfo.new(@dm, mailer), main
+         main = mod + "/" + "client.rb"
+         $process.launch ModInfo.new(@dm, mailer), main
       end
    end
 
@@ -129,15 +130,15 @@ class Invite < Message
    # We are part of the protocol :)
    protoword "invite"
 
-   def initialize from, game
+   def initialize from, game, delayed_crypt=nil
       @game = game
-      super from
+      super from, delayed_crypt
    end
 
-   def Invite.parse from, blob
+   def Invite.parse from, blob, delayed_crypt
       forget, blob = find K.invite, blob
       info, blob = GameClient.parse blob
-      [Invite.new(from, info), blob]
+      [Invite.new(from, info, delayed_crypt), blob]
    end
 
    # Ask if the player wants to accept this invitation

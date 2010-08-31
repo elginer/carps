@@ -133,13 +133,12 @@ class Mailer
          # Request a handshake 
          send to, Handshake.new(@addr)
          # Get the peer's key
-         their_key = read PublicKey, to
+         their_key = @mailbox.insecure_read PublicKey, to
          peer.your_key their_key.key
          # Send our key
          send to, PublicKey.new(@addr, @public_key)
          # Receive an okay message
          read AcceptHandshake, to
-         @mailbox.secure
          puts "Established spoof-proof communications with #{to}"
       end
    end
@@ -149,32 +148,28 @@ class Mailer
    # A British stereotype?
    def expect_handshake
       # Get the handshake 
-      read Handshake 
+      handshake = @mailbox.insecure_read Handshake
       # Get the peer's address
-      from = peer_key.from
+      from = handshake.from
       puts "Receiving handshake request from #{from}."
       if @mailbox.peer? from
-         log "#{from} is already a registered peer.  This could be an attempt to conduct a spoofing attack."
+         warn "#{from} is already a registered peer.  This could be an attempt to conduct a spoofing attack."
       end
       # See if the user accepts the handshake.
       accept = confirm "Accept handshake from #{from}?"
       Thread.fork do
          if accept
+            # Send our key to the peer
+            send from, (PublicKey.new @addr, @public_key)
             # Get their key
-            peer_key
+            peer_key = @mailbox.insecure_read PublicKey, from
             # Create a new peer
             peer = Peer.new from
             @mailbox.add_peer from, peer
             peer.your_key peer_key.key
-            # Send our key to the peer
-            send from, (PublicKey.new @addr, @public_key)
             # Send an okay message
             send from, (AcceptHandshake.new @addr)
-            @mailbox.secure
             puts "Established spoof-proof communications with #{from}."
-            return from
-         else
-            return nil
          end
       end
    end

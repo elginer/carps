@@ -22,7 +22,8 @@ end
 
 def test
    mut = Mutate.new
-   ashare mut, lambda {|uri|
+   process = CARPProcess.new "process.yaml"
+   process.ashare mut, lambda {|uri|
       ob = DRbObject.new_with_uri uri
       ob.mutate
       puts "In child:"

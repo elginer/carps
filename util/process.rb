@@ -20,53 +20,79 @@ require "util/config"
 require "drb"
 require "drb/acl"
 
+require "set"
+
 # Responsible for launching other CARP processes
 class CARPProcess < YamlConfig
    def parse_yaml conf
       ruby = read_conf conf, "launch_ruby"
       term = read_conf conf, "launch_terminal"
-      [ruby, term]
+      start_port = read_conf(conf, "start_port").to_i
+      end_port = read_conf(conf, "end_port").to_i
+      port_range = start_port .. end_port
+      [ruby, term, port_range]
    end
 
-   def load_resources ruby, term
+   def load_resources ruby, term, ports
+      @ports = ports
       @ruby = ruby
       @term = term
+      @used = Set.new
+      @semaphore = Mutex.new
    end
 
    # Launch a ruby program in another terminal window, which can access the resource over drb
    def launch resource, program
-      share_with resource, @term + " " + @ruby + " " + program
+      program = @term + " '" + @ruby + " " + program
+      ashare resource, lambda { |uri|
+         program = program + " " + uri + "'"
+         puts "Launching: #{program}"
+         exec program
+      }
    end
 
-end
-
-# Spawn a process with the second argument that can access the first.
-def share_exec resource, program
-   share resource, lambda do |uri|
-      exec program + " " + uri
-   end
-end
-
-$ashare_semaphore = Mutex.new
-$ashare_port = 9000
-# Run computation in the second argument in a new process allowing access the first
-def ashare resource, computation
-   local_only = ACL.new %w[deny all allow localhost]
-   DRb.install_acl local_only
-   $ashare_semaphore.synchronize do
-      if $ashare_port < 9100
-         $ashare_port = $ashare_port + 1
-      else
-         $ashare_port = 9000
+   # May deadlock!
+   def with_uri
+      uri = "druby://localhost:"
+      port = nil
+      until port
+         @semaphore.synchronize do
+            @ports.each do |p|
+               unless @used.member? p
+                  @used.add p
+                  port = p
+                  break
+               end
+            end
+         end
+      end
+      yield uri + port.to_s
+      @semaphore.synchronize do
+         @used.delete port
       end
    end
-   uri = "druby://localhost:" + $ashare_port.to_s
-   DRb.start_service(uri, resource).uri
-   child = fork do
-      DRb.start_service
-      computation.call uri
-      exit
+
+   # Run computation in the second argument in a new process allowing access the first
+   def ashare resource, computation
+      local_only = ACL.new %w[deny all allow localhost]
+      DRb.install_acl local_only
+      with_uri do |uri|   
+         DRb.start_service(uri, resource).uri
+         child = fork do
+            DRb.start_service
+            computation.call uri
+            exit
+         end
+         Process.wait child
+         DRb.stop_service
+      end
    end
-   Process.wait child
-   DRb.stop_service
+end
+
+# Set up threading
+#
+# Initialize a CARPProcess object into the global variable $process
+def init_process file
+   Thread.abort_on_exception = true
+   $process = CARPProcess.new file
 end

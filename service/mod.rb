@@ -23,7 +23,7 @@ def load_mods
    end
    mods = {} 
    mod_list.each do |mod_name|
-      mods[mod_name] = "mods" + mod_name
+      mods[mod_name] = "mods/" + mod_name
    end
    mods
 end

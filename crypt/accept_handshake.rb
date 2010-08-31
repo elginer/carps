@@ -23,9 +23,9 @@ class AcceptHandshake < Message
    protoword :accept 
 
    # Parse from the void
-   def AcceptHandshake.parse from, blob
+   def AcceptHandshake.parse from, blob, delayed_crypt
       forget, blob = find K.accept, blob
-      [AcceptHandshake.new(from), blob]
+      [AcceptHandshake.new(from, delayed_crypt), blob]
    end
 
    # Emit

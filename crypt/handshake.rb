@@ -24,9 +24,9 @@ class Handshake < Message
    protoword :handshake
 
    # Parse from the void
-   def Handshake.parse from, blob
+   def Handshake.parse from, blob, delayed_crypt
       forget, blob = find K.handshake, blob
-      [Handshake.new(from), blob]
+      [Handshake.new(from, delayed_crypt), blob]
    end
 
    # Emit

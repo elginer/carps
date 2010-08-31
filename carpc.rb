@@ -18,6 +18,8 @@
 
 require "email/config"
 
+require "util/process"
+
 require "service/client_parser"
 
 # Wait for an invitation, and to see if it has been accepted by the user
@@ -36,13 +38,17 @@ end
 
 # Run the client 
 def main
+
+   init_process "process.yaml"
+
    # Get the client's email information
    account = EmailConfig.new "email.yaml", client_parser
+
    # Get the mailer
    mailer = account.mailer Mailer
    # Expect invitations forever  
    while true
       invite = receive_invitation mailer
-      invite.accept
+      invite.accept mailer
    end
 end

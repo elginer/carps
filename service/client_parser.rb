@@ -16,7 +16,7 @@
 # along with CARPS.  If not, see <http://www.gnu.org/licenses/>.
 
 require "service/game"
-require "protocol/default_messages"
+require "crypt/default_messages"
 
 # Create a parser which parses messages for the client
 def client_parser

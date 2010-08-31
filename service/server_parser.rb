@@ -15,7 +15,7 @@
 # You should have received a copy of the GNU General Public License
 # along with CARPS.  If not, see <http://www.gnu.org/licenses/>.
 
-require "protocol/default_messages"
+require "crypt/default_messages"
 
 # Create a parser which parses messages for the server 
 def server_parser

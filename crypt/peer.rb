@@ -15,6 +15,36 @@
 # You should have received a copy of the GNU General Public License
 # along with CARPS.  If not, see <http://www.gnu.org/licenses/>.
 
+require "util/warn"
+require "protocol/keyword"
+
+# Clean the end of an email
+#
+# Strip the last end marker and any text after it 
+def clean_end blob
+   rb = blob.reverse
+   before, after = rb.split K.end.reverse, 2
+   if after
+      return after.reverse
+   end
+   nil
+end
+
+# Fetch security information from an email
+def security_info blob
+   blob = clean_end blob
+   sig = nil   
+   begin
+      sig, blob = find K.sig, blob
+   rescue
+      warn "Message signature was malformed", blob
+      return nil
+   end
+   # If the digest is the hash of the message and the signature matches the digest then all is well
+   dig = Digest::MD5.digest blob
+   [[sig, dig], blob]
+end
+
 # Peers  
 class Peer
 
@@ -31,28 +61,15 @@ class Peer
       @peer_key = key
    end
 
-   # Verify text was sent by this peer
-   def verify blob
-      if @peer_key
-         sig = nil   
-         begin
-            sig, blob = find K.sig, blob
-         rescue
-            log "Message signature was malformed", blob
-            return nil
-         end
-         # If the digest is the hash of the message and the signature matches the digest then all is well
-         dig = Digest::MD5.digest blob
-         if @peer_key.sysverify dig, sig
-            return blob
-         else
-            log "Someone has attempted to spoof an email from #{@addr}", blob
-            return nil
-         end
+   # Perform a verification on an email
+   def verify mail
+      sig, dig = mail.crypt 
+      pass = @peer_key.sysverify dig, sig
+      if pass
+         return true
       else
-         # We can't tell...
-         blob
+         warn "Someone has attempted to spoof an email from #{mail.from}", mail.to_s 
+         return false
       end
    end
 end
-

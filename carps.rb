@@ -24,6 +24,9 @@ require "service/game/config"
 
 require "service/server_parser"
 
+require "util/process"
+require "util/error"
+
 # Choose which game we are to play
 def choose_game
    game_files = Dir.open("games").entries.reject do |game_file|
@@ -53,6 +56,9 @@ end
 
 # Carps server
 def main
+   # Evil testing
+   # $evil = true
+   init_process "server_process.yaml"
    # Choose game
    game_config = choose_game
    # Load email account
