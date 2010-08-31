@@ -18,8 +18,13 @@
 # This mailbox receives all messages that come in
 
 require "util/warn"
+require "util/process"
+
+require "drb"
 
 class Mailbox
+
+   include DRbUndumped
 
    # Create the mailbox from a simple, synchronous mail client
    def initialize sender, receiver, parser 
@@ -61,24 +66,49 @@ class Mailbox
       end
    end
 
+   # A container
+   class Container
+     
+      include DRbUndumped
+ 
+      def empty?
+         @contents == nil
+      end
+      
+      def push a
+         @contents = a
+      end
+
+      def contents
+         @contents
+      end
+   end
+
    # Read a message 
    def read type, must_be_from
-      msg = nil
-      until msg
-         @rsemaphore.synchronize do
-            msg = search type, must_be_from
-         end
-      end
+      msgc = Container.new
+      puts "Attempting to read #{type.to_s}"
+      mailc = Container.new 
+      child = spawn_mail_reader type, must_be_from, [self, mailc]
+      puts "Waiting for #{type} from #{child} process"
+      Process.wait child
+      puts "Received message..."
       # Ding!
       puts "\a"
-      return msg
+      msgc.contents
    end
 
    # See if there is an appropriate message in the mail box
    def search type, must_be_from
+      puts "Mail size: #{@mail.size}"
+      sleep 1
       @mail.each_index do |index|
+         puts "Attempting to find: #{type.to_s}"
+         puts "This mail: #{@mail[index].class.to_s}"
+         puts "Number of mails: #{@mail.size}"
          mail = @mail[index]
          pass = true
+
          if type
             pass = mail.class == type
          end
@@ -116,7 +146,7 @@ class Mailbox
 
    # Receive new mail
    def receive_forever
-      while true
+      loop do
          receive_new
       end
    end
@@ -129,7 +159,7 @@ class Mailbox
          who = nil
          begin
             # Find who sent the message
-            who, blob = find K.addr, blob 
+            who, blob = find K.addr, blob
          rescue Expected
             warn "Mail message did not contain sender.", blob 
             next
@@ -163,4 +193,19 @@ class Mailbox
       nil
    end
 
+end
+
+def spawn_mail_reader type, must_be_from, maild
+   mail = maild[0]
+   mailc = maild[1]
+   ashare mailc, lambda {|uri|
+         mailcontainer = DRbObject.new nil, uri
+         msgc = mailcontainer.msg
+         mail = mailcontainer.mail
+         puts "Waiting for msgc to be full"
+         while msgc.empty?
+            msgc.push mail.search type, must_be_from
+         end
+         puts "Ace, got the message"
+   }
 end

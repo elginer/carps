@@ -16,22 +16,42 @@
 # along with CARPS.  If not, see <http://www.gnu.org/licenses/>.
 
 require "protocol/message"
+require "protocol/keyword"
 
-# A cryptographic handshake request
-class Handshake < Message
+require "openssl"
 
-   # Extend the protocol for this request 
-   protoword :handshake
+# Transmit public keys over email
+class PublicKey < Message
 
-   # Parse from the void
-   def Handshake.parse from, blob
-      forget, blob = find K.handshake, blob
-      [Handshake.new(from), blob]
+   # Extend the protocol for public_keys 
+   protoval "key"
+
+   # Create a new handshake
+   def initialize from, public_key
+      super from
+      @public_key = public_key
    end
 
-   # Emit
+   # Parse from text
+   def PublicKey.parse from, blob
+      key, blob = find K.key, blob
+      pkey = OpenSSL::PKey
+      begin
+         key = pkey::DSA.new key
+         return [PublicKey.new(from, key), blob]
+      rescue pkey::DSAError
+         throw Expected.new "Public key"
+      end
+   end
+
+   # Emit the handshake as text
    def emit
-      K.handshake
+      V.key @public_key.to_pem
    end
 
-end
+   # Share the public key
+   def key
+      @public_key
+   end
+
+end 

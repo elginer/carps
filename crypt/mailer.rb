@@ -22,6 +22,7 @@ require "util/warn"
 require "util/question"
 
 require "crypt/handshake"
+require "crypt/public_key"
 require "crypt/accept_handshake"
 require "crypt/peer"
 require "crypt/mailbox"
@@ -50,6 +51,11 @@ class Mailer
       @mailbox = Mailbox.new sender, receiver, parser
       @private_key = get_keys
       @public_key = @private_key.public_key
+      Thread.fork do
+         while true
+            expect_handshake
+         end
+      end
    end
 
    # Give our address to interested parties
@@ -94,12 +100,9 @@ class Mailer
       # Sign the message
       digest = Digest::MD5.digest text
       sig = @private_key.syssign digest
-      sf = File.open "sent_sig", "w"
-      sf.write sig
-      sf.close
       mail = (V.addr @addr) + (V.sig sig) + text + K.end
       @mailbox.send to, mail
-      puts "Message sent to " + to
+      puts "#{message.class} sent to " + to
    end
 
    # Send an evil message for testing.  The recipent should drop this.
@@ -120,64 +123,59 @@ class Mailer
       @mailbox.read type, must_be_from
    end
 
-end
-
-# Mailer for the server
-class ServerMailer < Mailer
-
-   def initialize address, receiver, sender, parser
-      super address, receiver, sender, parser
-   end
-
    # Perform a handshake to authenticate with a peer
    def handshake to
-      puts "Offering cryptographic handshake to #{to}"
-      # Create a new peer
-      peer = Peer.new to
-      @mailbox.add_peer to, peer
-      # Send our key to the peer
-      send to, Handshake.new(@addr, @public_key)
-      # Get the peer's key
-      their_key = read Handshake, to
-      peer.your_key their_key.key
-      # Receive an okay message
-      read AcceptHandshake, to
-      @mailbox.secure
-      puts "Established spoof-proof communications with #{to}"
+      Thread.fork do
+         puts "Offering cryptographic handshake to #{to}"
+         # Create a new peer
+         peer = Peer.new to
+         @mailbox.add_peer to, peer
+         # Request a handshake 
+         send to, Handshake.new(@addr)
+         # Get the peer's key
+         their_key = read PublicKey, to
+         peer.your_key their_key.key
+         # Send our key
+         send to, PublicKey.new(@addr, @public_key)
+         # Receive an okay message
+         read AcceptHandshake, to
+         @mailbox.secure
+         puts "Established spoof-proof communications with #{to}"
+      end
    end
-end
 
-# Mailer for the client
-class ClientMailer < Mailer
    # Wait the someone to begin the handshake
    #
    # A British stereotype?
    def expect_handshake
-      puts "Awaiting cryptographic handshake..."
-      # Get the email
-      peer_key = read Handshake 
+      # Get the handshake 
+      read Handshake 
       # Get the peer's address
       from = peer_key.from
       puts "Receiving handshake request from #{from}."
       if @mailbox.peer? from
-         puts "#{from} is already a registered peer.  This could be an attempt to conduct a spoofing attack."
+         log "#{from} is already a registered peer.  This could be an attempt to conduct a spoofing attack."
       end
       # See if the user accepts the handshake.
-      accept = confirm "Accept handshake from #{from}?" 
-      if accept
-         # Create a new peer
-         peer = Peer.new from
-         @mailbox.add_peer from, peer
-         peer.your_key peer_key.key
-         # Send our key to the peer
-         send from, (Handshake.new @addr, @public_key)
-         # Send an okay message
-         send from, (AcceptHandshake.new @addr)
-         @mailbox.secure
-         puts "Established spoof-proof communications with #{from}."
-         return from
-      else
-         return nil
+      accept = confirm "Accept handshake from #{from}?"
+      Thread.fork do
+         if accept
+            # Get their key
+            peer_key
+            # Create a new peer
+            peer = Peer.new from
+            @mailbox.add_peer from, peer
+            peer.your_key peer_key.key
+            # Send our key to the peer
+            send from, (PublicKey.new @addr, @public_key)
+            # Send an okay message
+            send from, (AcceptHandshake.new @addr)
+            @mailbox.secure
+            puts "Established spoof-proof communications with #{from}."
+            return from
+         else
+            return nil
+         end
       end
    end
 end

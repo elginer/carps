@@ -18,7 +18,6 @@
 
 require "email/config"
 
-require "service/game"
 require "service/client_parser"
 
 # Wait for an invitation, and to see if it has been accepted by the user
@@ -40,9 +39,10 @@ def main
    # Get the client's email information
    account = EmailConfig.new "email.yaml", client_parser
    # Get the mailer
-   mailer = account.mailer ClientMailer
-   # Wait for a handshake
-   mailer.expect_handshake
-   # Wait for an invitation to a game
-   invite = receive_invitation mailer
+   mailer = account.mailer Mailer
+   # Expect invitations forever  
+   while true
+      invite = receive_invitation mailer
+      invite.accept
+   end
 end

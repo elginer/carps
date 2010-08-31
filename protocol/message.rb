@@ -17,6 +17,7 @@
 
 
 require "util/warn"
+require "drb"
 
 # Parse, choosing from a number of alternative messages, return the first one that suceeds
 def choose from, messages, blob

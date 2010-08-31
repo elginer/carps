@@ -15,24 +15,5 @@
 # You should have received a copy of the GNU General Public License
 # along with CARPS.  If not, see <http://www.gnu.org/licenses/>.
 
-# High level communications interface
-class Comm
 
-   # Initialize with a mailer
-   def initialize mailer
-      @mailer = mailer
-      Thread.fork do
-         handshake_loop
-      end
-   end
-
-   # Expect handshakes
-   def handshake_loop
-   end
-
-   # Read mail
-   def read type, must_be_from=nil
-      
-   end
-
-end 
+puts "FRRRRRUUUUUUUIIIITTTT!"

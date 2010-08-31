@@ -21,6 +21,10 @@ require "protocol/keyword"
 
 require "util/question"
 
+require "util/process"
+
+require "drb"
+
 # A game
 # Subclasses must write the variables @dm, @mod, @about in their constructors
 class Game
@@ -65,9 +69,8 @@ class GameServer < Game
    def invite_players
       # Perform handshakes
       threads = @players.map do |player|
-         Thread.fork do
-            @mailer.handshake player
-         end
+         # Handshakes are done asychronously
+         @mailer.handshake player
       end
       threads.each do |thread|
          thread.join
@@ -103,11 +106,11 @@ class GameClient < Game
    end
 
    # Join this game as a client
-   def join_game account
+   def join_game mailer
       mod = load_mods[@mod]
       if mod
-         require mod
-         return Mod.join(account)
+         main = mod + "/" + "main.rb"
+         process.launch ModInfo.new(@dm, mailer), main
       end
    end
 
@@ -126,8 +129,8 @@ class Invite < Message
    # We are part of the protocol :)
    protoword "invite"
 
-   def initialize from, game_info
-      @game_info = game_info
+   def initialize from, game
+      @game = game
       super from
    end
 
@@ -140,22 +143,22 @@ class Invite < Message
    # Ask if the player wants to accept this invitation
    def ask
       puts "You have been invited to a game!"
-      unless load_mods.member? @game_info.mod
-         puts "But it's for the mod: " + @game_info.mod
+      unless load_mods.member? @game.mod
+         puts "But it's for the mod: " + @game.mod
          puts "Which you don't have installed."
          return false
       end
-      @game_info.display
+      @game.display
       confirm "Do you want to join?"
    end
 
    # Accept the invitation
    def accept account
-      @game_info.join_game account
+      @game.join_game account
    end
 
    def emit 
-      K.invite + @game_info.emit
+      K.invite + @game.emit
    end
 
 end

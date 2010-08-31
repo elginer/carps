@@ -25,6 +25,11 @@ def mark_prefix
    "\1"
 end
 
+# End the prefix, so there are no ambiguities
+def keyword_end
+   "\3"
+end
+
 # Class containing message keywords.  Its name is short :)
 class K
 end
@@ -35,15 +40,15 @@ end
 
 # Declare a new protocol keyword which is associated with a value
 def protoval keyword
-   K.define_singleton_method keyword, proc {prefix + keyword}
+   K.define_singleton_method keyword, proc {prefix + keyword + keyword_end}
    V.define_singleton_method keyword, do |data|
-      prefix + keyword + data + K.end
+      prefix + keyword + keyword_end + data + K.end
    end
 end
 
 # Declare a new protocol keyword which is a flag or marker 
 def protoword keyword
-   K.define_singleton_method keyword, proc {mark_prefix + keyword}
+   K.define_singleton_method keyword, proc {mark_prefix + keyword + keyword_end}
 end
 
 # End keyword 

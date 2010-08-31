@@ -37,9 +37,6 @@ class Peer
          sig = nil   
          begin
             sig, blob = find K.sig, blob
-            sf = File.open "received_sig", "w"
-            sf.write sig
-            sf.close
          rescue
             log "Message signature was malformed", blob
             return nil

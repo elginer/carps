@@ -19,7 +19,7 @@
 # Load the available mods 
 def load_mods
    mod_list = (Dir.open "mods").entries.reject do |filename|
-      filename[0] == "."
+      filename[0] == "." and File.ftype(filename) == "directory"
    end
    mods = {} 
    mod_list.each do |mod_name|
@@ -27,3 +27,6 @@ def load_mods
    end
    mods
 end
+
+# Mod information struct, to be provided as a drb service to mods
+ModInfo = Struct.new :mailer, :dm

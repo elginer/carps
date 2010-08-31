@@ -30,13 +30,18 @@ class YamlConfig
    end
 
    # Subclasses may create a method load_resource
-   # This is called after parsing - hence errors which occur here are not attributed to the configuration file
-   # which takes each element of parse_yaml's return array as an argument
-   # (This method is called with the result of parse_yaml, with the *[] syntax)
+   #
+   # This is called after parse_yaml - hence errors which occur here are not attributed to parsing the configuration file
+   #
+   # Takes each element of parse_yaml's return array as an argument, as in
+   # it is called with the result of parse_yaml, like so: 
+   #
+   # load_resources *parse_yaml conf 
    def load_resources forget
    end
 
-   # Read a resource using the subclass' parse_yaml
+   # Read a resource using the subclass' parse_yaml.
+   #
    # Then load this resource using the subclass' load_resource
    def read filepath
       contents = ""

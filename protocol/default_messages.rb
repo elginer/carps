@@ -16,9 +16,10 @@
 # along with CARPS.  If not, see <http://www.gnu.org/licenses/>.
 
 require "crypt/handshake"
+require "crypt/public_key"
 require "crypt/accept_handshake"
 
 # Services will be built by extending upon these messages
 def default_messages 
-   [Handshake, AcceptHandshake]
+   [Handshake, AcceptHandshake, PublicKey]
 end
