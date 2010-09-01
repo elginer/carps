@@ -60,8 +60,10 @@ class SMTP
    def send to, message 
       until false
          begin
+            connect
             message = to_mail "Content-Type: application/octet-stream\r\n" + message
             @smtp.send_message message, @username, [to]
+            @smtp.quit
             return 
          rescue
             warn "Could not send email with SMTP", "Attempting to reconnect"

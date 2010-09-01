@@ -85,7 +85,12 @@ class GameServer < Game
             @mailer.send player, invite
          end
       end
-   end 
+   end
+
+   # Start the game
+   def start_game
+      
+   end
 
 end
 

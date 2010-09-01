@@ -43,11 +43,12 @@ class CARPProcess < YamlConfig
 
    # Launch a ruby program in another terminal window, which can access the resource over drb
    def launch resource, program
-      program = @term + " '" + @ruby + " " + program
+      cmd = @term.gsub "%ruby", @ruby 
       ashare resource, lambda { |uri|
-         program = program + " " + uri + "'"
-         puts "Launching: #{program}"
-         exec program
+         program = "'" + program + "' '" + uri + "'"
+         cmd = cmd.gsub "%args", program
+         puts "Launching: #{cmd}"
+         exec cmd 
       }
    end
 

@@ -40,15 +40,15 @@ end
 
 # Declare a new protocol keyword which is associated with a value
 def protoval keyword
-   K.define_singleton_method keyword, proc {prefix + keyword + keyword_end}
+   K.define_singleton_method keyword, proc {prefix + keyword.to_s + keyword_end}
    V.define_singleton_method keyword, do |data|
-      prefix + keyword + keyword_end + data + K.end
+      prefix + keyword.to_s + keyword_end + data + K.end
    end
 end
 
 # Declare a new protocol keyword which is a flag or marker 
 def protoword keyword
-   K.define_singleton_method keyword, proc {mark_prefix + keyword + keyword_end}
+   K.define_singleton_method keyword, proc {mark_prefix + keyword.to_s + keyword_end}
 end
 
 # End keyword 

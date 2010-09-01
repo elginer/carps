@@ -1,4 +1,4 @@
-launch_terminal: "gnome-terminal -e"
-launch_ruby: "ruby1.9.1"
+launch_terminal: "urxvt -bg black -fg white -fn 'xft:DejaVu Sans Mono-13' -e %ruby %args"
+launch_ruby: "ruby"
 start_port: 51001
 end_port: 52000
