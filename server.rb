@@ -1,4 +1,4 @@
-#! /usr/local/bin/ruby
+#! /usr/bin/ruby
 
 # Copyright 2010 John Morrice
  

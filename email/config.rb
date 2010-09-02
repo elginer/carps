@@ -65,7 +65,7 @@ class EmailConfig < YamlConfig
    end
 
    # Return the high level mail client
-   def mailer klass
-      klass.new @address, @imap, @smtp, @message_parser
+   def mailer
+      Mailer.new @address, @imap, @smtp, @message_parser
    end
 end

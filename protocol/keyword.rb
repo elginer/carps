@@ -40,15 +40,27 @@ end
 
 # Declare a new protocol keyword which is associated with a value
 def protoval keyword
-   K.define_singleton_method keyword, proc {prefix + keyword.to_s + keyword_end}
-   V.define_singleton_method keyword, do |data|
-      prefix + keyword.to_s + keyword_end + data + K.end
-   end
+   # Use the OLD SKOOL for ruby 1.8 (and cucumber!) support
+   K.class_eval <<-"END"
+      def K.#{keyword.to_s}
+         prefix + "#{keyword.to_s}" + keyword_end
+      end
+   END
+   V.class_eval <<-"END"
+      def V.#{keyword.to_s} data
+         prefix + "#{keyword.to_s}" + keyword_end + data + K.end
+      end
+   END
 end
 
 # Declare a new protocol keyword which is a flag or marker 
 def protoword keyword
-   K.define_singleton_method keyword, proc {mark_prefix + keyword.to_s + keyword_end}
+   # Use the OLD SKOOL for ruby 1.8 (and cucumber!) support
+   K.class_eval <<-"END"
+      def K.#{keyword.to_s}
+         mark_prefix + "#{keyword.to_s}"
+      end
+   END
 end
 
 # End keyword 

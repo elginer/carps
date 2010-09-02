@@ -64,7 +64,7 @@ def main
    # Load email account
    account = EmailConfig.new "server_email.yaml", server_parser 
    # Get the mailer
-   mailer = account.mailer Mailer
+   mailer = account.mailer
    # We can create the game as soon as we have the mailer 
    game = game_config.spawn mailer
    # Invite players

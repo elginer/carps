@@ -45,7 +45,7 @@ def main
    account = EmailConfig.new "email.yaml", client_parser
 
    # Get the mailer
-   mailer = account.mailer Mailer
+   mailer = account.mailer
    # Expect invitations forever  
    while true
       invite = receive_invitation mailer

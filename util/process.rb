@@ -43,13 +43,18 @@ class CARPProcess < YamlConfig
 
    # Launch a ruby program in another terminal window, which can access the resource over drb
    def launch resource, program
-      cmd = @term.gsub "%ruby", @ruby 
       ashare resource, lambda { |uri|
          program = "'" + program + "' '" + uri + "'"
-         cmd = cmd.gsub "%args", program
+         cmd = ruby_shell_cmd program 
          puts "Launching: #{cmd}"
          exec cmd 
       }
+   end
+
+   # The command which would open a new window running the given command
+   def ruby_shell_cmd program
+      cmd = @term.gsub "%ruby", @ruby
+      cmd.gsub "%args", program
    end
 
    # May deadlock!
