@@ -15,16 +15,34 @@
 # You should have received a copy of the GNU General Public License
 # along with CARPS.  If not, see <http://www.gnu.org/licenses/>.
 
-require "util/colour"
+require "protocol/message"
 
-# Output an error message and quit with exit code 1
-def fatal msg
-   h = HighLine.new
-   $stderr.write h.color("\nFATAL ERROR\n#{msg}\n", :error)
-   if $!
-      $stderr.write h.color("Error reported:\n", :error)
-      $stderr.write $!.to_s
+# Text sent by the server to be viewed on the client.
+class StatusReport < Message
+
+   # Extend the protocol
+   protoval :status_report
+
+   # Create a status report
+   def initialize addr, text, delayed_crypt
+      super addr, delayed_crypt
+      @text = text
    end
-   puts "\a"
-   exit 1
+
+   # Parse from the void
+   def SatusReport.parse from, blob, delayed_crypt
+      forget, blob = find K.status_report, blob
+      [StatusReport.new(from, blob, delayed_crypt), ""]
+   end
+
+   # Emit
+   def emit
+      V.status_report @text
+   end
+
+   # Display the text
+   def display
+      puts @text
+   end
+
 end

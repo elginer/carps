@@ -44,7 +44,7 @@ class CARPProcess < YamlConfig
    # Launch a ruby program in another terminal window, which can access the resource over drb
    def launch resource, program
       ashare resource, lambda { |uri|
-         program = "'" + program + "' '" + uri + "'"
+         program = program + " " + uri 
          cmd = ruby_shell_cmd program 
          puts "Launching: #{cmd}"
          exec cmd 

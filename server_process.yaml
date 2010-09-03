@@ -1,4 +1,4 @@
 launch_terminal: "gnome-terminal -e '%ruby %args'"
-launch_ruby: "ruby"
+launch_ruby: "ruby1.9.1"
 start_port: 51100
 end_port: 52000

@@ -95,7 +95,7 @@ class GameServer < Game
       end
       # Wait for invitation acceptances
       loop do
-         accept = read AcceptInvite
+         accept = @mailer.read AcceptInvite
          interface.acceptance accept
       end
    end
