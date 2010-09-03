@@ -95,10 +95,16 @@ class CARPProcess < YamlConfig
    end
 end
 
-# Set up threading
+# Set up multi processing 
 #
 # Initialize a CARPProcess object into the global variable $process
 def init_process file
-   Thread.abort_on_exception = true
    $process = CARPProcess.new file
+end
+
+# Set up multi-threading
+#
+# Can be called more than once
+def init_threading
+   Thread.abort_on_exception = true
 end

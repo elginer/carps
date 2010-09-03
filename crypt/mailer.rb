@@ -20,6 +20,7 @@ require "protocol/keyword"
 
 require "util/warn"
 require "util/question"
+require "util/process"
 
 require "crypt/handshake"
 require "crypt/public_key"
@@ -32,6 +33,8 @@ require "digest/md5"
 require "openssl"
 
 require "highline"
+
+init_threading
 
 # High level CARPS mail client supporting strong cryptographic message signing.
 class Mailer
@@ -52,7 +55,7 @@ class Mailer
       @private_key = get_keys
       @public_key = @private_key.public_key
       Thread.fork do
-         while true
+         loop do 
             expect_handshake
          end
       end

@@ -15,24 +15,13 @@
 # You should have received a copy of the GNU General Public License
 # along with CARPS.  If not, see <http://www.gnu.org/licenses/>.
 
-require "highline"
+require "service/mod"
 
-def rainbow msg
-   msga = msg.split //
-   cols = [:red, :green, :yellow, :blue, :magenta]
-   cols_replicate = msga.length / cols.length
-   extra = msga.length % cols.length
-   if extra
-      cols_replicate += 1
-   end
-   cols = Array.new(cols_replicate, cols).flatten
-   msga = msga.zip cols
-   h = HighLine.new
-   msga = msga.map do |char, col|
-      h.color char, col
-   end
-   msga.join
-end
+this_mod "fruit"
 
-puts rainbow "Welcome to Fruit, version 0.0.1!"
+require "text/rainbow"
+require "util/mailer"
+
+puts rainbow "Welcome to Fruit Client, version 0.0.1!"
+mailer = init_mailer
 STDIN.gets

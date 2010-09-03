@@ -15,22 +15,13 @@
 # You should have received a copy of the GNU General Public License
 # along with CARPS.  If not, see <http://www.gnu.org/licenses/>.
 
-require "protocol/message"
+require "service/mod"
 
-class AcceptHandshake < Message
+this_mod "fruit"
 
-   # Extend the protocol for this OKAY message
-   protoword :accept_handshake 
+require "text/rainbow"
+require "util/mailer"
 
-   # Parse from the void
-   def AcceptHandshake.parse from, blob, delayed_crypt
-      forget, blob = find K.accept_handshake, blob
-      [AcceptHandshake.new(from, delayed_crypt), blob]
-   end
-
-   # Emit
-   def emit
-      K.accept_handshake
-   end
-
-end
+puts rainbow "Welcome to Fruit Server, version 0.0.1!"
+mailer = init_mailer
+STDIN.gets

@@ -17,20 +17,20 @@
 
 require "protocol/message"
 
-class AcceptHandshake < Message
+class AcceptInvite < Message
 
    # Extend the protocol for this OKAY message
-   protoword :accept_handshake 
+   protoword :accept_invite
 
    # Parse from the void
-   def AcceptHandshake.parse from, blob, delayed_crypt
-      forget, blob = find K.accept_handshake, blob
-      [AcceptHandshake.new(from, delayed_crypt), blob]
+   def AcceptInvite.parse from, blob, delayed_crypt
+      forget, blob = find K.accept_invite, blob
+      [AcceptInvite.new(from, delayed_crypt), blob]
    end
 
    # Emit
    def emit
-      K.accept_handshake
+      K.accept_invite
    end
 
 end

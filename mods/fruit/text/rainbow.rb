@@ -15,22 +15,21 @@
 # You should have received a copy of the GNU General Public License
 # along with CARPS.  If not, see <http://www.gnu.org/licenses/>.
 
-require "protocol/message"
+require "highline"
 
-class AcceptHandshake < Message
-
-   # Extend the protocol for this OKAY message
-   protoword :accept_handshake 
-
-   # Parse from the void
-   def AcceptHandshake.parse from, blob, delayed_crypt
-      forget, blob = find K.accept_handshake, blob
-      [AcceptHandshake.new(from, delayed_crypt), blob]
+def rainbow msg
+   msga = msg.split //
+   cols = [:red, :green, :yellow, :blue, :magenta]
+   cols_replicate = msga.length / cols.length
+   extra = msga.length % cols.length
+   if extra
+      cols_replicate += 1
    end
-
-   # Emit
-   def emit
-      K.accept_handshake
+   cols = Array.new(cols_replicate, cols).flatten
+   msga = msga.zip cols
+   h = HighLine.new
+   msga = msga.map do |char, col|
+      h.color char, col
    end
-
+   msga.join
 end

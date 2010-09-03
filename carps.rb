@@ -68,5 +68,5 @@ def main
    # We can create the game as soon as we have the mailer 
    game = game_config.spawn mailer
    # Invite players
-   game.invite_players
+   game.start_game
 end

@@ -1,4 +1,4 @@
-#! /usr/bin/ruby
+#! /usr/bin/ruby1.9.1
 
 # Copyright 2010 John Morrice
  

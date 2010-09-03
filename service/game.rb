@@ -16,6 +16,7 @@
 # along with CARPS.  If not, see <http://www.gnu.org/licenses/>.
 
 require "service/mod"
+require "service/accept_invite"
 
 require "protocol/keyword"
 
@@ -65,8 +66,8 @@ class GameServer < Game
       @players = players
    end
 
-   # Invite players to this game
-   def invite_players
+   # Invite players to this game and begin
+   def start_game 
       # Perform handshakes
       threads = @players.map do |player|
          # Handshakes are done asychronously
@@ -75,9 +76,16 @@ class GameServer < Game
       threads.each do |thread|
          thread.join
       end
+
+      mod = load_mods[@mod]
+      interface = ServerInterface.new @mailer
+      $process.launch interface, mod + "/server.rb"
+
       invite = Invite.new @dm, self
+
       @players.each do |player|
          puts "Inviting #{player}"
+         # A built in, system wide test
          if $evil
             puts "Sending evil message..."
             @mailer.evil player, invite 
@@ -85,11 +93,11 @@ class GameServer < Game
             @mailer.send player, invite
          end
       end
-   end
-
-   # Start the game
-   def start_game
-      
+      # Wait for invitation acceptances
+      loop do
+         accept = read AcceptInvite
+         interface.acceptance accept
+      end
    end
 
 end
@@ -114,10 +122,8 @@ class GameClient < Game
    # Join this game as a client
    def join_game mailer
       mod = load_mods[@mod]
-      if mod
-         main = mod + "/" + "client.rb"
-         $process.launch ModInfo.new(@dm, mailer), main
-      end
+      main = mod + "/client.rb"
+      $process.launch ModInfo.new(@dm, mailer), main
    end
 
    # Parse this from semi-structured text
@@ -166,5 +172,4 @@ class Invite < Message
    def emit 
       K.invite + @game.emit
    end
-
 end
