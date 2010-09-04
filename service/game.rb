@@ -81,7 +81,7 @@ class GameServer < Game
       interface = ServerInterface.new @mailer
       $process.launch interface, mod + "/server.rb"
 
-      invite = Invite.new @dm, self
+      invite = Invite.new self
 
       @players.each do |player|
          puts "Inviting #{player}"
@@ -124,6 +124,7 @@ class GameClient < Game
       mod = load_mods[@mod]
       main = mod + "/client.rb"
       $process.launch ModInfo.new(@dm, mailer), main
+      mailer.send @dm, AcceptInvite.new
    end
 
    # Parse this from semi-structured text

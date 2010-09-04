@@ -17,9 +17,12 @@
 
 require "crypt/default_messages"
 
+require "service/accept_invite"
+
 # Create a parser which parses messages for the server 
 def server_parser
-   MessageParser.new default_messages 
+   server_messages = default_messages.push AcceptInvite
+   MessageParser.new server_messages 
 end
 
 

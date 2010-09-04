@@ -79,6 +79,8 @@ class CARPProcess < YamlConfig
    end
 
    # Run computation in the second argument in a new process allowing access the first
+   #
+   # Should only be called once.....
    def ashare resource, computation
       local_only = ACL.new %w[deny all allow localhost]
       DRb.install_acl local_only
@@ -89,8 +91,10 @@ class CARPProcess < YamlConfig
             computation.call uri
             exit
          end
-         Process.wait child
-         DRb.stop_service
+         Thread.fork do
+            Process.wait child
+            DRb.stop_service
+         end
       end
    end
 end
