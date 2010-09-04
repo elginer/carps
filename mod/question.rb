@@ -17,32 +17,39 @@
 
 require "protocol/message"
 
-# Text sent by the server to be viewed on the client.
-class StatusReport < Message
+require "mod/answers"
+require "util/question"
+
+# A question sent by the server, to be asked of the player.
+#
+# Interacts with Answers class
+class Question < Message
 
    # Extend the protocol
-   protoval :status_report
+   protoval :question
 
-   # Create a status report
-   def initialize addr, text, delayed_crypt = nil
+   # Create a question
+   def initialize addr, question, delayed_crypt = nil
       super addr, delayed_crypt
-      @text = text
+      @text = question
+      @type = question_type
    end
 
    # Parse from the void
-   def StatusReport.parse from, blob, delayed_crypt
-      status, blob = find K.status_report, blob
-      [StatusReport.new(from, status, delayed_crypt), blob]
+   def Question.parse from, blob, delayed_crypt
+      question, blob = find K.question, blob
+      [Question.new(from, question, delayed_crypt), blob]
    end
 
    # Emit
    def emit
-      V.status_report @text
+      V.question @text 
    end
 
-   # Display the text
-   def display
-      puts @text
-   end
+   # Ask the question, store the answer in the answers object
+   def ask answers
+      response = question @text
+      answers.answer @text, @response
+   end 
 
 end

@@ -47,7 +47,7 @@ class CARPProcess < YamlConfig
          program = program + " " + uri 
          cmd = ruby_shell_cmd program 
          puts "Launching: #{cmd}"
-         exec cmd 
+         exec cmd
       }
    end
 
