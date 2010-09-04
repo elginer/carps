@@ -48,7 +48,7 @@ class Question < Message
    # Ask the question, store the answer in the answers object
    def ask answers
       response = question @text
-      answers.answer @text, @response
+      answers.answer @text, response
    end 
 
 end

@@ -17,7 +17,8 @@
 
 # A status report, followed by a list of questions
 
-require "message/protocol"
+require "protocol/message"
+
 require "mod/answers"
 require "mod/status_report"
 
@@ -27,7 +28,7 @@ class ClientTurn < Message
    protoword :client_turn
 
    # Create a client turn
-   def initialize addr, delayed_crypt, status, questions 
+   def initialize addr, status, questions, delayed_crypt = nil
       super addr, delayed_crypt
       @status = status
       @questions = questions
@@ -47,7 +48,7 @@ class ClientTurn < Message
             more = false
          end
       end
-      [ClientTurn.new(from, delayed_crypt, status, questions), blob] 
+      [ClientTurn.new(from, status, questions, delayed_crypt), blob] 
    end
 
    # Emit

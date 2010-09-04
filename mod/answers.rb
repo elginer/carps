@@ -45,13 +45,8 @@ class Answers < Message
    end
 
    # Set an answer to a question
-   def answer type, response
-      @answers[type] = response
-   end
-
-   # Get the answer to a question
-   def read type
-      @answers[type]
+   def answer question, response
+      @answers[question] = response
    end
 
    # Display answers

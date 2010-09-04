@@ -1,6 +1,7 @@
 require "mod/status_report"
 require "mod/question"
 require "mod/answers"
+require "mod/client_turn"
 
 Given /^a status report$/ do
    $status = StatusReport.new "dungeon master", "This is some might important information here!"
@@ -15,6 +16,27 @@ Given /^a question$/ do
 end
 
 Then /^the question should be asked$/ do
-   ans = Answers.new "dungeon master"
+   ans = Answers.new "Johnny Mo"
    $question.ask ans
+   puts "Our conversation:"
+   ans.display
+end
+
+Given /^a status report and a number of questions$/ do
+   a = "Authority Figure"
+   s = StatusReport.new a, "Halt, mortal!"
+   q1 = Question.new a, "Who are you?"
+   q2 = Question.new a, "What are you doing here?"
+   $turn = ClientTurn.new "Johnny Mo", s, [q1, q2]
+end
+
+Then /^all the questions should be asked$/ do
+   class Tester
+      def send to, answers
+         puts "To be sent to #{to}"
+         answers.display
+      end
+   end
+   tester = Tester.new
+   $turn.take tester
 end
