@@ -22,6 +22,8 @@ require "protocol/message"
 require "mod/answers"
 require "mod/status_report"
 
+require "highline"
+
 class ClientTurn < Message
 
    # Extend the protocol
@@ -59,6 +61,9 @@ class ClientTurn < Message
 
    # Take the turn
    def take mailer
+      h = HighLine.new
+      puts h.color("It is your turn:", :blue)
+      puts "\a"
       @status.display
       answers = Answers.new from
       @questions.each do |q|
