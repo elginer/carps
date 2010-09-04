@@ -101,7 +101,6 @@ class Mailer
 
    # Send a message
    def send to, message
-      message.from = address
       text = message.emit
       # Sign the message
       digest = Digest::MD5.digest text
@@ -113,7 +112,6 @@ class Mailer
 
    # Send an evil message for testing.  The recipent should drop this.
    def evil to, message
-      message.from = address
       text = message.emit
       # Sign the message
       digest = Digest::MD5.digest text
