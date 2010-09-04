@@ -141,15 +141,14 @@ class Invite < Message
    # We are part of the protocol :)
    protoword "invite"
 
-   def initialize from, game, delayed_crypt=nil
+   def initialize game
       @game = game
-      super from, delayed_crypt
    end
 
-   def Invite.parse from, blob, delayed_crypt
+   def Invite.parse blob
       forget, blob = find K.invite, blob
       info, blob = GameClient.parse blob
-      [Invite.new(from, info, delayed_crypt), blob]
+      [Invite.new(info), blob]
    end
 
    # Ask if the player wants to accept this invitation

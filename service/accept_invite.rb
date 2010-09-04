@@ -23,9 +23,9 @@ class AcceptInvite < Message
    protoword :accept_invite
 
    # Parse from the void
-   def AcceptInvite.parse from, blob, delayed_crypt
+   def AcceptInvite.parse blob
       forget, blob = find K.accept_invite, blob
-      [AcceptInvite.new(from, delayed_crypt), blob]
+      [AcceptInvite.new, blob]
    end
 
    # Emit

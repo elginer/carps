@@ -22,6 +22,9 @@ require "util/process"
 
 require "drb"
 
+# The mailbox's responsibility is in sending messages and securely and robustly receiving them
+#
+# It has knowledge is of the public keys of the Mailer s of the remote peers
 class Mailbox
 
    include DRbUndumped
@@ -165,13 +168,17 @@ class Mailbox
          delayed_crypt, blob = security_info blob
 
          # Parse a message
-         msg = @parser.parse who, blob, delayed_crypt
-         unless msg
+         msg = @parser.parse blob
+
+         if msg
+            msg.crypt = delayed_crypt
+            msg.from = who 
+            puts "Mail from #{who}: #{msg.class.to_s}"
+            @rsemaphore.synchronize do
+               @mail.push msg
+            end
+         else
             warn "Failed to parse message from #{who}", blob
-         end 
-         puts "Mail from #{who}: #{msg.class.to_s}"
-         @rsemaphore.synchronize do
-            @mail.push msg
          end
       end
    end

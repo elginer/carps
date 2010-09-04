@@ -27,8 +27,7 @@ class Answers < Message
    protoval :answers
 
    # The answers hash gives the initial answers
-   def initialize from, delayed_crypt = nil, answers_hash = {}
-      super from, delayed_crypt
+   def initialize answers_hash = {}
       @answers = answers_hash
    end
 
@@ -36,7 +35,7 @@ class Answers < Message
    def Answers.parse from, blob, delayed_crypt
       yaml, blob = find K.answers, blob
       answers = YAML::load yaml
-      [Answers.new(from, delayed_crypt, answers), blob]
+      [Answers.new(answers), blob]
    end
 
    # Emit

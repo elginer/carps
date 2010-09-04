@@ -37,6 +37,8 @@ require "highline"
 init_threading
 
 # High level CARPS mail client supporting strong cryptographic message signing.
+#
+# It has knowledge of our own public and private key
 class Mailer
 
    # Extend protocol for sharing our address
@@ -99,6 +101,7 @@ class Mailer
 
    # Send a message
    def send to, message
+      message.from = address
       text = message.emit
       # Sign the message
       digest = Digest::MD5.digest text
@@ -110,6 +113,7 @@ class Mailer
 
    # Send an evil message for testing.  The recipent should drop this.
    def evil to, message
+      message.from = address
       text = message.emit
       # Sign the message
       digest = Digest::MD5.digest text
@@ -134,12 +138,12 @@ class Mailer
          peer = Peer.new to
          @mailbox.add_peer to, peer
          # Request a handshake 
-         send to, Handshake.new(@addr)
+         send to, Handshake.new
          # Get the peer's key
          their_key = @mailbox.insecure_read PublicKey, to
          peer.your_key their_key.key
          # Send our key
-         send to, PublicKey.new(@addr, @public_key)
+         send to, PublicKey.new(@public_key)
          # Receive an okay message
          read AcceptHandshake, to
          puts "Established spoof-proof communications with #{to}"
@@ -163,7 +167,7 @@ class Mailer
       Thread.fork do
          if accept
             # Send our key to the peer
-            send from, (PublicKey.new @addr, @public_key)
+            send from, PublicKey.new(@public_key)
             # Get their key
             peer_key = @mailbox.insecure_read PublicKey, from
             # Create a new peer
@@ -171,7 +175,7 @@ class Mailer
             @mailbox.add_peer from, peer
             peer.your_key peer_key.key
             # Send an okay message
-            send from, (AcceptHandshake.new @addr)
+            send from, AcceptHandshake.new
             puts "Established spoof-proof communications with #{from}."
          end
       end

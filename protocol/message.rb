@@ -20,10 +20,10 @@ require "util/warn"
 require "drb"
 
 # Parse, choosing from a number of alternative messages, return the first one that suceeds
-def choose from, messages, blob, delayed_crypt 
+def choose messages, blob 
    messages.each do |message|
       begin
-         result, text = message.parse from, blob, delayed_crypt
+         result, text = message.parse blob
          return [result, text] 
       rescue Expected
       end
@@ -40,10 +40,10 @@ class MessageParser
    end
 
    # Parse the text into a message 
-   def parse from, text, delayed_crypt
+   def parse text
       input = text
       begin
-         msg, blob = choose from, @choices, text, delayed_crypt
+         msg, blob = choose @choices, text
          return msg
       rescue Expected
          warn "An invalid email was received:", input
@@ -55,15 +55,19 @@ end
 # A message
 class Message
 
-   # Save who we're from and optionally provide a delayed cryptography mechanism
-   def initialize from, delayed_crypt=nil
-      @from = from
-      @delayed_crypt = delayed_crypt
+   # Set cryptography information
+   def crypt= sig
+      @delayed_crypt = sig
    end
 
    # Cryptography information
    def crypt
       @delayed_crypt
+   end
+
+   # set who we're from
+   def from= addr
+      @from = addr
    end
 
    # Who we're from

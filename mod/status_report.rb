@@ -24,15 +24,14 @@ class StatusReport < Message
    protoval :status_report
 
    # Create a status report
-   def initialize addr, text, delayed_crypt = nil
-      super addr, delayed_crypt
+   def initialize text
       @text = text
    end
 
    # Parse from the void
-   def StatusReport.parse from, blob, delayed_crypt
+   def StatusReport.parse blob
       status, blob = find K.status_report, blob
-      [StatusReport.new(from, status, delayed_crypt), blob]
+      [StatusReport.new(status), blob]
    end
 
    # Emit

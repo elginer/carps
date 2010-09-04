@@ -30,27 +30,26 @@ class ClientTurn < Message
    protoword :client_turn
 
    # Create a client turn
-   def initialize addr, status, questions, delayed_crypt = nil
-      super addr, delayed_crypt
+   def initialize status, questions
       @status = status
       @questions = questions
    end
 
    # Parse
-   def ClientTurn.parse from, blob, delayed_crypt
+   def ClientTurn.parse blob
       forget, blob = find K.client_turn blob
-      status, blob = StatusReport.parse from, blob, delayed_crypt
+      status, blob = StatusReport.parse blob
       more = true
       questions = []
       while more
          begin
-            que, blob = Question.parse from, blob, delayed_crypt
+            que, blob = Question.parse blob
             questions.push que
          rescue Expected
             more = false
          end
       end
-      [ClientTurn.new(from, status, questions, delayed_crypt), blob] 
+      [ClientTurn.new(status, questions), blob] 
    end
 
    # Emit
@@ -59,17 +58,17 @@ class ClientTurn < Message
       K.client_turn + @status.emit + question_text
    end
 
-   # Take the turn
-   def take mailer
+   # Take the turn, return list of answers
+   def take
       h = HighLine.new
       puts h.color("It is your turn:", :blue)
       puts "\a"
       @status.display
-      answers = Answers.new from
+      answers = Answers.new
       @questions.each do |q|
          q.ask answers
       end
-      mailer.send from, answers
+      answers
    end
 
 end

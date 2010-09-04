@@ -29,15 +29,14 @@ class Question < Message
    protoval :question
 
    # Create a question
-   def initialize addr, question, delayed_crypt = nil
-      super addr, delayed_crypt
+   def initialize question
       @text = question
    end
 
    # Parse from the void
-   def Question.parse from, blob, delayed_crypt
+   def Question.parse blob
       question, blob = find K.question, blob
-      [Question.new(from, question, delayed_crypt), blob]
+      [Question.new(question), blob]
    end
 
    # Emit

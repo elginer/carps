@@ -27,18 +27,17 @@ class PublicKey < Message
    protoval "key"
 
    # Create a new handshake
-   def initialize from, public_key, delayed_crypt=nil
-      super from, delayed_crypt
+   def initialize public_key
       @public_key = public_key
    end
 
    # Parse from text
-   def PublicKey.parse from, blob, delayed_crypt
+   def PublicKey.parse blob
       key, blob = find K.key, blob
       pkey = OpenSSL::PKey
       begin
          key = pkey::DSA.new key
-         return [PublicKey.new(from, key, delayed_crypt), blob]
+         return [PublicKey.new(key), blob]
       rescue pkey::DSAError
          throw Expected.new "Public key"
       end
