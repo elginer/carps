@@ -32,7 +32,6 @@ class Question < Message
    def initialize addr, question, delayed_crypt = nil
       super addr, delayed_crypt
       @text = question
-      @type = question_type
    end
 
    # Parse from the void

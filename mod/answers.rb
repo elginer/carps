@@ -21,7 +21,7 @@ require "yaml"
 require "highline"
 
 # A series of answers to questions asked by the DM.
-class Answers
+class Answers < Message
 
    # Extend the protocol
    protoval :answers
