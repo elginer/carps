@@ -27,14 +27,12 @@ class CARPProcess < YamlConfig
    def parse_yaml conf
       ruby = read_conf conf, "launch_ruby"
       term = read_conf conf, "launch_terminal"
-      start_port = read_conf(conf, "start_port").to_i
-      end_port = read_conf(conf, "end_port").to_i
-      port_range = start_port .. end_port
-      [ruby, term, port_range]
+      port = read_conf(conf, "port").to_i
+      [ruby, term, port]
    end
 
-   def load_resources ruby, term, ports
-      @ports = ports
+   def load_resources ruby, term, port
+      @port = port
       @ruby = ruby
       @term = term
       @used = Set.new
@@ -57,53 +55,34 @@ class CARPProcess < YamlConfig
       cmd.gsub "%args", program
    end
 
-   # May deadlock!
-   def with_uri
-      uri = "druby://localhost:"
-      port = nil
-      until port
-         @semaphore.synchronize do
-            @ports.each do |p|
-               unless @used.member? p
-                  @used.add p
-                  port = p
-                  break
-               end
-            end
-         end
-      end
-      yield uri + port.to_s
-      @semaphore.synchronize do
-         @used.delete port
-      end
-   end
-
    # Run computation in the second argument in a new process allowing access the first
    #
-   # Should only be called once.....
+   # Can run at only one time
    def ashare resource, computation
-      local_only = ACL.new %w[deny all allow localhost]
-      DRb.install_acl local_only
-      with_uri do |uri|   
-         DRb.start_service(uri, resource).uri
-         child = fork do
-            DRb.start_service
-            computation.call uri
-            exit
-         end
-         Thread.fork do
+      Thread.fork do
+         @semaphore.synchronize do
+            local_only = ACL.new %w[deny all allow localhost]
+            DRb.install_acl local_only
+            uri = "druby://localhost:" + @port.to_s 
+            DRb.start_service(uri, resource).uri
+            child = fork do
+               DRb.start_service
+               computation.call uri
+               exit
+            end
             Process.wait child
             DRb.stop_service
          end
       end
    end
+   
 end
 
 # Set up multi processing 
 #
 # Initialize a CARPProcess object into the global variable $process
-def init_process file
-   $process = CARPProcess.new file
+def init_process
+   $process = CARPProcess.new "process.yaml" 
 end
 
 # Set up multi-threading

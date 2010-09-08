@@ -73,28 +73,33 @@ class Mailer
    # If we can't find them, regenerate them
    def get_keys
       pkey = OpenSSL::PKey
-      if File.exists? ".key"
+      if File.exists? keyfile 
          begin
-            pem = File.read ".key"
+            pem = File.read keyfile
             return pkey::DSA.new pem
          rescue
-            warn "Could not read .key file"
          end
       end
-      keygen
+      warn "Could not read cryptographic key from #{keyfile}"
+      return keygen
    end 
+
+   # The key file
+   def keyfile
+      keyfile = $CONFIG + ".key"
+   end
 
    # Generate keys
    def keygen
       puts "Generating cryptographic keys.  This may take a minute."
       key = OpenSSL::PKey::DSA.generate 2048
       begin
-         pri = File.new ".key", "w"
+         pri = File.new keyfile, "w"
          pri.chmod 0600
          pri.write key.to_pem
          pri.close
       rescue
-         warn "Could not save cryptographic keys in the .key file", "They will be regenerated next time CARPS is run."
+         warn "Could not save cryptographic keys in #{keyfile}", "They will be regenerated next time CARPS is run."
       end
       key
    end

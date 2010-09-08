@@ -1,4 +1,0 @@
-launch_terminal: "urxvt -bg black -fg white -fn 'xft:DejaVu Sans Mono-13' -e %ruby %args"
-launch_ruby: "ruby1.9.1"
-start_port: 52001 
-end_port: 53000

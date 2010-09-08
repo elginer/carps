@@ -18,7 +18,7 @@
 
 require "email/config"
 
-require "util/process"
+require "util/init"
 
 require "service/client_parser"
 
@@ -39,8 +39,7 @@ end
 # Run the client 
 def main
 
-   init_process "process.yaml"
-
+   init "client"
    # Get the client's email information
    account = EmailConfig.new "email.yaml", client_parser
 

@@ -15,13 +15,14 @@
 # You should have received a copy of the GNU General Public License
 # along with CARPS.  If not, see <http://www.gnu.org/licenses/>.
 
-require "service/mod"
+require "util/process"
+require "util/config"
 
-this_mod "fruit"
+require "etc"
 
-require "text/rainbow"
-require "util/mailer"
-
-puts rainbow "Welcome to Fruit Server, version 0.0.1!"
-mailer = init_mailer
-STDIN.gets
+# Initialize carps
+def init dir
+   $ROOT_CONFIG = Etc.getpwuid.dir + "/carps/"
+   $CONFIG = $ROOT_CONFIG + dir + "/"
+   init_process
+end 

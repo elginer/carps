@@ -4,9 +4,11 @@ Feature: email
    Send and receive emails
 
    Scenario: send email
-      Given details of the email account in 'email.yaml' 
+      Given carps is initialized with client
+      Given the email account
       Then an email is sent
 
    Scenario: receive email
-      Given details of the email account in 'email.yaml'
+      Given carps is initialized with client
+      Given the email account
       Then an email is received

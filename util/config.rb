@@ -24,7 +24,7 @@ class YamlConfig
 
    # Takes as an argument a path to a yaml configuration file
    def initialize filepath
-      read filepath
+      read $CONFIG + filepath
    end
 
    # Subclasses must create a method parse_yaml which takes YAML returns an array

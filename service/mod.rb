@@ -17,14 +17,19 @@
 
 require "drb"
 
+# Where the mods are
+def mods_dir
+   mods_dir = $ROOT_CONFIG + "mods/"
+end
+
 # Load the available mods 
 def load_mods
-   mod_list = (Dir.open "mods").entries.reject do |filename|
-      filename[0] == "." and File.ftype(filename) == "directory"
+   mod_list = (Dir.open mods_dir).entries.reject do |filename|
+      filename[0] == "." and File.ftype(mods_dir + filename) == "directory"
    end
    mods = {} 
    mod_list.each do |mod_name|
-      mods[mod_name] = "mods/" + mod_name
+      mods[mod_name] = mods_dir + mod_name
    end
    mods
 end
@@ -90,5 +95,5 @@ end
 
 # Register the name of this mod so it can require its own files
 def this_mod mod
-    $LOAD_PATH.push "./mods/" + mod + "/"
+    $LOAD_PATH.push mods_dir + mod + "/"
 end

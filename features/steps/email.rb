@@ -20,7 +20,7 @@ class EmailConfig
 
 end
 
-Given /^details of the email account in 'email\.yaml'$/ do
+Given /^the email account$/ do
    $email_config = EmailConfig.new "email.yaml", nil
 end
 

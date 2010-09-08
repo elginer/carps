@@ -24,13 +24,14 @@ require "service/game/config"
 
 require "service/server_parser"
 
-require "util/process"
 require "util/error"
+require "util/init"
 
 # Choose which game we are to play
 def choose_game
-   game_files = Dir.open("games").entries.reject do |game_file|
-      game_file[0] == "." or File.ftype("games/" + game_file) != "file" 
+   games_dir = $CONFIG + "/games"
+   game_files = Dir.open(games_dir).entries.reject do |game_file|
+      game_file[0] == "." or File.ftype(games_dir + game_file) != "file" 
    end
    if game_files.empty?
       fatal "You need to create a game inside the games directory first."
@@ -58,11 +59,11 @@ end
 def main
    # Evil testing
    # $evil = true
-   init_process "server_process.yaml"
+   init "server"
    # Choose game
    game_config = choose_game
    # Load email account
-   account = EmailConfig.new "server_email.yaml", server_parser 
+   account = EmailConfig.new server_parser 
    # Get the mailer
    mailer = account.mailer
    # We can create the game as soon as we have the mailer 
