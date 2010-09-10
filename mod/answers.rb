@@ -59,6 +59,6 @@ class Answers < Message
          end
          puts "\n"
       end
-      puts h.color("End of #{from}'s answers", :blue)
+      puts h.color("End of #{from}'s answers\n", :blue)
    end
 end
