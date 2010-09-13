@@ -25,40 +25,27 @@ require "util/question"
 
 # Used by the dungeon master to generate reports
 #
-# Subclasses must provide "player_turn" method
-#
-# which takes a monikers (a string used to identify a player)
-#
-# and producees a ClientTurn object for that player
+# Subclasses should override the "player_turn" method
 class Reporter
 
-   # Takes a resource manager
-   def initialize resource
-      resource.reporter = self
+   def initialize
       @status = {}
-      @monikers = {}
-      @questions = []
-   end
-
-   # Add a player
-   def add_player email
-      moniker = question "Enter moniker for " + email
-      @monikers[moniker] = email
+      @questions = {}
    end
 
    # Produce a ClientTurn for the player referred to by the moniker
    def player_turn moniker
       status = StatusReport.new @status[moniker]
-      ClientTurn.new status, @questions
+      ClientTurn.new status, @questions[moniker]
    end
 
    # Take a hash of monikers to email addresses
    #
    # Produce a hash of email address to ClientTurn objects
-   def player_turns
-      turns = {}
-      @monikers.each do |moniker, mail|
-         turns[mail] = player_turn moniker 
+   def player_turns monikers
+      turns = [] 
+      monikers.each do |moniker|
+         turns.push = player_turn moniker 
       end
       turns
    end
@@ -68,12 +55,12 @@ class Reporter
       @status[player] = editor.edit @status[player]
    end
 
-   # Used by the resource manager to inform the reporter of updates to a player's status report
+   # Inform the reporter of updates to a player's status report
    def update_player_status player, status
       @status[player] = status
    end
 
-   # Used by the resource manager to inform the reporter of updates to everyone's status
+   # Inform the reporter of updates to everyone's status
    def update_global_status status
       @monikers.each_key do |moniker|
          @status[moniker] = status

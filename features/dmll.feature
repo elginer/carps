@@ -1,4 +1,4 @@
-Feature: DM interface components
+Feature: Low-level DM interface components
    The DM requires a powerful interface
    To communicate with the players
 
@@ -43,4 +43,3 @@ Feature: DM interface components
       Given barry is in the cave
       Given paul is in the ship
       Then describe the room to each player
-
