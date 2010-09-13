@@ -31,8 +31,8 @@ Given /^a reporter$/ do
    $reporter.current_room $room
 end
 
-Then /^customize report$/ do
-
+Then /^customize report for all players$/ do
+   $reporter.global_edit $editor
 end
 
 Then /^describe the room to each player$/ do

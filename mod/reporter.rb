@@ -19,6 +19,8 @@ require "mod/question"
 require "mod/client_turn"
 require "mod/status_report"
 
+require "util/edit"
+
 # Used by the dungeon master to generate reports
 #
 # Presents a facade, allowing the current room to be changed.
@@ -34,25 +36,20 @@ class Reporter
       @questions = []
    end
 
-   def set_default_status
-      unless @status
-         @status = @room.describe
-      end
-   end
-
-   def add_question que
-      @questions.push Question.new que
-   end
-
+   # Set the current room
    def current_room room
       @room = room
    end
 
+   # Produce a ClientTurn for the player referred to by the moniker
    def player_turn moniker
       status = StatusReport.new @status
       ClientTurn.new status, @questions
    end
 
+   # Take a hash of monikers to email addresses
+   #
+   # Produce a hash of email address to ClientTurn objects
    def player_turns monikers
       turns = {}
       set_default_status
@@ -61,5 +58,20 @@ class Reporter
       end
       turns
    end
+
+   # Edit the status, all players can see this
+   def global_edit editor
+      set_default_status
+      @status = editor.edit @status
+   end
+
+   private
+
+   def set_default_status
+      unless @status
+         @status = @room.describe
+      end
+   end
+
 
 end
