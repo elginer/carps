@@ -18,12 +18,12 @@
 require "mod/question"
 require "mod/client_turn"
 require "mod/status_report"
+require "mod/resource"
 
 require "util/edit"
+require "util/question"
 
 # Used by the dungeon master to generate reports
-#
-# Presents a facade, allowing the current room to be changed.
 #
 # Subclasses must provide "player_turn" method
 #
@@ -32,46 +32,52 @@ require "util/edit"
 # and producees a ClientTurn object for that player
 class Reporter
 
-   def initialize
+   # Takes a resource manager
+   def initialize resource
+      resource.reporter = self
+      @status = {}
+      @monikers = {}
       @questions = []
    end
 
-   # Set the current room
-   def current_room room
-      @room = room
+   # Add a player
+   def add_player email
+      moniker = question "Enter moniker for " + email
+      @monikers[moniker] = email
    end
 
    # Produce a ClientTurn for the player referred to by the moniker
    def player_turn moniker
-      status = StatusReport.new @status
+      status = StatusReport.new @status[moniker]
       ClientTurn.new status, @questions
    end
 
    # Take a hash of monikers to email addresses
    #
    # Produce a hash of email address to ClientTurn objects
-   def player_turns monikers
+   def player_turns
       turns = {}
-      set_default_status
-      monikers.each do |moniker, mail|
+      @monikers.each do |moniker, mail|
          turns[mail] = player_turn moniker 
       end
       turns
    end
 
-   # Edit the status, all players can see this
-   def global_edit editor
-      set_default_status
-      @status = editor.edit @status
+   # Edit the report for a player 
+   def edit player, editor
+      @status[player] = editor.edit @status[player]
    end
 
-   private
+   # Used by the resource manager to inform the reporter of updates to a player's status report
+   def update_player_status player, status
+      @status[player] = status
+   end
 
-   def set_default_status
-      unless @status
-         @status = @room.describe
+   # Used by the resource manager to inform the reporter of updates to everyone's status
+   def update_global_status status
+      @monikers.each_key do |moniker|
+         @status[moniker] = status
       end
    end
-
 
 end

@@ -29,6 +29,6 @@ def warn reason, *msgs
       $stderr.write h.color("Error raised:\n", :warning)
       $stderr.write $!.to_s
    end
-   $stderr.write h.color("End of warning report.\n", :warning)
+   $stderr.write h.color("\nEnd of warning report.\n", :warning)
    puts "\a" 
 end

@@ -61,14 +61,13 @@ class CARPProcess < YamlConfig
    def ashare resource, computation
       Thread.fork do
          @semaphore.synchronize do
-            local_only = ACL.new %w[deny all allow localhost]
+            local_only = ACL.new %w[deny all allow 127.0.0.1]
             DRb.install_acl local_only
             uri = "druby://localhost:" + @port.to_s 
-            DRb.start_service(uri, resource).uri
+            DRb.start_service uri, resource
             child = fork do
                DRb.start_service
                computation.call uri
-               exit
             end
             Process.wait child
             DRb.stop_service

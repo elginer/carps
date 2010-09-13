@@ -4,12 +4,14 @@
 require "drb"
 
 begin
-   mut = DRbObject.new nil, ARGV.shift
+   url = ARGV.shift
+   puts "Listening on " + url
+   mut = DRbObject.new nil, url
    mut.mutate!
    puts mut.works?
-   puts "Press any key to exit"
-   gets
 rescue Exception => e
+   puts "ERROR:"
    puts e
-   gets
 end
+puts "Press enter to exit"
+gets

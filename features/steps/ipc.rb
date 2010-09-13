@@ -26,7 +26,7 @@ end
 
 When /^the \$process.ashare method is run with a computation to mutate the object$/ do
    chld = $process.ashare $mut, lambda {|uri|
-      ob = DRbObject.new_with_uri uri
+      ob = DRbObject.new nil, uri
       ob.mutate!
       puts "In child:"
       puts "\t" + ob.works?

@@ -10,6 +10,7 @@ Feature:  Interprocess Communication
       Then I should see 'It works' from the server side
 
    Scenario: fork subprogram in another shell
+      Given carps is initialized with server
       Given an object to be mutated
       When the $process.launch method is called with the name of a ruby subprogram, which I should see in another window
       Then I should see 'It works' from the server side 
