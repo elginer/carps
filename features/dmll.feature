@@ -5,41 +5,51 @@ Feature: Low-level DM interface components
    Scenario: produce reports
       Given a resource manager
       Given a reporter
-      Given an email address for player 0
-      Then associate player 0's email address with a moniker 
-      Given an email address for player 1
-      Then associate player 1's email address with a moniker
+      Then the reporter is registered with the resource manager
+      Given a player called barry
       Given all players are in the cave
-      Then describe the room to each player
+      Then take player turns 
 
    Scenario: produce customized report
       Given a resource manager
       Given a reporter
+      Then the reporter is registered with the resource manager
       Given carps is initialized with server
-      Given an editor
-      Given an email address for player 0
-      Then associate player 0's email address with a moniker
+      Then a player called barry
       Given all players are in the cave
       Then customize report for barry 
-      Then describe the room to each player
+      Then take player turns
 
    Scenario: change rooms
       Given a resource manager
       Given a reporter
-      Given an email address for player 0
-      Then associate player 0's email address with a moniker
+      Then the reporter is registered with the resource manager
+      Given a player called barry
       Given all players are in the cave
-      Then describe the room to each player
+      Then take player turns 
       Given all players are in the ship 
-      Then describe the room to each player
+      Then take player turns
 
    Scenario: different rooms
       Given a resource manager
       Given a reporter
-      Given an email address for player 0
-      Then associate player 0's email address with a moniker 
-      Given an email address for player 1
-      Then associate player 1's email address with a moniker
+      Then the reporter is registered with the resource manager
+      Given a player called barry
+      Given a player called paul
       Given barry is in the cave
       Given paul is in the ship
-      Then describe the room to each player
+      Then take player turns
+
+   Scenario: global question
+      Given a reporter
+      Given a player called barry
+      Then ask everyone what do you do?
+      Then take player turns
+
+   Scenario: individual question
+      Given a reporter
+      Given a player called barry
+      Given a player called paul
+      Then ask barry only: do you like paul?
+      Then ask paul only: does barry smell?
+      Then take player turns

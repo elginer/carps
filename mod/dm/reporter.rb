@@ -18,10 +18,8 @@
 require "mod/question"
 require "mod/client_turn"
 require "mod/status_report"
-require "mod/resource"
 
-require "util/edit"
-require "util/question"
+require "util/editor"
 
 # Used by the dungeon master to generate reports
 #
@@ -33,6 +31,12 @@ class Reporter
       @questions = {}
    end
 
+   # Add a new player
+   def add_player moniker
+      @status[moniker] = nil
+      @questions[moniker] = []
+   end
+
    # Produce a ClientTurn for the player referred to by the moniker
    def player_turn moniker
       status = StatusReport.new @status[moniker]
@@ -42,28 +46,42 @@ class Reporter
    # Take a hash of monikers to email addresses
    #
    # Produce a hash of email address to ClientTurn objects
-   def player_turns monikers
-      turns = [] 
+   def player_turns
+      turns = {}
+      monikers = @status.keys
       monikers.each do |moniker|
-         turns.push = player_turn moniker 
+         turns[moniker] = player_turn moniker 
       end
       turns
    end
 
    # Edit the report for a player 
-   def edit player, editor
+   def edit player
+      editor = Editor.new "editor.yaml"
       @status[player] = editor.edit @status[player]
    end
 
    # Inform the reporter of updates to a player's status report
-   def update_player_status player, status
+   def update_player player, status
       @status[player] = status
    end
 
    # Inform the reporter of updates to everyone's status
-   def update_global_status status
-      @monikers.each_key do |moniker|
+   def update_everyone status
+      @status.each_key do |moniker|
          @status[moniker] = status
+      end
+   end
+
+   # Ask a player some questions
+   def ask_player moniker, questions
+      @questions[moniker] = questions
+   end
+
+   # Ask everyone some questions
+   def ask_everyone questions
+      @questions.each_key do |moniker|
+         @questions[moniker] = questions
       end
    end
 

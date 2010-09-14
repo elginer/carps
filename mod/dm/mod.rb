@@ -16,20 +16,64 @@
 # along with CARPS.  If not, see <http://www.gnu.org/licenses/>.
 
 require "mod/character_sheet_request"
+require "mod/answers"
+require "mod/character_sheet"
+
+require "mod/dm/reporter"
+require "mod/dm/character"
+
+require "util/editor"
 
 # Class for DM mods
+#
+# Subclasses should override
+# interpreter, schema, semantic_verifier
 class Mod
 
-   def initialize
+   # Initialize with a resource manager, and a mailer 
+   def initialize resource, mailer
+      @mailer = mailer
+      @resource = resource
+      @reporter = Reporter.new resource
       @monikers = {}
+      @mails = {}
       @answers = {}
       @character_sheets = {}
+      receive mail
+   end
+
+   # Receive mail
+   def receive mail
+      Thread.fork do
+         loop do
+            @mailer.read Answers
+            sleep 1
+         end
+      end
+      Thread.fork do
+         loop do
+            @mailer.read CharacterSheet
+            sleep 1
+         end
+      end
+   end
+
+   # A new turn
+   def next_turn
+      @reporter.update_everyone ""
+      @reporter.ask_everyone []
+   end
+
+   # Edit the report for a player 
+   def edit player
+      @reporter.edit player
    end
 
    # Add a player
    def add_player email
       moniker = question "Enter moniker for " + email
       @monikers[moniker] = email
+      @mails[email] = moniker
       request_character_sheet moniker, email
    end
 
@@ -45,24 +89,45 @@ class Mod
    #
    # Not re-entrant
    def search mail
-      mail.each do |moniker, mail_list|
-         if mail_list.empty?
-            mail.delete moniker
-         else
-            return mail_list.shift
+      mail.reject! do |moniker, mail_list|
+         mail_list.empty?   
+      end
+      if mail.empty?
+         return nil
+      else
+         return mail.shift
+      end
+   end
+
+   # Check for mail 
+   def check_mail
+      if mail = search(@character_sheets)
+         new_character_sheet *mail
+      elsif result = search(@answers)
+         new_answer *mail
+      else
+         puts "No new mail."
+      end
+   end
+
+   # Register a new character sheet
+   def new_character_sheet moniker, sheet
+      if sheet.verify schema
+         if sheet.verify_semantics semantic_verifier
+            Ch.create moniker, sheet
          end
       end
    end
 
-   # Wait upon the next mail and then act upon it 
-   def wait_for_mail
-      if mail = search(@character_sheets)
-         new_character_sheet mail
-      elsif mail = search(@answers)
-         new_answer mail
-      else
-         puts "No new mail."
-      end
+   # The semantic verifier
+   def semantic_verifier sheet
+      NullVerifier.new
+   end
+
+   # Print the answer
+   def new_answer moniker, answer
+      answer.from = moniker
+      answer.display
    end
 
    # Request a character sheet from the player
@@ -75,4 +140,11 @@ class Mod
       @gateway = gate
    end
 
+end
+
+# Semantic verifier that always returns true
+class NullVerifier
+   def verify sheet
+      true
+   end
 end

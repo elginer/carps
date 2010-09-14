@@ -60,9 +60,6 @@ class ClientTurn < Message
 
    # Take the turn, return list of answers
    def take
-      h = HighLine.new
-      puts h.color("It is your turn:", :blue)
-      puts "\a"
       @status.display
       answers = Answers.new
       @questions.each do |q|

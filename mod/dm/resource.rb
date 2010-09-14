@@ -15,7 +15,7 @@
 # You should have received a copy of the GNU General Public License
 # along with CARPS.  If not, see <http://www.gnu.org/licenses/>.
 
-require "mod/room"
+require "mod/dm/room"
 
 require "util/warn"
 
@@ -61,12 +61,12 @@ class Resource
 
    # Update the reporter
    def update_reporter player, room
-      @reporter.update_player_status player, room.describe
+      @reporter.update_player player, room.describe
    end
 
    # Update the global status
    def update_reporter_global room
-      @reporter.update_global_status room.describe
+      @reporter.update_everyone room.describe
    end
 
 end

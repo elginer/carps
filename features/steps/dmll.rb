@@ -1,21 +1,23 @@
-require "mod/room"
-require "mod/reporter"
-require "mod/resource"
+require "mod/dm/room"
+require "mod/dm/reporter"
+require "mod/dm/resource"
+
+require "mod/question"
 
 Given /^all players are in the (.+)$/ do |room_name|
    $resource.everyone_in room_name
+end
+
+Then /^the reporter is registered with the resource manager$/ do
+   $resource.reporter = $reporter
 end
 
 Given /^(.+) is in the (.+)$/ do |moniker, room|
    $resource.player_in moniker, room
 end
 
-Given /^an email address for player (\d)$/ do |num|
-  $last_email = num + "@players"
-end
-
-Then /^associate player (\d+)'s email address with a moniker$/ do |num|
-   $reporter.add_player $last_email
+Given /^a player called (.+)$/ do |moniker|
+   $reporter.add_player moniker
 end
 
 Given /^a resource manager$/ do
@@ -23,18 +25,26 @@ Given /^a resource manager$/ do
 end
 
 Given /^a reporter$/ do
-   $reporter = Reporter.new $resource
+   $reporter = Reporter.new
 end
 
 Then /^customize report for (.+)$/ do |player|
-   $reporter.edit player, $editor
+   $reporter.edit player
 end
 
-Then /^describe the room to each player$/ do
+Then /^take player turns$/ do
    turns = $reporter.player_turns
-   turns.each do |mail, turn|
-      puts "For " + mail + ":"
+   turns.each do |moniker, turn|
       answers = turn.take
+      answers.from = moniker
       answers.display
    end
+end
+
+Then /^ask everyone (.+)$/ do |question|
+   $reporter.ask_everyone [Question.new(question)]
+end
+
+Then /^ask (.+) only: (.+)$/ do |player, question|
+   $reporter.ask_player player, [Question.new(question)]
 end
