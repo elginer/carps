@@ -22,7 +22,7 @@ require "mod/character_sheet"
 require "mod/dm/reporter"
 require "mod/dm/character"
 
-require "util/editor"
+require "util/warn"
 
 # Class for DM mods
 #
@@ -34,31 +34,36 @@ class Mod
    def initialize resource, mailer
       @mailer = mailer
       @resource = resource
-      @reporter = Reporter.new resource
+      @reporter = Reporter.new
       @monikers = {}
       @mails = {}
       @answers = {}
       @character_sheets = {}
-      receive mail
+      @semaphore = Mutex.new
+      receive
    end
 
-   # Receive mail
-   def receive mail
-      Thread.fork do
-         loop do
-            @mailer.read Answers
-            sleep 1
-         end
-      end
-      Thread.fork do
-         loop do
-            @mailer.read CharacterSheet
-            sleep 1
-         end
+
+
+   # Inspect reports
+   def inspect_reports
+      turns = @reporter.player_turns
+      turns.each do |moniker, t|
+         puts "Upcoming turn for " + moniker
+         t.preview
       end
    end
 
-   # A new turn
+   # Send the reports
+   def send_reports
+      turns = @reporter.player_turns
+      turns.each do |moniker, t|
+         addr = @monikers[moniker]
+         @mailer.send addr, t
+      end
+   end
+
+   # Next turn 
    def next_turn
       @reporter.update_everyone ""
       @reporter.ask_everyone []
@@ -72,9 +77,17 @@ class Mod
    # Add a player
    def add_player email
       moniker = question "Enter moniker for " + email
+      new_player moniker, email
+   end
+
+   # Add a player with a moniker
+   def add_known_player moniker, email
+      @reporter.add_player moniker
       @monikers[moniker] = email
       @mails[email] = moniker
-      request_character_sheet moniker, email
+      @character_sheets[moniker] = []
+      @answers[moniker] = []
+      request_character_sheet moniker
    end
 
    # List all the players
@@ -86,33 +99,36 @@ class Mod
    end
 
    # Search for mail
-   #
-   # Not re-entrant
    def search mail
-      mail.reject! do |moniker, mail_list|
-         mail_list.empty?   
+      found = nil
+      @semaphore.synchronize do
+         mail.each do |moniker, inbox|
+            unless inbox.empty?
+               found = [moniker, inbox.shift]
+               break
+            end
+         end
       end
-      if mail.empty?
-         return nil
-      else
-         return mail.shift
-      end
+      return found
    end
 
    # Check for mail 
    def check_mail
       if mail = search(@character_sheets)
          new_character_sheet *mail
+         return true
       elsif result = search(@answers)
          new_answer *mail
+         return true
       else
          puts "No new mail."
+         return false
       end
    end
 
    # Register a new character sheet
    def new_character_sheet moniker, sheet
-      if sheet.verify schema
+      unless sheet.syntax_error schema
          if sheet.verify_semantics semantic_verifier
             Ch.create moniker, sheet
          end
@@ -120,7 +136,7 @@ class Mod
    end
 
    # The semantic verifier
-   def semantic_verifier sheet
+   def semantic_verifier
       NullVerifier.new
    end
 
@@ -131,13 +147,35 @@ class Mod
    end
 
    # Request a character sheet from the player
-   def request_character_sheet moniker, email
-      send email, CharacterSheetRequest.new(blank_character_sheet)
+   def request_character_sheet moniker
+      email = @monikers[moniker]
+      @mailer.send email, CharacterSheetRequest.new(schema)
    end
 
-   # Set the gateway
-   def gateway= gate
-      @gateway = gate
+   private
+
+   # Receive mail
+   def receive
+      receive_mails Answers, @answers
+      receive_mails CharacterSheet, @character_sheets
+   end
+
+   def receive_mails klass, hash
+      Thread.fork do
+         loop do
+            mail = @mailer.read klass
+            moniker = @mails[mail.from]
+            @semaphore.synchronize do
+               inbox = hash[moniker]
+               if inbox
+                  inbox.push mail
+               else
+                  warn "Unwanted email from #{mail.from}"
+               end
+            end
+            sleep 1
+         end
+      end
    end
 
 end

@@ -45,9 +45,19 @@ class CharacterSheetRequest < Message
       V.character_sheet_request @schema.to_yaml
    end
 
+   # Create a sheet
+   def create_sheet
+      sheet = "# Character sheet\n"
+      @schema.each do |field, type|
+         sheet += "# #{field} is #{type}\n"
+         sheet += "#{field}: \n"
+      end
+      sheet
+   end
+
    # Fill in the sheet 
    def fill 
-      editor = Editor.new "editor"
+      editor = Editor.new "editor.yaml"
       sheet = create_sheet
       filled = nil 
       until filled
@@ -59,7 +69,11 @@ class CharacterSheetRequest < Message
             puts e
          end
          character_sheet = CharacterSheet.new sheet_map 
-         if character_sheet.verify @schema
+         failure = character_sheet.syntax_error @schema
+         if failure
+            puts "Character sheet was incorrect:"
+            puts failure
+         else
             filled = character_sheet
          end
       end

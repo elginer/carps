@@ -53,32 +53,34 @@ class CharacterSheet < Message
    # Perform semantic analysis
    def verify_semantics verifyer
       valid = verifyer.verify @sheet
+      display
       if valid
-         display
          return confirm "Is the above character sheet correct?"
       else
+         puts "Invalid character sheet."
          return false
       end
    end
 
    # Verify the sheet's syntax.
-   def verify schema
-      mechanical_verify schema
+   def syntax_error schema
+      schema.each do |field, type|
+         valid, coerced = verify_type @sheet[field], type
+         if valid
+            @sheet[field] = coerced
+         else
+            return field + " was not " + type
+         end
+      end
+      return nil
+   end
+
+   # Dump the sheet!
+   def dump
+      @sheet
    end
 
    private
-
-   def mechanical_verify schema
-      schema.each do |field, type|
-         coerced = verify_type @sheet[field], type
-         if coerced 
-            @sheet[field] = coerced
-         else
-            return false
-         end
-      end
-      return true
-   end
 
    def verify_type val, type_str
       optional_math = type_str.match /^\s+optional\s+(\S+)\s+$/

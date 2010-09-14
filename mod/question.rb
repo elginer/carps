@@ -48,6 +48,11 @@ class Question < Message
    def ask answers
       response = question @text
       answers.answer @text, response
-   end 
+   end
+
+   # Preview the question
+   def preview
+      puts "Question: " + @text
+   end
 
 end

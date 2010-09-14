@@ -20,24 +20,22 @@
 # Subclasses should provide a method called coercion, which should return a symbol referring to a method which coerces a value into a different type (example, :to_s)
 class SheetType
 
-   def initialize optional, val
+   def initialize optional
       @optional = optional
-      @val = val
    end
 
-   def verify
+   def verify val
       coercable = val.respond_to?(coercion)
-      if @optional
-         if @val == nil
+      if val == nil
+         if @optional
             return [true, nil]
-         elsif coercable
-            if empty
-               return [true, nil]
-            end
          end
-      end
-      if coercable
-         [true, val.send(coercion)]
+      elsif coercable
+         if empty(val) and @optional
+            return [true, nil]
+         else
+            [true, val.send(coercion)]
+         end
       else
          [false, nil]
       end
@@ -51,7 +49,7 @@ class SheetInt < SheetType
       :to_i
    end
 
-   def empty
+   def empty val
       false
    end
 
@@ -63,19 +61,23 @@ class SheetText < SheetType
       :to_s
    end
 
-   def empty
-      @val.empty?
+   def empty val
+      if val.class == String
+         return val.empty?
+      else
+         return false
+      end
    end
 
 end
 
 # Parse the sheet types from strings
 class TypeParser
-   def TypeParser.parse type_name
+   def TypeParser.parse optional, type_name
       if type_name == "integer"
-         return SheetInt.new
+         return SheetInt.new optional 
       elsif type_name == "text"
-         return SheetText.new
+         return SheetText.new optional
       end
    end
 end

@@ -22,7 +22,8 @@ require "ostruct"
 # Subclasses must override character method to return class of character
 class Ch
 
-   def Ch.create moniker, sheet
+   def Ch.create moniker, char_sheet
+      sheet = char_sheet.dump
       klass = self.to_s
       self.class_eval <<-"END"
          char_sheet = #{sheet}

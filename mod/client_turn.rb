@@ -58,6 +58,14 @@ class ClientTurn < Message
       K.client_turn + @status.emit + question_text
    end
 
+   # Preview the turn
+   def preview
+      @status.display
+      @questions.each do |q|
+         q.preview
+      end
+   end
+
    # Take the turn, return list of answers
    def take
       @status.display
