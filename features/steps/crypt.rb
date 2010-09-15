@@ -56,10 +56,14 @@ end
 Then /^Alice initiates a handshake request and Bob accepts$/ do
    Thread.fork do
       bchild = $bob.expect_handshake
-      bchild.join
+      if bchild
+         bchild.join
+      end
       $bob_box.shutdown
    end
    child = $alice.handshake $bob_address
-   child.join
+   if child
+      child.join
+   end
    $alice_box.shutdown
 end

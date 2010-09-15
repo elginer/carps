@@ -60,22 +60,26 @@ class Mailer
 
       # Perform a handshake to authenticate with a peer
    def handshake to
-      Thread.fork do
-         puts "Offering cryptographic handshake to #{to}"
-         # Create a new peer
-         peer = Peer.new to
-         @mailbox.add_peer peer
-         # Request a handshake 
-         send to, Handshake.new
-         # Get the peer's key
-         their_key = @mailbox.insecure_read PublicKey, to
-         peer.your_key their_key.key
-         write_peer peer
-         # Send our key
-         send to, PublicKey.new(@public_key)
-         # Receive an okay message
-         read AcceptHandshake, to
-         puts "Established spoof-proof communications with #{to}"
+      if @mailbox.peer? to
+         puts "No need for handshake: " + to + " is already a known peer."
+      else
+         Thread.fork do
+            puts "Offering cryptographic handshake to #{to}"
+            # Create a new peer
+            peer = Peer.new to
+            @mailbox.add_peer peer
+            # Request a handshake 
+            send to, Handshake.new
+            # Get the peer's key
+            their_key = @mailbox.insecure_read PublicKey, to
+            peer.your_key their_key.key
+            write_peer peer
+            # Send our key
+            send to, PublicKey.new(@public_key)
+            # Receive an okay message
+            read AcceptHandshake, to
+            puts "Established spoof-proof communications with #{to}"
+         end
       end
    end
 
@@ -89,24 +93,25 @@ class Mailer
       from = handshake.from
       puts "Receiving handshake request from #{from}."
       if @mailbox.peer? from
-         warn "#{from} is already a registered peer.  This could be an attempt to conduct a spoofing attack."
-      end
-      # See if the user accepts the handshake.
-      accept = confirm "Accept handshake from #{from}?"
-      Thread.fork do
-         if accept
-            # Send our key to the peer
-            send from, PublicKey.new(@public_key)
-            # Get their key
-            peer_key = @mailbox.insecure_read PublicKey, from
-            # Create a new peer
-            peer = Peer.new from
-            @mailbox.add_peer peer
-            peer.your_key peer_key.key
-            write_peer peer
-            # Send an okay message
-            send from, AcceptHandshake.new
-            puts "Established spoof-proof communications with #{from}."
+         warn "Handshake request from #{from} has been dropped because #{from} is already a known peer",  "Possible spoofing attack."
+      else
+         # See if the user accepts the handshake.
+         accept = confirm "Accept handshake from #{from}?"
+         Thread.fork do
+            if accept
+               # Send our key to the peer
+               send from, PublicKey.new(@public_key)
+               # Get their key
+               peer_key = @mailbox.insecure_read PublicKey, from
+               # Create a new peer
+               peer = Peer.new from
+               @mailbox.add_peer peer
+               peer.your_key peer_key.key
+               write_peer peer
+               # Send an okay message
+               send from, AcceptHandshake.new
+               puts "Established spoof-proof communications with #{from}."
+            end
          end
       end
    end
@@ -142,7 +147,7 @@ class Mailer
       puts "#{message.class} sent to " + to
    end
 
-   # Send an evil message for testing.  The recipent should drop this.
+   # Send an evil message, as part of whole system testing.  The recipent should drop this.
    def evil to, message
       text = message.emit
       # Sign the message
