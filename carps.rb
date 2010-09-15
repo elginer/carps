@@ -26,18 +26,17 @@ require "service/server_parser"
 
 require "util/error"
 require "util/init"
+require "util/files"
 
 # Choose which game we are to play
 def choose_game
    games_dir = $CONFIG + "/games"
-   game_files = Dir.open(games_dir).entries.reject do |game_file|
-      game_file[0] == "." or File.ftype(games_dir + game_file) != "file" 
-   end
+   game_files = files games_dir 
    if game_files.empty?
       fatal "You need to create a game inside the games directory first."
    end
    games = game_files.map do |game_file|
-      GameConfig.new "games/" + game_file
+      GameConfig.new game_file
    end
    if games.size == 1
       game = games[0]

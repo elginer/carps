@@ -18,6 +18,10 @@
 require "util/warn"
 require "protocol/keyword"
 
+require "openssl"
+
+require "yaml"
+
 # Clean the end of an email
 #
 # Strip the last end marker and any text after it 
@@ -46,7 +50,7 @@ def security_info blob
 end
 
 # Peers  
-class Peer
+class Peer < YamlConfig
 
    # Extend protocol for signed data
    protoval :sig 
@@ -54,6 +58,10 @@ class Peer
    # Create a new peer
    def initialize addr
       @addr = addr
+   end
+
+   def addr
+      @addr
    end
 
    # Tell this peer its key
@@ -72,4 +80,26 @@ class Peer
          return false
       end
    end
+
+   # Emit this peer as a yaml document
+   def to_yaml
+      {"addr" => @addr, "key" => @peer_key.to_pem}.to_yaml
+   end
+
+   private
+
+   def parse_yaml conf
+      key_pem = read_conf conf, "key"
+      addr = read_conf conf, "addr"
+
+      key = OpenSSL::PKey::DSA.new key_pem
+      [key, addr]
+   end
+
+   def load_resources key, addr
+      p = Peer.new addr
+      p.your_key key
+      p
+   end
+
 end

@@ -21,18 +21,16 @@ require "protocol/keyword"
 require "util/warn"
 require "util/question"
 require "util/process"
+require "util/files"
 
 require "crypt/handshake"
 require "crypt/public_key"
 require "crypt/accept_handshake"
 require "crypt/peer"
-require "crypt/mailbox"
 
 require "digest/md5"
 
 require "openssl"
-
-require "highline"
 
 init_threading
 
@@ -51,22 +49,118 @@ class Mailer
    # The third is the mail sender.
    #
    # The fourth is a message parser
-   def initialize address, receiver, sender, parser
+   def initialize address, mailbox 
       @addr = address 
-      @mailbox = Mailbox.new sender, receiver, parser
+      @mailbox = mailbox
       @private_key = get_keys
       @public_key = @private_key.public_key
+      # Load the old peers
+      load_peers
+   end
+
+      # Perform a handshake to authenticate with a peer
+   def handshake to
       Thread.fork do
+         puts "Offering cryptographic handshake to #{to}"
+         # Create a new peer
+         peer = Peer.new to
+         @mailbox.add_peer peer
+         # Request a handshake 
+         send to, Handshake.new
+         # Get the peer's key
+         their_key = @mailbox.insecure_read PublicKey, to
+         peer.your_key their_key.key
+         write_peer peer
+         # Send our key
+         send to, PublicKey.new(@public_key)
+         # Receive an okay message
+         read AcceptHandshake, to
+         puts "Established spoof-proof communications with #{to}"
+      end
+   end
+
+   # Wait the someone to begin the handshake
+   #
+   # A British stereotype?
+   def expect_handshake
+      # Get the handshake 
+      handshake = @mailbox.insecure_read Handshake
+      # Get the peer's address
+      from = handshake.from
+      puts "Receiving handshake request from #{from}."
+      if @mailbox.peer? from
+         warn "#{from} is already a registered peer.  This could be an attempt to conduct a spoofing attack."
+      end
+      # See if the user accepts the handshake.
+      accept = confirm "Accept handshake from #{from}?"
+      Thread.fork do
+         if accept
+            # Send our key to the peer
+            send from, PublicKey.new(@public_key)
+            # Get their key
+            peer_key = @mailbox.insecure_read PublicKey, from
+            # Create a new peer
+            peer = Peer.new from
+            @mailbox.add_peer peer
+            peer.your_key peer_key.key
+            write_peer peer
+            # Send an okay message
+            send from, AcceptHandshake.new
+            puts "Established spoof-proof communications with #{from}."
+         end
+      end
+   end
+
+   # Expect handshakes
+   def expect_handshakes
+      @child = Thread.fork do
          loop do 
             expect_handshake
          end
       end
    end
 
+   # Shutdown the mailbox
+   def shutdown
+      @child.kill
+      @mailbox.shutdown
+   end
+
    # Give our address to interested parties
    def address
       @addr
    end
+
+   # Send a message
+   def send to, message
+      text = message.emit
+      # Sign the message
+      digest = Digest::MD5.digest text
+      sig = @private_key.syssign digest
+      mail = (V.addr @addr) + (V.sig sig) + text + K.end
+      @mailbox.send to, mail
+      puts "#{message.class} sent to " + to
+   end
+
+   # Send an evil message for testing.  The recipent should drop this.
+   def evil to, message
+      text = message.emit
+      # Sign the message
+      digest = Digest::MD5.digest text
+      puts "sent digest (as part of an evil scheme): " + digest
+      new_key = OpenSSL::PKey::DSA.new 2048
+      sig = new_key.syssign digest
+      mail = (V.addr @addr) + (V.sig sig) + text + K.end
+      @mailbox.send to, mail
+      puts "Message sent to " + to
+   end
+
+   # Receive a message
+   def read type, must_be_from=nil
+      @mailbox.read type, must_be_from
+   end
+
+   private
 
    # Get cryptographic keys
    #
@@ -104,83 +198,36 @@ class Mailer
       key
    end
 
-   # Send a message
-   def send to, message
-      text = message.emit
-      # Sign the message
-      digest = Digest::MD5.digest text
-      sig = @private_key.syssign digest
-      mail = (V.addr @addr) + (V.sig sig) + text + K.end
-      @mailbox.send to, mail
-      puts "#{message.class} sent to " + to
+
+   # Peer directory
+   def peer_dir
+      # Yes, this is strange.  It's to cope with needed to have two mailers at once for testing, which never would normally happen.
+      # In other words, global variables are bad and Haskell is right.
+      unless @peer_dir
+         @peer_dir = $CONFIG + "/.peers/"
+      end
+      @peer_dir
    end
 
-   # Send an evil message for testing.  The recipent should drop this.
-   def evil to, message
-      text = message.emit
-      # Sign the message
-      digest = Digest::MD5.digest text
-      puts "sent digest (as part of an evil scheme): " + digest
-      new_key = OpenSSL::PKey::DSA.new 2048
-      sig = new_key.syssign digest
-      mail = (V.addr @addr) + (V.sig sig) + text + K.end
-      @mailbox.send to, mail
-      puts "Message sent to " + to
-   end
-
-   # Receive a message
-   def read type, must_be_from=nil
-      @mailbox.read type, must_be_from
-   end
-
-   # Perform a handshake to authenticate with a peer
-   def handshake to
-      Thread.fork do
-         puts "Offering cryptographic handshake to #{to}"
-         # Create a new peer
-         peer = Peer.new to
-         @mailbox.add_peer to, peer
-         # Request a handshake 
-         send to, Handshake.new
-         # Get the peer's key
-         their_key = @mailbox.insecure_read PublicKey, to
-         peer.your_key their_key.key
-         # Send our key
-         send to, PublicKey.new(@public_key)
-         # Receive an okay message
-         read AcceptHandshake, to
-         puts "Established spoof-proof communications with #{to}"
+   # Load previous peers
+   def load_peers
+      peer_file_names = files peer_dir
+      peer_file_names.each do |p|
+         load_peer p
       end
    end
 
-   # Wait the someone to begin the handshake
-   #
-   # A British stereotype?
-   def expect_handshake
-      # Get the handshake 
-      handshake = @mailbox.insecure_read Handshake
-      # Get the peer's address
-      from = handshake.from
-      puts "Receiving handshake request from #{from}."
-      if @mailbox.peer? from
-         warn "#{from} is already a registered peer.  This could be an attempt to conduct a spoofing attack."
-      end
-      # See if the user accepts the handshake.
-      accept = confirm "Accept handshake from #{from}?"
-      Thread.fork do
-         if accept
-            # Send our key to the peer
-            send from, PublicKey.new(@public_key)
-            # Get their key
-            peer_key = @mailbox.insecure_read PublicKey, from
-            # Create a new peer
-            peer = Peer.new from
-            @mailbox.add_peer from, peer
-            peer.your_key peer_key.key
-            # Send an okay message
-            send from, AcceptHandshake.new
-            puts "Established spoof-proof communications with #{from}."
-         end
-      end
+   # Load a peer
+   def load_peer peer_file_name
+      peer = Peer.load ".peers/" + File.basename(peer_file_name) 
+      @mailbox.add_peer peer
    end
+
+   # Note a new peer
+   def write_peer peer
+      pf = File.new peer_dir + peer.addr, "w"
+      pf.write peer.to_yaml
+      pf.close
+   end
+
 end

@@ -22,31 +22,23 @@ require "yaml"
 # Configuration files that read yaml
 class YamlConfig 
 
+   # Load a yaml file.
+   # Provided so subclasses can override initialize
+   def YamlConfig.load filepath
+      config = self.allocate
+      config.read filepath
+   end
+
    # Takes as an argument a path to a yaml configuration file
    def initialize filepath
-      read $CONFIG + filepath
-   end
-
-   # Subclasses must create a method parse_yaml which takes YAML returns an array
-   def parse_yaml conf
-      []
-   end
-
-   # Subclasses may create a method load_resource
-   #
-   # This is called after parse_yaml - hence errors which occur here are not attributed to parsing the configuration file
-   #
-   # Takes each element of parse_yaml's return array as an argument, as in
-   # it is called with the result of parse_yaml, like so: 
-   #
-   # load_resources *parse_yaml conf 
-   def load_resources forget
+      read filepath
    end
 
    # Read a resource using the subclass' parse_yaml.
    #
    # Then load this resource using the subclass' load_resource
    def read filepath
+      filepath = $CONFIG + filepath
       contents = ""
       result = nil
       # Try to read the  file
@@ -68,6 +60,24 @@ class YamlConfig
       if result
          load_resources *result
       end
+   end
+
+   protected
+
+   # Subclasses must create a method parse_yaml which takes YAML returns an array
+   def parse_yaml conf
+      []
+   end
+
+   # Subclasses may create a method load_resource
+   #
+   # This is called after parse_yaml - hence errors which occur here are not attributed to parsing the configuration file
+   #
+   # Takes each element of parse_yaml's return array as an argument, as in
+   # it is called with the result of parse_yaml, like so: 
+   #
+   # load_resources *parse_yaml conf 
+   def load_resources forget
    end
 
    # Attempt to find field within the conf hash

@@ -46,8 +46,8 @@ class Mailbox
    end
 
    # Add a new peer
-   def add_peer addr, peer
-      @peers[addr] = peer
+   def add_peer peer
+      @peers[peer.addr] = peer
    end
 
    # Is this already a peer?
@@ -143,11 +143,16 @@ class Mailbox
 
    # Receive new mail
    def receive_forever
-      Thread.fork do
+      @child = Thread.fork do
          loop do
             receive_new
          end
       end
+   end
+
+   # Shutdown the mailbox
+   def shutdown
+      @child.kill
    end
 
    # Read new mail messages into the mail box
