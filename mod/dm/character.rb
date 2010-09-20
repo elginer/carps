@@ -22,8 +22,7 @@ require "ostruct"
 # Subclasses must override character method to return class of character
 class Ch
 
-   def Ch.create moniker, char_sheet
-      sheet = char_sheet.dump
+   def Ch.create moniker, sheet
       klass = self.to_s
       self.class_eval <<-"END"
          char_sheet = #{sheet}
@@ -38,6 +37,14 @@ class Ch
       Character
    end
 
+end
+
+# Generic Ch subclass for NPCs
+class NPC < Ch
+end
+
+# Generic Ch subclass for Players
+class PC < Ch
 end
 
 # Allow the dungeon master to inspect and modify character sheets

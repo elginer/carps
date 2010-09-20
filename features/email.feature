@@ -4,11 +4,11 @@ Feature: email
    Send and receive emails
 
    Scenario: send email
-      Given carps is initialized with client
+      Given carps is initialized with test/client
       Given the email account
       Then an email is sent
 
    Scenario: receive email
-      Given carps is initialized with client
+      Given carps is initialized with test/client
       Given the email account
       Then an email is received

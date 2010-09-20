@@ -1,6 +1,7 @@
 require "mod/dm/room"
 require "mod/dm/reporter"
 require "mod/dm/resource"
+require "mod/dm/character"
 
 require "mod/question"
 
@@ -47,4 +48,12 @@ end
 
 Then /^ask (.+) only: (.+)$/ do |player, question|
    $reporter.ask_player player, [Question.new(question)]
+end
+
+Given /^an NPC called (.+) of type (.+)$/ do |name, type|
+   $resource.new_npc type, name, NPC
+end
+
+Then /^report the strength of the NPC paul to (.+)$/ do |name|
+   $reporter.update_player name, "Paul's strength is #{NPC.paul.strength}"
 end

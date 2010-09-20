@@ -130,7 +130,7 @@ class Mod
    def new_character_sheet moniker, sheet
       unless sheet.syntax_error schema
          if sheet.verify_semantics semantic_verifier
-            Ch.create moniker, sheet
+            Ch.create moniker, sheet.dump
          end
       end
    end

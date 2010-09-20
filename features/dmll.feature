@@ -14,7 +14,7 @@ Feature: Low-level DM interface components
       Given a resource manager
       Given a reporter
       Then the reporter is registered with the resource manager
-      Given carps is initialized with server
+      Given carps is initialized with test/server
       Then a player called barry
       Given all players are in the cave
       Then customize report for barry 
@@ -52,4 +52,12 @@ Feature: Low-level DM interface components
       Given a player called paul
       Then ask barry only: do you like paul?
       Then ask paul only: does barry smell?
+      Then take player turns
+
+   Scenario: create NPC
+      Given a resource manager
+      Given a reporter
+      Given a player called barry
+      Given an NPC called paul of type human
+      Then report the strength of the NPC paul to barry
       Then take player turns

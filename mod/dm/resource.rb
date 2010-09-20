@@ -19,12 +19,27 @@ require "mod/dm/room"
 
 require "util/warn"
 
+require "yaml"
+
 # Resource manager
 class Resource
 
    # Takes as an argument a directory containing resources
    def initialize rdir
       @dir = rdir
+   end
+
+   # Create a new npc of a given type with a given name and store it in the character container class
+   def new_npc type, name, npc
+      sheet_loc = @dir + "/npcs/" + type + ".yaml"
+      ya = nil
+      begin
+         ya = YAML::load File.read sheet_loc
+      rescue
+         warn "Could not create NPC: " + sheet_loc
+         return
+      end
+      npc.create name, ya
    end
 
    # Put everyone in this room

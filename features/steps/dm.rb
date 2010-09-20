@@ -54,12 +54,7 @@ When /^barry joins the mod$/ do
 end
 
 Then /^set barry's status conditionally$/ do
-   puts "If barry is a banana, then his status shall be 'socks', otherwise 'rambo'"
-   if Ch.barry.fruit == "banana"
-      $mod.update_barry "socks"
-   else
-      $mod.update_barry "rambo"
-   end
+   $mod.update_barry "You are a #{Ch.barry.fruit}"
 end
 
 Then /^preview player turns$/ do
