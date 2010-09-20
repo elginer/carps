@@ -1,7 +1,8 @@
 require "mod/status_report"
-require "mod/question"
 require "mod/answers"
 require "mod/client_turn"
+
+require "mod/question"
 
 Given /^a status report$/ do
    $status = StatusReport.new "This is some might important information here!"

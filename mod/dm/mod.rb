@@ -18,6 +18,7 @@
 require "mod/character_sheet_request"
 require "mod/answers"
 require "mod/character_sheet"
+require "mod/question"
 
 require "mod/dm/reporter"
 require "mod/dm/character"
@@ -25,6 +26,8 @@ require "mod/dm/character"
 require "util/warn"
 
 # Class for DM mods
+#
+# Functions as a facade to the resource, mailer and reporter classes.
 #
 # Subclasses should override
 # interpreter, schema, semantic_verifier
@@ -34,6 +37,7 @@ class Mod
    def initialize resource, mailer
       @mailer = mailer
       @resource = resource
+      @resource.reporter = resource
       @reporter = Reporter.new
       @monikers = {}
       @mails = {}
@@ -43,9 +47,52 @@ class Mod
       receive
    end
 
+   # Ask a question of the player
+   def ask_player player, question
+      @reporter.ask_player player, question
+   end
 
+   # Ask a question of everyone
+   def ask_everyone question
+      @reporter.ask_everyone question
+   end
 
-   # Inspect reports
+   # Delete questions for a player
+   def delete_questions player
+      @reporter.delete_questions player
+   end
+
+   # Delete all questions
+   def delete_all_questions
+      @reporter.delete_all_questions
+   end
+
+   # Delete all reports
+   def delete_all_reports
+      @reporter.update_everyone ""
+   end
+
+   # Delete a player's report
+   def update_player player
+      @reporter.update_player player, ""
+   end
+
+   # All players are in this room
+   def everyone_in room
+      @resource.everyone_in room
+   end
+
+   # A player is in this room
+   def player_in player, room
+      @resource.player_in player, room
+   end
+
+   # Create a new npc
+   def new_npc type, name
+      @resource.new_npc type, name, npc_namespace
+   end
+
+   # Inspect all turns
    def inspect_reports
       turns = @reporter.player_turns
       turns.each do |moniker, t|
@@ -54,17 +101,15 @@ class Mod
       end
    end
 
-   # Send the reports
-   def send_reports
-      turns = @reporter.player_turns
-      turns.each do |moniker, t|
-         addr = @monikers[moniker]
-         @mailer.send addr, t
-      end
+   # Inspect a player's turn
+   def inspect_turn player
+      turn = @reporter.player_turn player
+      t.preview
    end
 
    # Next turn 
    def next_turn
+      send_reports
       @reporter.update_everyone ""
       @reporter.ask_everyone []
    end
@@ -77,7 +122,7 @@ class Mod
    # Add a player
    def add_player email
       moniker = question "Enter moniker for " + email
-      new_player moniker, email
+      add_know_player moniker, email
    end
 
    # Add a player with a moniker
@@ -98,20 +143,6 @@ class Mod
       end
    end
 
-   # Search for mail
-   def search mail
-      found = nil
-      @semaphore.synchronize do
-         mail.each do |moniker, inbox|
-            unless inbox.empty?
-               found = [moniker, inbox.shift]
-               break
-            end
-         end
-      end
-      return found
-   end
-
    # Check for mail 
    def check_mail
       if mail = search(@character_sheets)
@@ -130,14 +161,34 @@ class Mod
    def new_character_sheet moniker, sheet
       unless sheet.syntax_error schema
          if sheet.verify_semantics semantic_verifier
-            Ch.create moniker, sheet.dump
+            player_namespace.create moniker, sheet.dump
          end
       end
    end
 
-   # The semantic verifier
-   def semantic_verifier
-      NullVerifier.new
+   protected
+
+   # Send the reports
+   def send_reports
+      turns = @reporter.player_turns
+      turns.each do |moniker, t|
+         addr = @monikers[moniker]
+         @mailer.send addr, t
+      end
+   end
+
+   # Search for mail
+   def search mail
+      found = nil
+      @semaphore.synchronize do
+         mail.each do |moniker, inbox|
+            unless inbox.empty?
+               found = [moniker, inbox.shift]
+               break
+            end
+         end
+      end
+      return found
    end
 
    # Print the answer
@@ -150,6 +201,19 @@ class Mod
    def request_character_sheet moniker
       email = @monikers[moniker]
       @mailer.send email, CharacterSheetRequest.new(schema)
+   end
+
+   # The semantic verifier
+   def semantic_verifier
+      NullVerifier.new
+   end
+
+   def player_namespace
+      PC
+   end
+
+   def npc_namespace
+      NPC
    end
 
    private
@@ -170,7 +234,7 @@ class Mod
                if inbox
                   inbox.push mail
                else
-                  warn "Unwanted email from #{mail.from}"
+                  warn "BUG:  Unwanted email from #{mail.from}.  However, this should have been handled in another part of the program..."
                end
             end
             sleep 1

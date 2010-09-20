@@ -40,11 +40,10 @@ class Reporter
    # Produce a ClientTurn for the player referred to by the moniker
    def player_turn moniker
       status = StatusReport.new @status[moniker]
-      ClientTurn.new status, @questions[moniker]
+      questions = @questions[moniker].map {|q| Question.new q}
+      ClientTurn.new status, questions 
    end
 
-   # Take a hash of monikers to email addresses
-   #
    # Produce a hash of email address to ClientTurn objects
    def player_turns
       turns = {}
@@ -74,14 +73,26 @@ class Reporter
    end
 
    # Ask a player some questions
-   def ask_player moniker, questions
-      @questions[moniker] = questions
+   def ask_player moniker, question
+      @questions[moniker].push question
+   end
+
+   # Delete all questions for a player
+   def delete_questions moniker
+      @questions[moniker] = []
+   end
+
+   # Delete all questions for all players
+   def delete_all_questions
+      @questions.each_key do |moniker, old|
+         @questions[moniker] = []
+      end
    end
 
    # Ask everyone some questions
-   def ask_everyone questions
+   def ask_everyone question
       @questions.each_key do |moniker|
-         @questions[moniker] = questions
+         @questions[moniker].push question
       end
    end
 

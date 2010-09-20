@@ -1,6 +1,8 @@
 require "mod/dm/mod"
 require "mod/dm/resource"
 
+require "mod/dm/interface"
+
 class TestMod < Mod
    def schema
       {"name" => "text",
@@ -54,7 +56,7 @@ When /^barry joins the mod$/ do
 end
 
 Then /^set barry's status conditionally$/ do
-   $mod.update_barry "You are a #{Ch.barry.fruit}"
+   $mod.update_barry "You are a #{PC.barry.fruit}"
 end
 
 Then /^preview player turns$/ do
@@ -67,4 +69,9 @@ Then /^check barry's sheet$/ do
       received = $mod.check_mail
       sleep 1
    end
+end
+
+Then /^present a user interface to the DM$/ do
+   interface = DMInterface.new $mod
+   interface.run
 end

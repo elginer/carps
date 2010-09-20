@@ -3,8 +3,6 @@ require "mod/dm/reporter"
 require "mod/dm/resource"
 require "mod/dm/character"
 
-require "mod/question"
-
 Given /^all players are in the (.+)$/ do |room_name|
    $resource.everyone_in room_name
 end
@@ -43,11 +41,11 @@ Then /^take player turns$/ do
 end
 
 Then /^ask everyone (.+)$/ do |question|
-   $reporter.ask_everyone [Question.new(question)]
+   $reporter.ask_everyone question
 end
 
 Then /^ask (.+) only: (.+)$/ do |player, question|
-   $reporter.ask_player player, [Question.new(question)]
+   $reporter.ask_player player, question
 end
 
 Given /^an NPC called (.+) of type (.+)$/ do |name, type|
