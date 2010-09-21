@@ -22,7 +22,7 @@ require "util/config.rb"
 require "service/game.rb"
 
 # Class to read game configuration files
-class GameConfig < YamlConfig
+class DMGameConfig < YamlConfig
 
    # Create a new GameConfig
    def initialize mod, campaign, about, players
@@ -34,6 +34,7 @@ class GameConfig < YamlConfig
 
    # Parse a game config file
    def parse_yaml conf
+      @campaign = read_conf conf, "campaign"
       @mod = read_conf conf, "mod"
       @about = read_conf conf, "about"
       @players = read_conf conf, "players"

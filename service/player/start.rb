@@ -17,40 +17,24 @@
 
 require "service/start/interface"
 
-require "util/editor"
+require "service/game"
 
-# Interface for the dm to start games
-class DMStartInterface < StartGameInterface
+# Interface for the player to join games
+class PlayerStartInterface < StartGameInterface
 
    def initialize continuation, mailer, game_config, message_parser
       super
-      add_command "new", "Start a new game.", "NAME", "MOD", "CAMPAIGN"
+      add_command "wait", "Wait for an invitation to join a game."
    end
 
    private
 
-   def new name, mod, campaign
-      editor = Editor.new "editor.yaml"
-      about = editor.edit "<Replace with description of game>"
-      players = get_players
-      config = @game_config.new mod, campaign, about, players
-      config.save name + ".yaml"
-      game = config.spawn @mailer
-      @continuation.call lambda {game.start}
-   end
-
-   def get_players
-      pl = []
-      done = false
-      until done
-         e = question "Enter email address of player to invite.  Leave blank for no more players."
-         if e.empty?
-            done = true
-         else
-            pl.push e
-         end
+   def wait
+      puts "Waiting for an invitation from a DM."
+      invite = @mailer.read Invite
+      if invite.ask
+         @continuation.call lambda {invite.accept @mailer}
       end
-      pl
    end
 
 end

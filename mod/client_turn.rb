@@ -22,8 +22,6 @@ require "protocol/message"
 require "mod/answers"
 require "mod/status_report"
 
-require "highline"
-
 class ClientTurn < Message
 
    # Extend the protocol

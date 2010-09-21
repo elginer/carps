@@ -16,9 +16,10 @@
 # along with CARPS.  If not, see <http://www.gnu.org/licenses/>.
 
 require "protocol/message"
-require "yaml"
 
-require "highline"
+require "util/highlight"
+
+require "yaml"
 
 # A series of answers to questions asked by the DM.
 class Answers < Message
@@ -50,11 +51,10 @@ class Answers < Message
 
    # Display answers
    def display
-      h = HighLine.new
       if @answers.empty?
-         puts h.color("#{from} did not return any answers.", :blue)
+         highlight "#{from} did not return any answers."
       else
-         puts h.color("#{from}'s answers:", :blue)
+         highlight "#{from}'s answers:"
          @answers.each do |que, ans|
             puts ""
             puts h.color(que, :green)
@@ -63,7 +63,7 @@ class Answers < Message
             end
          end
          puts ""
-         puts h.color("End of #{from}'s answers\n", :blue)
+         highlight "End of #{from}'s answers\n"
       end
    end
 end

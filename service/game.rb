@@ -67,7 +67,7 @@ class GameServer < Game
    end
 
    # Invite players to this game and begin
-   def start_game players
+   def start players
 
       # Begin playing
       interface = play
@@ -174,8 +174,8 @@ class Invite < Message
    end
 
    # Accept the invitation
-   def accept account
-      @game.join_game account
+   def accept mailer 
+      @game.join_game mailer
    end
 
    def emit 

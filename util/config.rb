@@ -27,6 +27,7 @@ class YamlConfig
    def YamlConfig.load filepath
       config = self.allocate
       config.read filepath
+      config
    end
 
    # Takes as an argument a path to a yaml configuration file
