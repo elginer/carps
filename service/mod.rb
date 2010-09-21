@@ -21,7 +21,7 @@ require "yaml"
 
 # Load the available mods 
 def load_mods
-   mod_file = $CONFIG + "/mods.yaml"
+   mod_file = $ROOT_CONFIG + "/mods.yaml"
    mods = {}
    yaml = nil
    begin

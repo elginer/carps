@@ -25,6 +25,7 @@ class Interface
    def initialize 
       @commands = {}
       add_command "help", "Displays this help message."
+      add_command "quit", "Exit the program."
    end
 
    # Add a command
@@ -49,6 +50,10 @@ class Interface
    end
 
    protected
+
+   def quit
+      @run = false
+   end
 
    # Check the args are of the correct length
    def check args, length
@@ -85,7 +90,8 @@ class Interface
    end
 
    def repl
-      loop do
+      @run = true
+      while @run
          line = question "Enter command:"
          cmd = line.split /\s+/
          execute cmd
@@ -97,12 +103,7 @@ end
 # Interface which can alter program execution (ie, by terminating)
 class ControlInterface < Interface
 
-   def initialize
-      super
-      add_command "quit", "Exit the program."
-   end
-
-   def quit *args
+   def quit
       puts "Bye!"
       exit
    end

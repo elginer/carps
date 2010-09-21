@@ -25,15 +25,13 @@ require "set"
 # Responsible for launching other CARP processes
 class CARPProcess < YamlConfig
    def parse_yaml conf
-      ruby = read_conf conf, "launch_ruby"
       term = read_conf conf, "launch_terminal"
       port = read_conf(conf, "port").to_i
-      [ruby, term, port]
+      [term, port]
    end
 
-   def load_resources ruby, term, port
+   def load_resources term, port
       @port = port
-      @ruby = ruby
       @term = term
       @used = Set.new
       @semaphore = Mutex.new
