@@ -79,7 +79,7 @@ class GameServer < Game
 
       mod = load_mods[@mod]
       interface = ServerInterface.new @mailer
-      $process.launch interface, mod + "/server.rb"
+      $process.launch interface, mod["host"]
 
       invite = Invite.new self
 
@@ -122,7 +122,7 @@ class GameClient < Game
    # Join this game as a client
    def join_game mailer
       mod = load_mods[@mod]
-      main = mod + "/client.rb"
+      main = mod["play"]
       $process.launch ModInfo.new(@dm, mailer), main
       mailer.send @dm, AcceptInvite.new
    end

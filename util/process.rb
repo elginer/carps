@@ -43,16 +43,15 @@ class CARPProcess < YamlConfig
    def launch resource, program
       ashare resource, lambda { |uri|
          program = program + " " + uri 
-         cmd = ruby_shell_cmd program 
+         cmd = shell_cmd program 
          puts "Launching: #{cmd}"
          exec cmd
       }
    end
 
    # The command which would open a new window running the given command
-   def ruby_shell_cmd program
-      cmd = @term.gsub "%ruby", @ruby
-      cmd.gsub "%args", program
+   def shell_cmd program
+      cmd.gsub "%cmd", program
    end
 
    # Run computation in the second argument in a new process allowing access the first
