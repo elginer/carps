@@ -49,13 +49,15 @@ Given /^a DM mod$/ do
    $mod = TestMod.new resource, $mailer
 end
 
-When /^barry joins the mod$/ do
-   $email = "barry@doodah.xxx"
-   $mod.add_known_player "barry", $email 
+$email = "barry@doodah.xxx"
+
+When /^(.+) joins the mod$/ do |name|
+   $mod.add_known_player name, $email 
 end
 
-Then /^set barry's status conditionally$/ do
-   $mod.update_barry "You are a #{PC.barry.fruit}"
+Then /^set (.+)'s status conditionally$/ do |name|
+   player = $mod.player_stats(name)
+   $mod.update_barry "You are a #{player["fruit"]}"
 end
 
 Then /^preview player turns$/ do
@@ -70,18 +72,25 @@ Then /^check barry's sheet$/ do
    end
 end
 
+Then /^someone requests to join the mod$/ do
+   $mod.add_player $email
+end
+
 Then /^present a user interface to the DM$/ do
-   interface = DMInterface.new $mod
-   child = fork do
-      interface.run
+   DMInterface.class_eval <<-END
+   def quit
+      @run = false
    end
-   Process.wait child
+   END
+   interface = DMInterface.new $mod
+   interface.run
 end
 
 Then /^create an NPC called (.+) of type (.+)$/ do |name, type|
    $mod.new_npc type, name
 end
 
-Then /^report the strength of the NPC paul to (.+)$/ do |name|
-   $mod.update_player name, "Paul's strength is #{NPC.paul.strength}"
+Then /^report the strength of the NPC (.+) to (.+)$/ do |npc_name, name|
+   npc = $mod.npc_stats npc_name
+   $mod.update_player name, "#{npc_name}'s strength is #{npc["strength"]}"
 end

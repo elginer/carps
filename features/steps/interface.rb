@@ -1,6 +1,8 @@
 require "service/interface"
 
-class Cheesey < ControlInterface
+class Cheesey < Interface
+
+   include ControlInterface
 
    def initialize
       super

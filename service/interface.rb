@@ -101,7 +101,7 @@ class Interface
 end
 
 # Interface which can alter program execution (ie, by terminating)
-class ControlInterface < Interface
+module ControlInterface 
 
    def quit
       puts "Bye!"

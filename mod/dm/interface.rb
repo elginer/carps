@@ -15,21 +15,24 @@
 # You should have received a copy of the GNU General Public License
 # along with CARPS.  If not, see <http://www.gnu.org/licenses/>.
 
-require "service/interface"
+require "mod/interface"
 
 require "util/editor"
 
 # A basic user interface for the dm
 #
 # Subclass this interface to provide commands
-class DMInterface < ControlInterface
+class DMInterface < RolePlayInterface
 
    def initialize mod
       super()
       @mod = mod
       @editor = Editor.new "editor.yaml"
       add_command "mail", "Check for new emails."
-      add_command "players", "List all players"
+      add_command "players", "Describe all players."
+      add_command "player", "Describe one player.", "PLAYER"
+      add_command "minions", "Describe all NPCs."
+      add_command "minion", "Describe one NPC.", "NPC"
       add_command "warp", "Put all player in this room.", "ROOM"
       add_command "room", "Put one player in this room.", "PLAYER", "ROOM"
       add_command "npc", "Create a new npc", "TYPE", "NAME"

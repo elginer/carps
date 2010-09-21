@@ -30,7 +30,7 @@ require "util/warn"
 # Functions as a facade to the resource, mailer and reporter classes.
 #
 # Subclasses should override
-# interpreter, schema, semantic_verifier
+# schema, semantic_verifier
 class Mod
 
    # Initialize with a resource manager, and a mailer 
@@ -39,6 +39,8 @@ class Mod
       @resource = resource
       @resource.reporter = resource
       @reporter = Reporter.new
+      @players = {}
+      @npcs = {}
       @monikers = {}
       @mails = {}
       @answers = {}
@@ -116,8 +118,8 @@ class Mod
 
    # Create a new npc
    def new_npc type, name
-      if npc = @resource.new_npc(type)
-         npc_namespace.create name, npc
+      if char = @resource.new_npc(type)
+         @npcs[name] = npc.new char
       end
    end
 
@@ -155,7 +157,7 @@ class Mod
    # Add a player
    def add_player email
       moniker = question "Enter moniker for " + email
-      add_know_player moniker, email
+      add_known_player moniker, email
    end
 
    # Add a player with a moniker
@@ -168,11 +170,54 @@ class Mod
       request_character_sheet moniker
    end
 
+   # Describe npc
+   def describe_npc npc
+      with_npc npc do
+         unsafe_describe npc
+      end
+   end
+
+   def unsafe_describe_npc
+      puts @npcs[npc].emit
+   end
+
+   # Describe all npcs
+   def list_npcs
+      puts "The NPCs are:"
+      @npcs.each_key do |npc|
+         unsafe_describe_npc npc
+      end
+   end
+
+
+   # Return player stats
+   def player_stats player
+      @players[player]
+   end
+
+   # Return npc stats
+   def npc_stats npc
+      @npcs[npc]
+   end
+
+   # Describe a player
+   def describe_player player
+      with_player player do
+         unsafe_describe_player player
+      end
+   end
+
+   def unsafe_describe_player player
+      mail = @monikers[player]
+      puts mail + " aka " + player + " aka: "
+      puts @players[player].emit
+   end
+
    # List all the players
    def list_players
       puts "The players are:"
-      @monikers.each do |player, mail|
-         puts mail + " aka " + player
+      @players.each_key do |player|
+         unsafe_describe_player player
       end
    end
 
@@ -194,12 +239,20 @@ class Mod
    def new_character_sheet moniker, sheet
       unless sheet.syntax_error schema
          if sheet.verify_semantics semantic_verifier
-            player_namespace.create moniker, sheet.dump
+            @players[moniker] = player.new sheet.dump
          end
       end
    end
 
    protected
+
+   def player
+      Character
+   end
+
+   def npc
+      Character
+   end
 
    # Send the reports
    def send_reports
@@ -241,14 +294,6 @@ class Mod
       NullVerifier.new
    end
 
-   def player_namespace
-      PC
-   end
-
-   def npc_namespace
-      NPC
-   end
-
    private
 
    # Receive mail
@@ -261,9 +306,9 @@ class Mod
       Thread.fork do
          loop do
             mail = @mailer.read klass
-            puts "You have mail.  Go read it!"
-            puts "\a"
             moniker = @mails[mail.from]
+            puts "You have mail from #{mail.from} aka #{moniker}.  Go read it!"
+            puts "\a"
             @semaphore.synchronize do
                inbox = hash[moniker]
                if inbox
