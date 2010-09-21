@@ -16,29 +16,55 @@
 # along with CARPS.  If not, see <http://www.gnu.org/licenses/>.
 
 require "service/interface"
+require "service/game/config"
 
 require "util/editor"
 require "util/question"
+require "util/files"
 
 # Interface for the dm to start games
 class StartGameInterface < Interface
 
-   def initialize
+   def initialize continuation, message_parser
+      @continuation = continuation
+      @message_parser = message_parser
       super
       add_command "new", "Start a new game.", "NAME", "MOD", "CAMPAIGN"
       add_command "games", "List existing games."
       add_command "load", "Load an existing game.", "NAME"
    end
 
+   private
+
+   def games
+      dir = $CONFIG + "/games"
+      fs = files dir
+      fs.each do |f|
+         name = File.basename(f, ".yaml")
+         puts "Game name: " + f
+         g = GameConfig.load f
+         g.display
+      end
+
+   end
+
    def new name, mod, campaign
       editor = Editor.new "editor.yaml"
       about = editor.edit "<Replace with description of game>"
       players = get_players
-      game = GameConfig.new mod, campaign, about, players 
-      
+      config = GameConfig.new mod, campaign, about, players 
+      game = GameConfig.spawn
+      @continuation.call lambda {game.start_game}
    end
 
-   private
+   def load name
+      filename = "games/" + name + ".yaml"
+      config = GameConfig.load filename
+      if config
+         game = GameConfig.spawn
+         @continuation.call lambda {game.resume}
+      end
+   end
 
    def get_players
       pl = []
