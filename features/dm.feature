@@ -10,7 +10,10 @@ Feature: High-level DM interface
 
    Scenario: create npc
       Given a DM mod
-      Then create an NPC of type human called paul
+      Given carps is initialized with test/server
+      Then create an NPC called paul of type human
+      When barry joins the mod
+      Then check barry's sheet
       Then report the strength of the NPC paul to barry
       Then preview player turns
 

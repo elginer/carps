@@ -48,10 +48,7 @@ Then /^ask (.+) only: (.+)$/ do |player, question|
    $reporter.ask_player player, question
 end
 
-Given /^an NPC called (.+) of type (.+)$/ do |name, type|
-   $resource.new_npc type, name, NPC
-end
-
-Then /^report the strength of the NPC paul to (.+)$/ do |name|
-   $reporter.update_player name, "Paul's strength is #{NPC.paul.strength}"
+Then /^create an NPC of type human$/ do
+   npc = $resource.new_npc "human"
+   puts npc.to_s
 end

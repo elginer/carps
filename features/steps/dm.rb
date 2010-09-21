@@ -77,3 +77,11 @@ Then /^present a user interface to the DM$/ do
    end
    Process.wait child
 end
+
+Then /^create an NPC called (.+) of type (.+)$/ do |name, type|
+   $mod.new_npc type, name
+end
+
+Then /^report the strength of the NPC paul to (.+)$/ do |name|
+   $mod.update_player name, "Paul's strength is #{NPC.paul.strength}"
+end

@@ -80,6 +80,11 @@ class Mod
       end
    end
 
+   # Update a player's report
+   def update_player player, report
+      @reporter.update_player player, report
+   end
+
    # Delete all questions
    def delete_all_questions
       @reporter.delete_all_questions
@@ -113,7 +118,6 @@ class Mod
    def new_npc type, name
       if npc = @resource.new_npc(type)
          npc_namespace.create name, npc
-         @npcs.add name
       end
    end
 
