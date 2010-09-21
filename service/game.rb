@@ -19,6 +19,7 @@ require "service/mod"
 require "service/accept_invite"
 
 require "protocol/keyword"
+require "protocol/message"
 
 require "util/question"
 
@@ -28,7 +29,7 @@ require "drb"
 
 # A game
 # Subclasses must write the variables @dm, @mod, @about in their constructors
-class Game
+class Game < Message
 
    # We add a few things to the protocol
    protoval "master"
@@ -56,48 +57,56 @@ class GameServer < Game
 
    # The first parameter is email account information.
    # The second is the mod.
-   # The third is the description.
-   # The fourth is a list of email addresses of players to be invited
-   def initialize mailer, mod, desc, players
+   # The fourth is the description.
+   # The fifth is a list of email addresses of players to be invited
+   def initialize mailer, mod, campaign, desc
       @dm = mailer.address 
       @mailer = mailer 
       @mod = mod
       @about = desc
-      @players = players
    end
 
    # Invite players to this game and begin
-   def start_game 
-      # Perform handshakes
-      threads = @players.map do |player|
-         # Handshakes are done asychronously
-         @mailer.handshake player
-      end
-      threads.each do |thread|
-         thread.join
-      end
+   def start_game players
 
-      mod = load_mods[@mod]
-      interface = ServerInterface.new @mailer
-      $process.launch interface, mod["host"]
+      # Begin playing
+      interface = play
 
-      invite = Invite.new self
-
-      @players.each do |player|
-         puts "Inviting #{player}"
-         # A built in, system wide test
-         if $evil
-            puts "Sending evil message..."
-            @mailer.evil player, invite 
-         else
+      Thread.fork do
+         # Perform handshakes
+         players.each do |player|
+            # Handshakes are done asychronously
+            thread = @mailer.handshake player
+            if thread
+               thread.join
+            end
+            invite = Invite.new self
+   
             @mailer.send player, invite
          end
       end
+      accept_invitations interface
+   end
+
+   def accept_invitations interface
       # Wait for invitation acceptances
       loop do
          accept = @mailer.read AcceptInvite
          interface.acceptance accept
       end
+   end
+
+   def play
+      mod = load_mods[@mod]
+      interface = ServerInterface.new @mailer
+      $process.launch interface, mod["host"] + " " + @campaign
+      interface
+   end
+
+   # Resume this game
+   def resume
+      interface = play
+      accept_invitations interface
    end
 
 end

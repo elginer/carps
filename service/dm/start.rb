@@ -17,6 +17,9 @@
 
 require "service/interface"
 
+require "util/editor"
+require "util/question"
+
 # Interface for the dm to start games
 class StartGameInterface < Interface
 
@@ -25,6 +28,30 @@ class StartGameInterface < Interface
       add_command "new", "Start a new game.", "NAME", "MOD", "CAMPAIGN"
       add_command "games", "List existing games."
       add_command "load", "Load an existing game.", "NAME"
+   end
+
+   def new name, mod, campaign
+      editor = Editor.new "editor.yaml"
+      about = editor.edit "<Replace with description of game>"
+      players = get_players
+      game = GameConfig.new mod, campaign, about, players 
+      
+   end
+
+   private
+
+   def get_players
+      pl = []
+      done = false
+      until done
+         e = question "Enter email address of player to invite.  Leave blank for no more players."
+         if e.empty?
+            done = true
+         else
+            pl.push e
+         end
+         pl
+      end
    end
 
 end

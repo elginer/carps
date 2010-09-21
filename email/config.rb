@@ -24,6 +24,7 @@ require "util/config"
 require "util/question"
 
 require "crypt/mailer"
+require "crypt/mailbox"
 
 require "yaml"
 
@@ -34,8 +35,7 @@ class EmailConfig < YamlConfig
 
    # The first parameter is the config file to read
    # the second is the MessageParser for parsing messages from email
-   def initialize conf, message_parser 
-      @message_parser = message_parser
+   def initialize conf
       super conf
    end
 
@@ -65,7 +65,8 @@ class EmailConfig < YamlConfig
    end
 
    # Return the high level mail client
-   def mailer
-      Mailer.new @address, @imap, @smtp, @message_parser
+   def mailer message_parser
+      mailbox = Mailbox.new @smtp, @imap, message_parser
+      Mailer.new @address, mailbox
    end
 end

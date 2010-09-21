@@ -127,7 +127,9 @@ class Mailer
 
    # Shutdown the mailbox
    def shutdown
-      @child.kill
+      if @child
+         @child.kill
+      end
       @mailbox.shutdown
    end
 
@@ -145,19 +147,6 @@ class Mailer
       mail = (V.addr @addr) + (V.sig sig) + text + K.end
       @mailbox.send to, mail
       puts "#{message.class} sent to " + to
-   end
-
-   # Send an evil message, as part of whole system testing.  The recipent should drop this.
-   def evil to, message
-      text = message.emit
-      # Sign the message
-      digest = Digest::MD5.digest text
-      puts "sent digest (as part of an evil scheme): " + digest
-      new_key = OpenSSL::PKey::DSA.new 2048
-      sig = new_key.syssign digest
-      mail = (V.addr @addr) + (V.sig sig) + text + K.end
-      @mailbox.send to, mail
-      puts "Message sent to " + to
    end
 
    # Receive a message

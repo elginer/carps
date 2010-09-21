@@ -79,7 +79,7 @@ class Message
    #
    # The first parameter is the email address this text is from
    # The second parameter is the text itself.
-   def parse from, text
+   def parse text
       nil
    end
 
