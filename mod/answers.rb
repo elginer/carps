@@ -51,14 +51,19 @@ class Answers < Message
    # Display answers
    def display
       h = HighLine.new
-      puts h.color("#{from}'s answers:", :blue)
-      @answers.each do |que, ans|
-         puts h.color(que, :green)
-         ans.each_line do |ln|
-            puts ">  " + ln
+      if @answers.empty?
+         puts h.color("#{from} did not return any answers.", :blue)
+      else
+         puts h.color("#{from}'s answers:", :blue)
+         @answers.each do |que, ans|
+            puts ""
+            puts h.color(que, :green)
+            ans.each_line do |ln|
+               puts ">  " + ln
+            end
          end
-         puts "\n"
+         puts ""
+         puts h.color("End of #{from}'s answers\n", :blue)
       end
-      puts h.color("End of #{from}'s answers\n", :blue)
    end
 end

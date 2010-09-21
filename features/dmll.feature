@@ -56,8 +56,4 @@ Feature: Low-level DM interface components
 
    Scenario: create NPC
       Given a resource manager
-      Given a reporter
-      Given a player called barry
-      Given an NPC called paul of type human
-      Then report the strength of the NPC paul to barry
-      Then take player turns
+      Then create an NPC of type human

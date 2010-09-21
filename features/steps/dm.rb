@@ -49,9 +49,8 @@ Given /^a DM mod$/ do
    $mod = TestMod.new resource, $mailer
 end
 
-$email = "barry@doodah.xxx"
-
 When /^barry joins the mod$/ do
+   $email = "barry@doodah.xxx"
    $mod.add_known_player "barry", $email 
 end
 
@@ -73,5 +72,8 @@ end
 
 Then /^present a user interface to the DM$/ do
    interface = DMInterface.new $mod
-   interface.run
+   child = fork do
+      interface.run
+   end
+   Process.wait child
 end

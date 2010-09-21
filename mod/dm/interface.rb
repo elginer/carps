@@ -17,15 +17,18 @@
 
 require "service/interface"
 
+require "util/editor"
+
 # A basic user interface for the dm
 #
 # Subclass this interface to provide commands
 class DMInterface < ControlInterface
 
    def initialize mod
-      super
+      super()
       @mod = mod
       @editor = Editor.new "editor.yaml"
+      add_command "mail", "Check for new emails."
       add_command "players", "List all players"
       add_command "warp", "Put all player in this room.", "ROOM"
       add_command "room", "Put one player in this room.", "PLAYER", "ROOM"
@@ -38,8 +41,41 @@ class DMInterface < ControlInterface
       add_command "nuke", "Clear all reports and questions for all players."
       add_command "silence", "Clear all reports for all players."
       add_command "futile", "Clear all questions for all players."
-      add_command "wipe", "Clear the report for one player", "PLAYER"
+      add_command "remit", "Clear the report for one player", "PLAYER"
       add_command "supress", "Clear the questions for one player", "PLAYER"
+   end
+
+   def mail
+      @mod.check_mail
+   end
+
+   def supress player
+      @mod.delete_questions player
+   end
+
+   def remit player
+      @mod.delete_report player
+   end
+
+   def futile
+      @mod.delete_all_questions
+   end
+
+   def silence
+      @mod.delete_all_reports
+   end
+
+   def nuke
+      silence
+      futile
+   end
+
+   def inspect player
+      @mod.inspect_turn player
+   end
+
+   def survey
+      @mod.inspect_reports
    end
 
    def players

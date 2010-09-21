@@ -29,23 +29,24 @@ class Resource
       @dir = rdir
    end
 
-   # Create a new npc of a given type with a given name and store it in the character container class
-   def new_npc type, name, npc
+   # Create a new npc of a given type
+   def new_npc type
       sheet_loc = @dir + "/npcs/" + type + ".yaml"
       ya = nil
       begin
-         ya = YAML::load File.read sheet_loc
+         return YAML::load File.read sheet_loc
       rescue
          warn "Could not create NPC: " + sheet_loc
-         return
+         return nil
       end
-      npc.create name, ya
    end
 
    # Put everyone in this room
    def everyone_in room_name
       room = load_room room_name
-      update_reporter_global room
+      if room
+         update_reporter_global room
+      end
    end
 
    # Load a room

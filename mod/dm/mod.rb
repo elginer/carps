@@ -47,9 +47,25 @@ class Mod
       receive
    end
 
+   # If the player exists, continue
+   def with_player player
+      if player? player
+         yield
+      else
+         puts "No player exists with that name."
+      end
+   end
+
+   # Does a player exist?
+   def player? player
+      @monikers.member? player
+   end
+
    # Ask a question of the player
    def ask_player player, question
-      @reporter.ask_player player, question
+      with_player player do
+         @reporter.ask_player player, question
+      end
    end
 
    # Ask a question of everyone
@@ -59,7 +75,9 @@ class Mod
 
    # Delete questions for a player
    def delete_questions player
-      @reporter.delete_questions player
+      with_player player do
+         @reporter.delete_questions player
+      end
    end
 
    # Delete all questions
@@ -73,8 +91,10 @@ class Mod
    end
 
    # Delete a player's report
-   def update_player player
-      @reporter.update_player player, ""
+   def delete_report player
+      with_player player do
+         @reporter.update_player player, ""
+      end
    end
 
    # All players are in this room
@@ -84,12 +104,17 @@ class Mod
 
    # A player is in this room
    def player_in player, room
-      @resource.player_in player, room
+      with_player player do
+         @resource.player_in player, room
+      end
    end
 
    # Create a new npc
    def new_npc type, name
-      @resource.new_npc type, name, npc_namespace
+      if npc = @resource.new_npc(type)
+         npc_namespace.create name, npc
+         @npcs.add name
+      end
    end
 
    # Inspect all turns
@@ -103,8 +128,10 @@ class Mod
 
    # Inspect a player's turn
    def inspect_turn player
-      turn = @reporter.player_turn player
-      t.preview
+      with_player player do
+         turn = @reporter.player_turn player
+         t.preview
+      end
    end
 
    # Next turn 
@@ -116,7 +143,9 @@ class Mod
 
    # Edit the report for a player 
    def edit player
-      @reporter.edit player
+      with_player player do
+         @reporter.edit player
+      end
    end
 
    # Add a player
@@ -228,6 +257,8 @@ class Mod
       Thread.fork do
          loop do
             mail = @mailer.read klass
+            puts "You have mail.  Go read it!"
+            puts "\a"
             moniker = @mails[mail.from]
             @semaphore.synchronize do
                inbox = hash[moniker]
