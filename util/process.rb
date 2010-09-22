@@ -49,7 +49,7 @@ class CARPProcess < YamlConfig
 
    # The command which would open a new window running the given command
    def shell_cmd program
-      cmd.gsub "%cmd", program
+      @term.gsub "%cmd", program
    end
 
    # Run computation in the second argument in a new process allowing access the first

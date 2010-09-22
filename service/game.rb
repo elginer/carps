@@ -119,7 +119,8 @@ class GameClient < Game
    # The first parameter is the dungeon master's name
    # The second is the mod.
    # The third is the description.
-   def initialize @mailer, dm, mod, desc
+   def initialize mailer, dm, mod, desc
+      @mailer = mailer
       @dm = dm
       @mod = mod
       @about = desc

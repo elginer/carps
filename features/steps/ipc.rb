@@ -41,6 +41,6 @@ Then /^I should see 'It works' from the server side$/ do
 end
 
 When /^the \$process.launch method is called with the name of a ruby subprogram, which I should see in another window$/ do
-   chld = $process.launch $mut, "test_extra/ipc.rb"
+   chld = $process.launch $mut, "ruby test_extra/ipc.rb"
    chld.join
 end

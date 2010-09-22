@@ -21,7 +21,7 @@ class EmailConfig
 end
 
 Given /^the email account$/ do
-   $email_config = EmailConfig.new "email.yaml", nil
+   $email_config = EmailConfig.new "email.yaml"
 end
 
 Then /^an email is sent$/ do

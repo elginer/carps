@@ -19,6 +19,8 @@ require "protocol/message"
 
 require "util/highlight"
 
+require "highline"
+
 require "yaml"
 
 # A series of answers to questions asked by the DM.
@@ -55,6 +57,7 @@ class Answers < Message
          highlight "#{from} did not return any answers."
       else
          highlight "#{from}'s answers:"
+         h = HighLine.new
          @answers.each do |que, ans|
             puts ""
             puts h.color(que, :green)
