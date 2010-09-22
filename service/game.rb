@@ -88,6 +88,14 @@ class GameServer < Game
       accept_invitations interface
    end
 
+   # Resume this game
+   def resume
+      interface = play
+      accept_invitations interface
+   end
+
+   private
+
    def accept_invitations interface
       # Wait for invitation acceptances
       loop do
@@ -103,12 +111,6 @@ class GameServer < Game
       interface
    end
 
-   # Resume this game
-   def resume
-      interface = play
-      accept_invitations interface
-   end
-
 end
 
 # Client games
@@ -117,7 +119,7 @@ class GameClient < Game
    # The first parameter is the dungeon master's name
    # The second is the mod.
    # The third is the description.
-   def initialize dm, mod, desc
+   def initialize @mailer, dm, mod, desc
       @dm = dm
       @mod = mod
       @about = desc
@@ -129,11 +131,9 @@ class GameClient < Game
    end
 
    # Join this game as a client
-   def join_game mailer
-      mod = load_mods[@mod]
-      main = mod["play"]
-      $process.launch ModInfo.new(@dm, mailer), main
-      mailer.send @dm, AcceptInvite.new
+   def join_game
+      resume
+      @mailer.send @dm, AcceptInvite.new
    end
 
    # Parse this from semi-structured text
@@ -143,6 +143,14 @@ class GameClient < Game
       about, blob = find K.about, blob
       [GameClient.new(dm, mod, about), blob] 
    end
+
+   # Play the game
+   def resume
+      mod = load_mods[@mod]
+      main = mod["play"]
+      $process.launch ModInfo.new(@dm, @mailer), main
+   end
+
 end
 
 # An invitation

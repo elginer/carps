@@ -22,32 +22,29 @@ require "util/config.rb"
 require "service/game.rb"
 
 # Class to read game configuration files
-class GameConfig < YamlConfig
+class PlayerGameConfig < YamlConfig
 
    # Create a new GameConfig
-   def initialize mod, campaign, about, players
+   def initialize mod, about, player
       @campaign = campaign
       @mod = mod
       @about = about
-      @players = players
    end
 
    # Parse a game config file
    def parse_yaml conf
-      @campaign = read_conf conf, "campaign"
       @mod = read_conf conf, "mod"
       @about = read_conf conf, "about"
-      @players = read_conf conf, "players"
+      @dm = read_conf conf, "dm"
    end
 
    # Display information on this configuration
    def display
       puts "Mod: " + @mod
-      puts "Campaign: " + @campaign
       puts "Description:"
       puts @about
-      puts "Invited players:"
-      puts @players
+      puts "DM:"
+      puts @dm
    end
 
    # Save this game
@@ -57,18 +54,20 @@ class GameConfig < YamlConfig
       f.close
    end
 
-   # Emit as yaml
+   # Spawn a game object so we can resume the game
+   def spawn mailer
+      GameClient.new mailer, @dm, @mod, @about
+   end
+
+   private
+
+      # Emit as yaml
    def emit
       {"mod" => @mod, 
        "campaign" => @campaign, 
        "about" => @about, 
-       "players" => @players}.to_yaml
+       "dm" => @dm}.to_yaml
    end
 
-   # Receive a mailer 
-   # Return a GameServer object that can communicate with players 
-   def spawn mailer
-      GameServer.new mailer, @mod, @campaign, @about, @players
-   end
 
 end
