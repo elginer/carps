@@ -26,9 +26,9 @@ require "util/error"
 # Subclass this interface to provide commands
 class Interface
 
-   def self.new
+   def self.new *args
       i = self.allocate
-      i.send :initialize
+      i.send :initialize, *args
       i.consistent!
       i
    end

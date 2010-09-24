@@ -16,6 +16,7 @@
 # along with CARPS.  If not, see <http://www.gnu.org/licenses/>.
 
 require "mod/character_sheet"
+require "mod/sheet_editor"
 
 require "protocol/message"
 
@@ -45,39 +46,10 @@ class CharacterSheetRequest < Message
       V.character_sheet_request @schema.to_yaml
    end
 
-   # Create a sheet
-   def create_sheet
-      sheet = "# Character sheet\n"
-      @schema.each do |field, type|
-         sheet += "# #{field} is #{type}\n"
-         sheet += "#{field}: \n"
-      end
-      sheet
-   end
-
    # Fill in the sheet 
-   def fill 
-      editor = Editor.new "editor.yaml"
-      sheet = create_sheet
-      filled = nil 
-      until filled
-         sheet = editor.edit sheet
-         sheet_map = nil
-         begin
-            sheet_map = YAML.load sheet
-         rescue ArgumentError => e
-            puts e
-         end
-         character_sheet = CharacterSheet.new sheet_map 
-         failure = character_sheet.syntax_error @schema
-         if failure
-            puts "Character sheet was incorrect:"
-            puts failure
-         else
-            filled = character_sheet
-         end
-      end
-      filled
-   end 
+   def fill
+      edit = SheetEditor.new @schema
+      edit.fill
+   end
 
 end

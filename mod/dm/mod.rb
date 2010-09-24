@@ -18,6 +18,7 @@
 require "mod/character_sheet_request"
 require "mod/answers"
 require "mod/character_sheet"
+require "mod/sheet_editor"
 require "mod/question"
 
 require "mod/dm/reporter"
@@ -247,7 +248,8 @@ class Mod
 
    # Register a new character sheet
    def new_character_sheet moniker, sheet
-      unless sheet.syntax_error schema
+      sheet_editor = SheetEditor.new schema
+      if sheet_editor.valid?(sheet)
          if sheet.verify_semantics semantic_verifier
             @players[moniker] = player.new sheet.dump
          end
