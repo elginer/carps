@@ -138,8 +138,8 @@ class Mod
 
    # Create a new npc
    def new_npc type, name
-      if char = @resource.new_npc(type, schema, semantic_verifier)
-         validator = SheetEditor.new schema, semantics
+      if char = @resource.new_npc(type)
+         validator = SheetEditor.new schema, semantic_verifier
          if validator.valid? CharacterSheet.new(char)
             @npcs[name] = npc.new char
          end
