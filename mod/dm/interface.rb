@@ -31,11 +31,11 @@ class DMInterface < RolePlayInterface
       add_command "mail", "Check for new emails."
       add_command "players", "Describe all players."
       add_command "player", "Describe one player.", "PLAYER"
-      add_command "minions", "Describe all NPCs."
-      add_command "minion", "Describe one NPC.", "NPC"
+      add_command "npcs", "Describe all NPCs."
+      add_command "npc", "Describe one NPC.", "NPC"
       add_command "warp", "Put all player in this room.", "ROOM"
       add_command "room", "Put one player in this room.", "PLAYER", "ROOM"
-      add_command "npc", "Create a new npc", "TYPE", "NAME"
+      add_command "spawn", "Create a new npc", "TYPE", "NAME"
       add_command "edit", "Edit a player's report.", "PLAYER"
       add_command "census", "Ask a question of every player."
       add_command "ask", "Ask a question of one player.", "PLAYER"
@@ -46,6 +46,22 @@ class DMInterface < RolePlayInterface
       add_command "futile", "Clear all questions for all players."
       add_command "remit", "Clear the report for one player", "PLAYER"
       add_command "supress", "Clear the questions for one player", "PLAYER"
+   end
+
+   def npc name
+      @mod.describe_npc name
+   end
+
+   def npcs
+      @mod.list_npcs
+   end
+
+   def players
+      @mod.list_players
+   end
+
+   def player name
+      @mod.describe_player name 
    end
 
    def mail
@@ -81,10 +97,6 @@ class DMInterface < RolePlayInterface
       @mod.inspect_reports
    end
 
-   def players
-      @mod.list_players
-   end
-
    def census
       question = @editor.edit "<Replace me with a question for everyone>"
       @mod.ask_everyone question
@@ -103,7 +115,7 @@ class DMInterface < RolePlayInterface
       @mod.player_in player, room
    end
 
-   def npc type, name
+   def spawn type, name
       @mod.new_npc type, name
    end
 

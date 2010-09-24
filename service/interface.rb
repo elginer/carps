@@ -17,6 +17,10 @@
 
 require "util/question"
 
+require "util/warn"
+
+require "util/error"
+
 # A basic user interface
 #
 # Subclass this interface to provide commands
@@ -26,6 +30,14 @@ class Interface
       @commands = {}
       add_command "help", "Displays this help message."
       add_command "quit", "Exit the program."
+      # Check we're working
+      @commands.each_key do |cmd|
+         unless respond_to?(cmd)
+            warn "This menu was intended to provide a '#{cmd}' command!", 
+               "However, it has been ommitted due to a programmer error."
+            @commands.delete cmd
+         end
+      end
    end
 
    # Add a command
@@ -60,7 +72,7 @@ class Interface
       if args.length == length
          yield *args
       else
-         puts "Error:  Expected #{length} parameters."
+         put_error "Expected #{length} parameters."
       end
    end
 
@@ -71,13 +83,13 @@ class Interface
          if @commands.member? cmd[0]
             self.send "exec_" + cmd[0], cmd[1..-1]
          else
-            puts "Error: unknown command: '" + cmd[0] + "'. Try 'help'."
+            put_error "Unknown command: '" + cmd[0] + "'. Try 'help'."
          end
       end
    end
 
    def empty_line
-      puts "Error: you must enter a command.  Try 'help'."
+      put_error "You must enter a command.  Try 'help'."
    end
 
    def help

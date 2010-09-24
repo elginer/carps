@@ -22,9 +22,14 @@ def fatal msg
    h = HighLine.new
    $stderr.write h.color("\nFATAL ERROR\n#{msg}\n", :error)
    if $!
-      $stderr.write h.color("Error reported:\n", :error)
       $stderr.write $!.to_s
    end
    puts "\a"
    exit 1
+end
+
+# Output an error message
+def put_error msg
+   h = HighLine.new
+   puts h.color("Error:  " + msg, :error)
 end

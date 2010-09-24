@@ -54,7 +54,7 @@ class Mod
       if player? player
          yield
       else
-         puts "No player exists with that name."
+         put_error "Unknown player."
       end
    end
 
@@ -170,14 +170,23 @@ class Mod
       request_character_sheet moniker
    end
 
-   # Describe npc
-   def describe_npc npc
-      with_npc npc do
-         unsafe_describe npc
+   # Only execute the block if the npc exists
+   def with_npc name
+      if @npcs.member? name
+         yield
+      else
+         put_error "Unknown NPC."
       end
    end
 
-   def unsafe_describe_npc
+   # Describe npc
+   def describe_npc npc
+      with_npc npc do
+         unsafe_describe_npc npc
+      end
+   end
+
+   def unsafe_describe_npc npc
       puts @npcs[npc].emit
    end
 
@@ -185,6 +194,7 @@ class Mod
    def list_npcs
       puts "The NPCs are:"
       @npcs.each_key do |npc|
+         puts "\n#{npc}:"
          unsafe_describe_npc npc
       end
    end

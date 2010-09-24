@@ -19,6 +19,8 @@ require "service/interface"
 
 require "mod/dice"
 
+require "util/error"
+
 # Interface for roleplaying
 class RolePlayInterface < Interface
 
@@ -32,7 +34,7 @@ class RolePlayInterface < Interface
    def d n
       i = n.to_i
       if i <= 1
-         puts "Error:  A dice must have more than 1 side."
+         put_error "A dice must have more than 1 side."
       else
          puts rint(1, i)
       end
@@ -61,7 +63,7 @@ class RolePlayInterface < Interface
    private
 
    def bounds_err
-      puts "Error: MIN must be less than MAX."
+      put_error "MIN must be less than MAX."
    end
 
 end

@@ -10,6 +10,6 @@ Feature: start a game
       Given carps is initialized with test/server
       Then the dm resumes a previous game called rot.yaml
 
-   Scenario: start game interface
+   Scenario: DM start game interface
       Given carps is initialized with test/server
       Then present the start game interface to the dm
