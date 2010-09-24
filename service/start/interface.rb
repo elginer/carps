@@ -43,7 +43,7 @@ class StartGameInterface < Interface
       add_command "load", "Load an existing game.", "NAME"
    end
 
-   private
+   protected
 
    def games
       dir = $CONFIG + "/games"

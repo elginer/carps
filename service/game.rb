@@ -183,8 +183,8 @@ class Invite < Message
    end
 
    # Accept the invitation
-   def accept mailer 
-      @game.join_game mailer
+   def accept
+      @game.join_game
    end
 
    def emit 

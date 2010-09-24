@@ -23,9 +23,8 @@ require "yaml"
 def load_mods
    mod_file = $ROOT_CONFIG + "/mods.yaml"
    mods = {}
-   yaml = nil
    begin
-       yaml = YAML.load(File.read mod_file)
+       mods = YAML.load(File.read mod_file)
    rescue
       warn "Cannot find mods: could not read #{mod_file}"
    end

@@ -24,16 +24,19 @@ class PlayerStartInterface < StartGameInterface
 
    def initialize continuation, mailer, game_config, message_parser
       super
-      add_command "wait", "Wait for an invitation to join a game."
+      add_command "mail", "Check for mail."
    end
 
-   private
+   protected
 
-   def wait
-      puts "Waiting for an invitation from a DM."
+   def mail 
       invite = @mailer.read Invite
-      if invite.ask
-         @continuation.call lambda {invite.accept @mailer}
+      if invite
+         if invite.ask
+            @continuation.call lambda {invite.accept}
+         end
+      else
+         puts "No new mail."
       end
    end
 
