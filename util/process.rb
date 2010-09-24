@@ -54,7 +54,7 @@ class CARPProcess < YamlConfig
 
    # Run computation in the second argument in a new process allowing access the first
    #
-   # Can run at only one time
+   # If already running, then the process will not launch until till the first process has completed.
    def ashare resource, computation
       Thread.fork do
          @semaphore.synchronize do

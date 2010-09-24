@@ -30,9 +30,8 @@ class Resource
    end
 
    # Create a new npc of a given type
-   def new_npc type
+   def new_npc type, schema, semantics
       sheet_loc = @dir + "/npcs/" + type + ".yaml"
-      ya = nil
       begin
          return YAML::load File.read sheet_loc
       rescue
