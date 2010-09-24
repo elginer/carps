@@ -33,6 +33,8 @@ class DMInterface < RolePlayInterface
       add_command "player", "Describe one player.", "PLAYER"
       add_command "npcs", "Describe all NPCs."
       add_command "npc", "Describe one NPC.", "NPC"
+      add_command "pcstats", "Edit a player's character sheet.", "PLAYER"
+      add_command "npcstats", "Edit an NPC's character sheet.", "NPC"
       add_command "warp", "Put all player in this room.", "ROOM"
       add_command "room", "Put one player in this room.", "PLAYER", "ROOM"
       add_command "spawn", "Create a new npc", "TYPE", "NAME"
@@ -46,6 +48,14 @@ class DMInterface < RolePlayInterface
       add_command "futile", "Clear all questions for all players."
       add_command "remit", "Clear the report for one player", "PLAYER"
       add_command "supress", "Clear the questions for one player", "PLAYER"
+   end
+
+   def npcstats name
+      @mod.edit_npc_sheet name
+   end
+
+   def pcstats name
+      @mod.edit_player_sheet name
    end
 
    def npc name

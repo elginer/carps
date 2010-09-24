@@ -40,7 +40,7 @@ end
 
 # Declare a new protocol keyword which is associated with a value
 def protoval keyword
-   # Use the OLD SKOOL for ruby 1.8 (and cucumber!) support
+   # Use the OLD SKOOL for ruby 1.8 support
    K.class_eval <<-"END"
       def K.#{keyword.to_s}
          prefix + "#{keyword.to_s}" + keyword_end
@@ -55,10 +55,9 @@ end
 
 # Declare a new protocol keyword which is a flag or marker 
 def protoword keyword
-   # Use the OLD SKOOL for ruby 1.8 (and cucumber!) support
    K.class_eval <<-"END"
       def K.#{keyword.to_s}
-         mark_prefix + "#{keyword.to_s}"
+         mark_prefix + "#{keyword.to_s}" + keyword_end
       end
    END
 end

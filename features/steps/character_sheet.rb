@@ -1,4 +1,5 @@
 require "mod/sheet_editor"
+require "mod/sheet_verifier"
 
 Given /^a character sheet schema$/ do
 $schema = 
@@ -8,6 +9,11 @@ $schema =
 end
 
 Then /^fill in the character sheet$/ do
-   editor = SheetEditor.new $schema
-   editor.fill
+   editor = SheetEditor.new $schema, NullVerifier.new 
+   $sheet = editor.fill
+end
+
+Then /^edit the character sheet again$/ do
+   editor = SheetEditor.new $schema, NullVerifier.new
+   editor.fill $sheet.dump
 end

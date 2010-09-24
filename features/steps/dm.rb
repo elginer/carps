@@ -3,11 +3,12 @@ require "mod/dm/resource"
 
 require "mod/dm/interface"
 
+require "mod/sheet_verifier"
+require "mod/sheet_editor"
+
 class TestMod < Mod
    def schema
-      {"name" => "text",
-       "fruit" => "text",
-       "days old" => "integer"}
+      $schema
    end
 
    def update_barry status
@@ -20,7 +21,9 @@ class TestMailer
 
    def send addr, mail
       if mail.class == CharacterSheetRequest
-         sheet = mail.fill
+         editor = SheetEditor.new $schema, NullVerifier.new
+         filled = {"name" => "bob", "fruit" => "kumquat", "days old" => 12}
+         sheet = editor.fill filled
          sheet.from = $email
          @sheet = sheet
       end

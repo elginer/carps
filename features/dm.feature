@@ -11,6 +11,7 @@ Feature: High-level DM interface
    Scenario: create npc
       Given a DM mod
       Given carps is initialized with test/server
+      Given a character sheet schema
       Then create an NPC called paul of type human
       When barry joins the mod
       Then check barry's sheet
@@ -19,6 +20,7 @@ Feature: High-level DM interface
 
    Scenario: user interaction
       Given a DM mod
+      Given a character sheet schema
       Given carps is initialized with test/server
       Then someone requests to join the mod
       Then present a user interface to the DM

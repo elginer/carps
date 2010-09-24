@@ -7,3 +7,8 @@ Feature: character sheets
       Given a character sheet schema
       Then fill in the character sheet
 
+   Scenario: fill in the sheet again
+      Given carps is initialized with test/client
+      Given a character sheet schema
+      Then fill in the character sheet 
+      Then edit the character sheet again

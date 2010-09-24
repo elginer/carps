@@ -20,14 +20,15 @@ require "util/error"
 # Editor for a character sheet
 class SheetEditor
 
-   def initialize schema
+   def initialize schema, semantics
       @schema = schema
+      @semantics = semantics
    end
 
    # Fill in the sheet
-   def fill
+   def fill current = {}
       editor = Editor.new "editor.yaml"
-      sheet = create_sheet
+      sheet = create_sheet current
       filled = nil 
       until filled
          sheet = editor.edit sheet
@@ -53,18 +54,24 @@ class SheetEditor
          puts failure
          return false
       else
-         return true
+         return sheet.verify_semantics @semantics
       end
    end
 
    private
 
-   # Create a sheet
-   def create_sheet
+   # Create sheet text 
+   def create_sheet current
+      if current.empty?
+         @schema.each_key do |field|
+            current[field] = nil
+         end
+      end
       sheet = "# Character sheet\n"
-      @schema.each do |field, type|
+      current.each do |field, value|
+         type = @schema[field]
          sheet += "# #{field} is #{type}\n"
-         sheet += "#{field}: \n"
+         sheet += "#{field}: #{value}\n"
       end
       sheet
    end

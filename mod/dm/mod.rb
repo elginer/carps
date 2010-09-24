@@ -18,6 +18,7 @@
 require "mod/character_sheet_request"
 require "mod/answers"
 require "mod/character_sheet"
+require "mod/sheet_verifier"
 require "mod/sheet_editor"
 require "mod/question"
 
@@ -48,6 +49,24 @@ class Mod
       @character_sheets = {}
       @semaphore = Mutex.new
       receive
+   end
+
+   # Edit a player's character sheet
+   def edit_player_sheet name
+      with_player name do
+         sheet = @players[name]
+         editor = SheetEditor.new schema, semantic_verifier
+         @players[name] = editor.fill sheet.dump
+      end
+   end
+
+   # Edit an npc's character sheet
+   def edit_npc_sheet name
+      with_npc name do
+         sheet = @npcs[name]
+         editor = SheetEditor.new schema, semantic_verifier
+         @npcs[name] = editor.fill sheet.dump
+      end
    end
 
    # If the player exists, continue
@@ -248,12 +267,11 @@ class Mod
 
    # Register a new character sheet
    def new_character_sheet moniker, sheet
-      sheet_editor = SheetEditor.new schema
-      if sheet_editor.valid?(sheet)
-         if sheet.verify_semantics semantic_verifier
-            @players[moniker] = player.new sheet.dump
-         end
+      sheet_editor = SheetEditor.new schema, semantic_verifier
+      unless sheet_editor.valid?(sheet)
+         sheet = sheet_editor.fill sheet.dump
       end
+      @players[moniker] = player.new sheet.dump
    end
 
    protected
@@ -334,11 +352,4 @@ class Mod
       end
    end
 
-end
-
-# Semantic verifier that always returns true
-class NullVerifier
-   def verify sheet
-      true
-   end
 end

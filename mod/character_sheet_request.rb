@@ -31,25 +31,24 @@ class CharacterSheetRequest < Message
    protoval :character_sheet_request
 
    # Make the request 
-   def initialize schema 
-      @schema = schema
+   def initialize current = {}
+      @current = current
    end
 
    # Parse from the void
    def CharacterSheetRequest.parse blob
-      schemay, blob = find K.character_sheet_request, blob
-      [CharacterSheetRequest.new(YAML.load(schemay)), blob]
+      current, blob = find K.character_sheet_request, blob
+      [CharacterSheetRequest.new(YAML.load(current)), blob]
    end
 
    # Emit
    def emit
-      V.character_sheet_request @schema.to_yaml
+      V.character_sheet_request @current.to_yaml
    end
 
-   # Fill in the sheet 
-   def fill
-      edit = SheetEditor.new @schema
-      edit.fill
+   # Currently this sheet is 
+   def currently
+      @current
    end
 
 end
