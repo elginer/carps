@@ -20,12 +20,32 @@ class Cheesey < Interface
 
 end
 
+class Broken < Cheesey
+
+   def initialize
+      super
+      add_command "wine", "Have a glass of wine", "YEAR", "TYPE"
+   end
+
+end
+
 Given /^a cheesey interface$/ do
    $interface = Cheesey.new
 end
 
 Then /^present the cheesey interface to the user$/ do
    child = fork do
+      $interface.run
+   end
+   Process.wait child 
+end
+
+Given /^a broken interface created by a drunk$/ do
+   $interface = Broken.new
+end
+
+Then /^present the interface, reporting the mistake to the user$/ do
+      child = fork do
       $interface.run
    end
    Process.wait child 

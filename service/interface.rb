@@ -26,10 +26,21 @@ require "util/error"
 # Subclass this interface to provide commands
 class Interface
 
+   def self.new
+      i = self.allocate
+      i.send :initialize
+      i.consistent!
+      i
+   end
+
    def initialize 
       @commands = {}
       add_command "help", "Displays this help message."
       add_command "quit", "Exit the program."
+   end
+
+   # Ensure consistency 
+   def consistent!
       # Check we're working
       @commands.each_key do |cmd|
          unless respond_to?(cmd)
