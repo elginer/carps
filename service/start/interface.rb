@@ -18,6 +18,7 @@
 require "continuation"
 
 require "util/highlight"
+require "util/error"
 
 # Interface to start games
 class StartGameInterface < Interface
@@ -52,7 +53,7 @@ class StartGameInterface < Interface
          name = File.basename(f, ".yaml")
          puts ""
          highlight "Name: " + name
-         g = @game_config.load "games/" + File.basename(f)
+         g = @game_config.load "games/" + File.basename(f), false
          g.display
       end
 
@@ -60,7 +61,12 @@ class StartGameInterface < Interface
 
    def load name
       filename = "games/" + name + ".yaml"
-      config = @game_config.load filename
+      config = nil
+      begin
+         config = @game_config.load filename, false
+      rescue StandardError => e
+         put_error e.to_s
+      end
       if config
          game = config.spawn @mailer
          @continuation.call lambda {game.resume}

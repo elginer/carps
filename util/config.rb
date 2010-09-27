@@ -24,14 +24,21 @@ class YamlConfig
 
    # Load a yaml file.
    # Provided so subclasses can override initialize
-   def YamlConfig.load filepath
+   def YamlConfig.load filepath, fatal=true
       config = self.allocate
       config.read filepath
+      config.fail_hard fatal
       config
    end
 
+   # Should we fail hard, quiting the program?
+   def fail_hard fatal
+      @fatal = fatal
+   end
+
    # Takes as an argument a path to a yaml configuration file
-   def initialize filepath
+   def initialize filepath, fatal=true
+      fail_hard fatal
       read filepath
    end
 
@@ -47,7 +54,7 @@ class YamlConfig
          contents = File.read filepath
       rescue
          # On failure, write a message to stderr and exit
-         fatal "Could not read configuration file: " + filepath 
+         err "Could not read configuration file: " + filepath 
       end
 
       # Try to parse the file
@@ -55,7 +62,7 @@ class YamlConfig
          conf = YAML.load contents
          result = parse_yaml conf
       rescue
-         fatal "Error parsing #{filepath}:\n#{$!}"
+         err "Error parsing #{filepath}:\n#{$!}"
       end
 
       if result
@@ -89,4 +96,14 @@ class YamlConfig
       end
       val
    end
+
+   # Raise error
+   def err msg
+      if @fatal
+         fatal msg
+      else
+         raise StandardError, msg
+      end
+   end
+
 end
