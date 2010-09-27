@@ -30,7 +30,7 @@ class PlayerStartInterface < StartGameInterface
    protected
 
    def mail 
-      invite = @mailer.read Invite
+      invite = @mailer.check Invite
       if invite
          if invite.ask
             @continuation.call lambda {invite.accept}

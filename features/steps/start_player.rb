@@ -18,15 +18,24 @@ class MockPlayerGame
 end
 
 class PlayerStartMailer
-   def read type, from = nil
+
+   def read klass, from=nil
+      msg = nil
+      until msg
+         msg = check
+         sleep 1
+      end
+      msg
+   end
+
+   def check klass, from=nil
       if @mail
          mail = @mail
          @mail = nil
          return mail
-      else
-         return nil
       end
    end
+
 
    def send to, message
       puts "Sending message to #{to}:"

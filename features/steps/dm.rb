@@ -29,15 +29,17 @@ class TestMailer
       end
    end
 
-   def read klass
-      if klass == Answers
-         loop do
-            sleep 1
-         end
-      elsif klass == CharacterSheet
-         until @sheet
-            sleep 1
-         end
+   def read klass, from=nil
+      msg = nil
+      until msg
+         msg = check
+         sleep 1
+      end
+      msg
+   end
+
+   def check klass, from=nil
+      if @sheet
          sheet = @sheet
          @sheet = nil
          return sheet
