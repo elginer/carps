@@ -27,7 +27,7 @@ class DMStartInterface < StartGameInterface
       add_command "new", "Start a new game.", "NAME", "MOD", "CAMPAIGN"
    end
 
-   private
+   protected
 
    def new name, mod, campaign
       editor = Editor.new "editor.yaml"
