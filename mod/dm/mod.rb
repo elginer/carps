@@ -45,10 +45,7 @@ class Mod
       @npcs = {}
       @monikers = {}
       @mails = {}
-      @answers = {}
-      @character_sheets = {}
       @semaphore = Mutex.new
-      receive
    end
 
    # Edit a player's character sheet
@@ -188,8 +185,6 @@ class Mod
       @reporter.add_player moniker
       @monikers[moniker] = email
       @mails[email] = moniker
-      @character_sheets[moniker] = []
-      @answers[moniker] = []
       request_character_sheet moniker
    end
 
@@ -256,15 +251,14 @@ class Mod
 
    # Check for mail 
    def check_mail
-      if mail = search(@character_sheets)
-         new_character_sheet *mail
-         return true
-      elsif result = search(@answers)
-         new_answer *mail
-         return true
-      else
-         puts "No new mail."
-         return false
+      if sheet = @mailer.check(CharacterSheet)
+         with_valid_mail sheet do |moniker|
+            new_character_sheet moniker, sheet
+         end
+      elsif answers = @mailer.check(Answers)
+         with_valid_mail answers do |moniker|
+            new_answer moniker, answers
+         end
       end
    end
 
@@ -327,31 +321,13 @@ class Mod
       NullVerifier.new
    end
 
-   private
-
-   # Receive mail
-   def receive
-      receive_mails Answers, @answers
-      receive_mails CharacterSheet, @character_sheets
-   end
-
-   def receive_mails klass, hash
-      Thread.fork do
-         loop do
-            mail = @mailer.read klass
-            moniker = @mails[mail.from]
-            puts "You have mail from #{mail.from} aka #{moniker}.  Go read it!"
-            puts "\a"
-            @semaphore.synchronize do
-               inbox = hash[moniker]
-               if inbox
-                  inbox.push mail
-               else
-                  warn "BUG:  Unwanted email from #{mail.from}.  However, this should have been handled in another part of the program..."
-               end
-            end
-            sleep 1
-         end
+   def with_valid_mail mail
+      moniker = @mails[mail.from]
+      if moniker
+         yield moniker
+      else
+         warn "BUG",  "Received mail from unregistered player #{mail.from}:"
+         puts mail.emit
       end
    end
 

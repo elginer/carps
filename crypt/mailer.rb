@@ -32,6 +32,7 @@ require "digest/md5"
 
 require "openssl"
 
+# This won't work unless some initialization is done.
 init_threading
 
 # High level CARPS mail client supporting strong cryptographic message signing.
@@ -83,7 +84,7 @@ class Mailer
       end
    end
 
-   # Wait the someone to begin the handshake
+   # Wait for someone to begin the handshake
    #
    # A British stereotype?
    def expect_handshake
@@ -116,23 +117,6 @@ class Mailer
       end
    end
 
-   # Expect handshakes
-   def expect_handshakes
-      @child = Thread.fork do
-         loop do 
-            expect_handshake
-         end
-      end
-   end
-
-   # Shutdown the mailbox
-   def shutdown
-      if @child
-         @child.kill
-      end
-      @mailbox.shutdown
-   end
-
    # Give our address to interested parties
    def address
       @addr
@@ -149,10 +133,16 @@ class Mailer
       puts "#{message.class} sent to " + to
    end
 
-   # Receive a message
+   # Receive a message.  Block until it is here.
    def read type, must_be_from=nil
       @mailbox.read type, must_be_from
    end
+
+   # Check for a message.  Don't block!  Return nil if nothing is available.
+   def check type, must_be_from=nil
+      @mailbox.check type, must_be_from
+   end
+
 
    private
 

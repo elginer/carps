@@ -62,7 +62,7 @@ class Mailbox
       end
    end
 
-   # Securely read a message 
+   # Securely read a message.  Block until one occurs.
    def read type, must_be_from=nil
       msg = nil
       until msg
@@ -74,7 +74,12 @@ class Mailbox
       return msg
    end
 
-   # Insecurely read a message
+   # Check for a new message.  Don't block
+   def check type, must_be_from=nil
+      search type, must_be_from
+   end
+
+   # Insecurely read a message.  Block until one comes.
    def insecure_read type, must_be_from=nil
       msg = nil
       until msg
@@ -85,6 +90,8 @@ class Mailbox
       puts "\a"
       return msg
    end
+
+   private
 
    # See if there is an appropriate message in the mail box
    def search type, must_be_from
