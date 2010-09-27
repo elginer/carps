@@ -2,7 +2,8 @@ Feature: High-level DM interface
 
    Scenario: produce report 
       Given a DM mod
-      Given carps is initialized with test/server 
+      Given carps is initialized with test/server
+      Given a character sheet schema
       When barry joins the mod
       Then check barry's sheet
       Then set barry's status conditionally
