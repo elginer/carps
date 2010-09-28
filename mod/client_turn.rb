@@ -62,7 +62,8 @@ class ClientTurn < Message
    # Emit
    def emit
       question_text = (@questions.map {|q| q.emit}).join
-      K.client_turn + @sheet.emit + @status.emit + question_text
+      status = @status.emit
+      K.client_turn + @sheet.emit + status + question_text
    end
 
    # Preview the turn

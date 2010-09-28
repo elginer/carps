@@ -33,16 +33,18 @@ class Reporter
       @sheets = {}
    end
 
-   # Add a new player
-   def add_player moniker
-      @status[moniker] = nil
-      @questions[moniker] = []
-   end
-
    # Produce a ClientTurn for the player referred to by the moniker
    def player_turn moniker
-      status = StatusReport.new @status[moniker]
-      questions = @questions[moniker].map {|q| Question.new q}
+      report = @status[moniker]
+      unless report
+         report = ""
+      end
+      status = StatusReport.new report 
+      qtext = @questions[moniker]
+      unless qtext
+         qtext = []
+      end
+      questions = qtext.map {|q| que = Question.new q}
       sheet = @sheets[moniker]
       unless sheet
          sheet = CharacterSheet.new({})
@@ -51,18 +53,12 @@ class Reporter
    end
 
    # Produce a hash of email address to ClientTurn objects
-   def player_turns
+   def player_turns monikers
       turns = {}
-      monikers = @status.keys
       monikers.each do |moniker|
          turns[moniker] = player_turn moniker 
       end
       turns
-   end
-
-   # Clean the sheets
-   def clean_sheets
-      @sheets = {}
    end
 
    # A character sheet has been changed
@@ -73,7 +69,11 @@ class Reporter
    # Edit the report for a player 
    def edit player
       editor = Editor.new "editor.yaml"
-      @status[player] = editor.edit @status[player]
+      stat = @status[player]
+      unless stat
+         stat = ""
+      end
+      @status[player] = editor.edit stat
    end
 
    # Inform the reporter of updates to a player's status report
@@ -81,35 +81,28 @@ class Reporter
       @status[player] = status
    end
 
-   # Inform the reporter of updates to everyone's status
-   def update_everyone status
-      @status.each_key do |moniker|
-         @status[moniker] = status
+   # Ask a player some questions
+   def ask_player moniker, question
+      if @questions.member? moniker
+         @questions[moniker].push question
+      else
+         @questions[moniker] = [question]
       end
    end
 
-   # Ask a player some questions
-   def ask_player moniker, question
-      @questions[moniker].push question
+   # Delete reports
+   def delete_reports
+      @status = {}
    end
 
    # Delete all questions for a player
    def delete_questions moniker
-      @questions[moniker] = []
+      @questions.delete moniker 
    end
 
    # Delete all questions for all players
    def delete_all_questions
-      @questions.each_key do |moniker, old|
-         @questions[moniker] = []
-      end
-   end
-
-   # Ask everyone some questions
-   def ask_everyone question
-      @questions.each_key do |moniker|
-         @questions[moniker].push question
-      end
+      @questions = {}
    end
 
 end

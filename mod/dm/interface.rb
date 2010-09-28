@@ -27,7 +27,6 @@ class DMInterface < RolePlayInterface
    def initialize mod
       super()
       @mod = mod
-      @editor = Editor.new "editor.yaml"
       add_command "mail", "Check for new emails."
       add_command "done", "Send all reports and start the next turn."
       add_command "players", "Describe all players."
@@ -113,13 +112,11 @@ class DMInterface < RolePlayInterface
    end
 
    def census
-      question = @editor.edit "<Replace me with a question for everyone>"
-      @mod.ask_everyone question
+      @mod.ask_everyone
    end
 
    def ask player
-      question = @editor.edit "<Replace me with a question for #{player}>"
-      @mod.ask_player question
+      @mod.ask_player player
    end
 
    def warp room 

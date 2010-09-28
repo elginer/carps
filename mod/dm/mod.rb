@@ -35,8 +35,8 @@ class DMMod < Mod
    def initialize resource, mailer
       @mailer = mailer
       @resource = resource
-      @resource.reporter = resource
       @reporter = Reporter.new
+      @resource.reporter = @reporter
       @players = {}
       @npcs = {}
       @monikers = {}
@@ -75,19 +75,25 @@ class DMMod < Mod
 
    # Does a player exist?
    def player? player
-      @monikers.member? player
+      @players.member? player
    end
 
    # Ask a question of the player
-   def ask_player player, question
+   def ask_player player
       with_player player do
+         edit = Editor.new "editor.yaml"
+         question = edit.edit "<Replace with question for #{player}>"
          @reporter.ask_player player, question
       end
    end
 
    # Ask a question of everyone
-   def ask_everyone question
-      @reporter.ask_everyone question
+   def ask_everyone
+      edit = Editor.new "editor.yaml"
+      question = edit.edit "<Replace with question for everyone>"
+      @players.each_key do |player|
+         @reporter.ask_player player, question
+      end
    end
 
    # Delete questions for a player
@@ -109,7 +115,7 @@ class DMMod < Mod
 
    # Delete all reports
    def delete_all_reports
-      @reporter.update_everyone ""
+      @reporter.delete_reports
    end
 
    # Delete a player's report
@@ -121,7 +127,7 @@ class DMMod < Mod
 
    # All players are in this room
    def everyone_in room
-      @resource.everyone_in room
+      @resource.players_in @players.keys, room
    end
 
    # A player is in this room
@@ -143,7 +149,7 @@ class DMMod < Mod
 
    # Inspect all turns
    def inspect_reports
-      turns = @reporter.player_turns
+      turns = @reporter.player_turns @players.keys
       turns.each do |moniker, t|
          puts "Upcoming turn for " + moniker
          t.preview
@@ -154,16 +160,14 @@ class DMMod < Mod
    def inspect_turn player
       with_player player do
          turn = @reporter.player_turn player
-         t.preview
+         turn.preview
       end
    end
 
    # Next turn 
    def next_turn
       send_reports
-      @reporter.update_everyone ""
-      @reporter.ask_everyone []
-      @reporter.clean_sheets
+      @reporter = Reporter.new
    end
 
    # Edit the report for a player 
@@ -181,7 +185,6 @@ class DMMod < Mod
 
    # Add a player with a moniker
    def add_known_player moniker, email
-      @reporter.add_player moniker
       @monikers[moniker] = email
       @mails[email] = moniker
    end
@@ -262,9 +265,8 @@ class DMMod < Mod
 
    # Register a new character sheet
    def new_character_sheet moniker, sheet
-      sheet_editor = SheetEditor.new schema, semantic_verifier
-      unless sheet_editor.valid?(sheet)
-         sheet = sheet_editor.fill sheet.dump
+      unless editor.valid?(sheet)
+         sheet = editor.fill sheet.dump
       end
       @players[moniker] = player.new sheet.dump
       @reporter.sheet moniker, sheet
@@ -282,10 +284,10 @@ class DMMod < Mod
 
    # Send the reports
    def send_reports
-      turns = @reporter.player_turns
-      turns.each do |moniker, t|
+      turns = @reporter.player_turns @players.keys
+      turns.each do |moniker, turn|
          addr = @monikers[moniker]
-         @mailer.send addr, t
+         @mailer.send addr, turn
       end
    end
 
@@ -314,7 +316,7 @@ class DMMod < Mod
       if moniker
          yield moniker
       else
-         warn "BUG",  "Received mail from unregistered player #{mail.from}:"
+         warn "BUG",  "Mod received mail from unregistered player #{mail.from}:"
          puts mail.emit
       end
    end

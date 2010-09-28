@@ -41,10 +41,12 @@ class Resource
    end
 
    # Put everyone in this room
-   def everyone_in room_name
+   def players_in players, room_name
       room = load_room room_name
       if room
-         update_reporter_global room
+         players.each do |player|
+            update_reporter player, room
+         end
       end
    end
 
@@ -77,11 +79,6 @@ class Resource
    # Update the reporter
    def update_reporter player, room
       @reporter.update_player player, room.describe
-   end
-
-   # Update the global status
-   def update_reporter_global room
-      @reporter.update_everyone room.describe
    end
 
 end

@@ -23,5 +23,5 @@ Feature: High-level DM interface
       Given a DM mod
       Given a character sheet schema
       Given carps is initialized with test/server
-      When someone requests to join the mod
+      When barry joins the mod
       Then present a user interface to the DM

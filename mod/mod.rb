@@ -16,6 +16,7 @@
 # along with CARPS.  If not, see <http://www.gnu.org/licenses/>.
 
 require "mod/sheet_verifier"
+require "mod/sheet_editor"
 
 # Mod base class supporting character sheet verification
 #
@@ -33,6 +34,11 @@ class Mod
    # The schema
    def schema
       {}
+   end
+
+   # Sheet editor
+   def editor
+      SheetEditor.new schema, semantic_verifier
    end
 
 end

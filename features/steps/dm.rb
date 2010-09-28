@@ -20,13 +20,16 @@ end
 class TestMailer
 
    def send addr, mail
-      if mail.class == CharacterSheetRequest
-         editor = SheetEditor.new $schema, NullVerifier.new
-         filled = {"name" => "bob", "fruit" => "kumquat", "days old" => 12}
-         sheet = editor.fill filled
-         sheet.from = $email
-         @sheet = sheet
-      end
+      puts "Sending to #{addr}:"
+      puts mail.emit
+   end
+
+   def barry
+      editor = SheetEditor.new $schema, UserVerifier.new
+      filled = {"name" => "bob", "fruit" => "kumquat", "days old" => 12}
+      sheet = editor.fill filled
+      sheet.from = $email
+      @sheet = sheet
    end
 
    def read klass, from=nil
@@ -58,6 +61,7 @@ $email = "barry@doodah.xxx"
 
 When /^(.+) joins the mod$/ do |name|
    $mod.add_known_player name, $email 
+   $mailer.barry
 end
 
 Then /^set (.+)'s status conditionally$/ do |name|
@@ -75,10 +79,6 @@ Then /^check barry's sheet$/ do
       received = $mod.check_mail
       sleep 1
    end
-end
-
-When /^someone requests to join the mod$/ do
-   $mod.add_player $email
 end
 
 Then /^present a user interface to the DM$/ do
