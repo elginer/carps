@@ -16,24 +16,51 @@
 # along with CARPS.  If not, see <http://www.gnu.org/licenses/>.
 
 require "mod/mod"
+require "mod/character_sheet"
+require "mod/sheet_editor"
 require "mod/client_turn"
 
 require "util/error"
+require "util/highlight"
 
 # Player mod
 class PlayerMod < Mod
 
    def initialize pmailer
       @mailer = pmailer
+      @sheet = CharacterSheet.new({})
+      edit_sheet
    end
 
-   # Check mail
-   def check
-      turn = @mailer.check ClientTurn
-      if turn
-         @answers = turn.take
+   # Edit the character sheet
+   def edit_sheet
+      edit = SheetEditor.new schema, semantic_verifier
+      @sheet = edit.fill @sheet.dump
+      @edited = true
+   end
+   
+   # Show the character sheet
+   def show_sheet
+      @sheet.display
+   end
+
+   # Take a turn
+   def take_turn
+      if @turn
+         @answers = @turn.take
       else
-         puts "No new mail."
+         tu = @mailer.check ClientTurn
+         if tu
+            @turn = tu
+            sheet = @turn.sheet
+            unless sheet.dump.empty?
+               @sheet = sheet
+               highlight "Received new character sheet."
+            end
+            @turn.take
+         else
+            put_error "Turn not received."
+         end
       end
    end
 
@@ -41,7 +68,14 @@ class PlayerMod < Mod
    def next_turn
       if @answers
          @mailer.send @answers
-      else
+         done = true
+      end
+      if @edited
+         @edited = false
+         @mailer.send @sheet
+         done = true
+      end
+      unless done
          put_error "Nothing to send."
       end
    end

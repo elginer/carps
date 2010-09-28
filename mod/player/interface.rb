@@ -23,12 +23,24 @@ class PlayerInterface < RolePlayInterface
    def initialize mod
       super()
       @mod = mod
-      add_command "mail", "Check for new emails."
-      add_command "done", "You're done, send your stuff to the dungeon master and await the next turn."
+      add_command "act", "Take your turn."
+      add_command "done", "Send your stuff to the dungeon master and await the next turn."
+      add_command "sheet", "Look at your character sheet."
+      add_command "edit", "Edit your character sheet."
    end
 
-   def mail
-      @mod.check
+   protected
+
+   def sheet
+      @mod.show_sheet
+   end
+
+   def edit
+      @mod.edit_sheet
+   end
+
+   def act
+      @mod.take_turn
    end
 
    def done

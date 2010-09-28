@@ -39,7 +39,7 @@ end
 When /^the player receives turn information$/ do
    status = StatusReport.new "You are a player don't you know!"
    questions = [Question.new("Who are you, you strange man?")]
-   t = ClientTurn.new status, questions
+   t = ClientTurn.new CharacterSheet.new({}), status, questions
    $mailer.turn t 
 end
 

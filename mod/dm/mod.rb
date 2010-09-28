@@ -15,7 +15,6 @@
 # You should have received a copy of the GNU General Public License
 # along with CARPS.  If not, see <http://www.gnu.org/licenses/>.
 
-require "mod/character_sheet_request"
 require "mod/answers"
 require "mod/character_sheet"
 require "mod/sheet_editor"
@@ -182,7 +181,6 @@ class DMMod < Mod
       @reporter.add_player moniker
       @monikers[moniker] = email
       @mails[email] = moniker
-      request_character_sheet moniker
    end
 
    # Only execute the block if the npc exists
@@ -305,12 +303,6 @@ class DMMod < Mod
    def new_answer moniker, answer
       answer.from = moniker
       answer.display
-   end
-
-   # Request a character sheet from the player
-   def request_character_sheet moniker
-      email = @monikers[moniker]
-      @mailer.send email, CharacterSheetRequest.new(schema)
    end
 
    def with_valid_mail mail

@@ -22,6 +22,7 @@ require "protocol/message"
 require "mod/answers"
 require "mod/question"
 require "mod/status_report"
+require "mod/character_sheet"
 
 class ClientTurn < Message
 
@@ -29,14 +30,21 @@ class ClientTurn < Message
    protoword :client_turn
 
    # Create a client turn
-   def initialize status, questions
+   def initialize sheet, status, questions
+      @sheet = sheet
       @status = status
       @questions = questions
+   end
+
+   # Expose the character sheet
+   def sheet
+      @sheet
    end
 
    # Parse
    def ClientTurn.parse blob
       forget, blob = find K.client_turn blob
+      sheet, blob = CharacterSheet.parse blob
       status, blob = StatusReport.parse blob
       more = true
       questions = []
@@ -48,13 +56,13 @@ class ClientTurn < Message
             more = false
          end
       end
-      [ClientTurn.new(status, questions), blob] 
+      [ClientTurn.new(sheet, status, questions), blob] 
    end
 
    # Emit
    def emit
       question_text = (@questions.map {|q| q.emit}).join
-      K.client_turn + @status.emit + question_text
+      K.client_turn + @sheet.emit + @status.emit + question_text
    end
 
    # Preview the turn

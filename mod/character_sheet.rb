@@ -42,7 +42,7 @@ class CharacterSheet < Message
 
    # Emit
    def emit
-      V.character_sheet_request @sheet.to_yaml
+      V.character_sheet @sheet.to_yaml
    end
 
    # Display the sheet 
@@ -52,10 +52,11 @@ class CharacterSheet < Message
 
    # Perform semantic analysis
    def verify_semantics verifyer
-      valid = verifyer.verify @sheet
+      valid = verifyer.verify self 
       unless valid
          puts "Invalid character sheet."
       end
+      valid
    end
 
    # Verify the sheet's syntax.
