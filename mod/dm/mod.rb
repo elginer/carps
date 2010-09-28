@@ -49,7 +49,9 @@ class DMMod < Mod
       with_player name do
          sheet = @players[name]
          editor = SheetEditor.new schema, semantic_verifier
-         @players[name] = editor.fill sheet.dump
+         sheet = editor.fill sheet.dump
+         @players[name] = sheet
+         @reporter.sheet name, sheet
       end
    end
 
@@ -161,6 +163,7 @@ class DMMod < Mod
       send_reports
       @reporter.update_everyone ""
       @reporter.ask_everyone []
+      @reporter.clean_sheets
    end
 
    # Edit the report for a player 
@@ -264,6 +267,7 @@ class DMMod < Mod
          sheet = sheet_editor.fill sheet.dump
       end
       @players[moniker] = player.new sheet.dump
+      @reporter.sheet moniker, sheet
    end
 
    protected

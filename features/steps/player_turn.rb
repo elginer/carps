@@ -27,7 +27,7 @@ Given /^a status report and a number of questions$/ do
    s = StatusReport.new "Halt, mortal!"
    q1 = Question.new "Who are you?"
    q2 = Question.new "What are you doing here?"
-   $turn = ClientTurn.new s, [q1, q2]
+   $turn = ClientTurn.new CharacterSheet.new({}), s, [q1, q2]
 end
 
 Then /^all the questions should be asked$/ do

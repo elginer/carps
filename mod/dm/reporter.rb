@@ -18,6 +18,7 @@
 require "mod/question"
 require "mod/client_turn"
 require "mod/status_report"
+require "mod/character_sheet"
 
 require "util/editor"
 
@@ -29,6 +30,7 @@ class Reporter
    def initialize
       @status = {}
       @questions = {}
+      @sheets = {}
    end
 
    # Add a new player
@@ -41,7 +43,11 @@ class Reporter
    def player_turn moniker
       status = StatusReport.new @status[moniker]
       questions = @questions[moniker].map {|q| Question.new q}
-      ClientTurn.new status, questions 
+      sheet = @sheets[moniker]
+      unless sheet
+         sheet = CharacterSheet.new({})
+      end
+      ClientTurn.new sheet, status, questions 
    end
 
    # Produce a hash of email address to ClientTurn objects
@@ -52,6 +58,16 @@ class Reporter
          turns[moniker] = player_turn moniker 
       end
       turns
+   end
+
+   # Clean the sheets
+   def clean_sheets
+      @sheets = {}
+   end
+
+   # A character sheet has been changed
+   def sheet moniker, sheet
+      @sheets[moniker] = sheet
    end
 
    # Edit the report for a player 
