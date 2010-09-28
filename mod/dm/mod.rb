@@ -25,6 +25,7 @@ require "mod/dm/reporter"
 require "mod/dm/character"
 
 require "util/warn"
+require "util/highlight"
 
 # Class for DM mods
 #
@@ -265,6 +266,7 @@ class DMMod < Mod
 
    # Register a new character sheet
    def new_character_sheet moniker, sheet
+      highlight "New character sheet for #{moniker}"
       unless editor.valid?(sheet)
          sheet = editor.fill sheet.dump
       end
