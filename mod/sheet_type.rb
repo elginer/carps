@@ -25,12 +25,12 @@ class SheetType
    end
 
    def verify val
-      coercable = val.respond_to?(coercion)
+      ok = valid(val) && val.respond_to?(coercion)
       if val == nil
          if @optional
             return [true, nil]
          end
-      elsif coercable
+      elsif ok
          if empty(val) and @optional
             return [true, nil]
          else
@@ -45,6 +45,10 @@ end
 
 class SheetInt < SheetType
 
+   def valid val
+      val.class == Fixnum
+   end
+
    def coercion
       :to_i
    end
@@ -56,6 +60,10 @@ class SheetInt < SheetType
 end
 
 class SheetText < SheetType
+
+   def valid val
+      true
+   end
 
    def coercion
       :to_s
