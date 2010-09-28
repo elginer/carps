@@ -127,8 +127,24 @@ class GameClient < Game
    end
 
    # Expose the mod so the client decide if he can even think of joining
+   #
+   # ANTI-PATTERN
    def mod
       @mod
+   end
+
+   # Expose the dm
+   #
+   # ANTI-PATTERN
+   def dm
+      @dm
+   end
+
+   # Expose the description
+   #
+   # ANTI-PATTERN
+   def desc
+      @desc
    end
 
    # Join this game as a client
@@ -168,6 +184,27 @@ class Invite < Message
       forget, blob = find K.invite, blob
       info, blob = GameClient.parse blob
       [Invite.new(info), blob]
+   end
+
+   # Expose the mod so the client decide if he can even think of joining
+   #
+   # ANTI-PATTERN
+   def mod
+      @game.mod
+   end
+
+   # Expose the dm
+   #
+   # ANTI-PATTERN
+   def dm
+      @game.dm
+   end
+
+   # Expose the description
+   #
+   # ANTI-PATTERN
+   def desc
+      @game.desc
    end
 
    # Ask if the player wants to accept this invitation

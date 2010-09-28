@@ -17,6 +17,8 @@
 
 require "continuation"
 
+require "service/interface"
+
 require "util/highlight"
 require "util/error"
 

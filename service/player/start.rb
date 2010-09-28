@@ -19,6 +19,8 @@ require "service/start/interface"
 
 require "service/game"
 
+require "util/question"
+
 # Interface for the player to join games
 class PlayerStartInterface < StartGameInterface
 
@@ -33,6 +35,10 @@ class PlayerStartInterface < StartGameInterface
       invite = @mailer.check Invite
       if invite
          if invite.ask
+            config = @game_config.new invite.mod, invite.dm, invite.desc
+            fn = question "Enter a name for this game"
+            fn = fn + ".yaml"
+            config.save fn
             @continuation.call lambda {invite.accept}
          end
       else

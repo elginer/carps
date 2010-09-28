@@ -25,9 +25,9 @@ require "service/game.rb"
 class PlayerGameConfig < YamlConfig
 
    # Create a new GameConfig
-   def initialize mod, about, player
-      @campaign = campaign
+   def initialize mod, dm, about
       @mod = mod
+      @dm = dm
       @about = about
    end
 
@@ -43,8 +43,7 @@ class PlayerGameConfig < YamlConfig
       puts "Mod: " + @mod
       puts "Description:"
       puts @about
-      puts "DM:"
-      puts @dm
+      puts "DM: " + @dm
    end
 
    # Save this game
@@ -64,7 +63,6 @@ class PlayerGameConfig < YamlConfig
       # Emit as yaml
    def emit
       {"mod" => @mod, 
-       "campaign" => @campaign, 
        "about" => @about, 
        "dm" => @dm}.to_yaml
    end

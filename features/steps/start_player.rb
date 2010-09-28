@@ -15,6 +15,20 @@ class MockPlayerGame
    def mod
       "fruit"
    end
+
+   def dm
+      "bob"
+   end
+
+   def desc
+      "A game about stuff"
+   end
+end
+
+class MockPlayerConfig < PlayerGameConfig
+   def spawn mailer
+      MockGame.new
+   end
 end
 
 class PlayerStartMailer
@@ -58,7 +72,7 @@ end
 Then /^present the start game interface to the player$/ do
    child = fork do
       PlayerStartInterface.start_game_interface $mailer,
-         PlayerGameConfig,
+         MockPlayerConfig,
          MessageParser.new(default_messages)
    end
    Process.wait child
