@@ -15,29 +15,24 @@
 # You should have received a copy of the GNU General Public License
 # along with CARPS.  If not, see <http://www.gnu.org/licenses/>.
 
-require "mod/mod"
-require "mod/client_turn"
+require "mod/interface"
 
-# Player mod
-class PlayerMod < Mod
+# Player interface
+class PlayerInterface < RolePlayInterface
 
-   def initialize pmailer
-      @mailer = pmailer
+   def initialize mod
+      super()
+      @mod = mod
+      add_command "mail", "Check for new emails."
+      add_command "next", "You're done, send your stuff to the dungeon master and await the next turn."
    end
 
-   # Check mail
-   def check
-      turn = @mailer.check ClientTurn
-      if turn
-         @answers = turn.take
-      else
-         puts "No new mail."
-      end
+   def mail
+      @mod.check
    end
 
-   # Send answers to dungeon master
-   def next_turn
-      @mailer.send @answers
+   def next
+      @mod.next_turn
    end
 
 end
