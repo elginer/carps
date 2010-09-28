@@ -4,6 +4,7 @@ Feature: Player interface
    to interact with a mod
 
    Scenario: player user interaction
+      Given a player test mailer
       Given a player mod
       Given a character sheet schema
       Given carps is initialized with test/client

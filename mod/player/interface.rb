@@ -24,14 +24,14 @@ class PlayerInterface < RolePlayInterface
       super()
       @mod = mod
       add_command "mail", "Check for new emails."
-      add_command "next", "You're done, send your stuff to the dungeon master and await the next turn."
+      add_command "done", "You're done, send your stuff to the dungeon master and await the next turn."
    end
 
    def mail
       @mod.check
    end
 
-   def next
+   def done
       @mod.next_turn
    end
 

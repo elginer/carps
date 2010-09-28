@@ -29,7 +29,7 @@ class DMInterface < RolePlayInterface
       @mod = mod
       @editor = Editor.new "editor.yaml"
       add_command "mail", "Check for new emails."
-      add_command "next", "Send all reports and start the next turn."
+      add_command "done", "Send all reports and start the next turn."
       add_command "players", "Describe all players."
       add_command "player", "Describe one player.", "PLAYER"
       add_command "npcs", "Describe all NPCs."
@@ -51,7 +51,7 @@ class DMInterface < RolePlayInterface
       add_command "supress", "Clear the questions for one player", "PLAYER"
    end
 
-   def next
+   def done 
       @mod.next_turn
    end
 

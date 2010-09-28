@@ -18,6 +18,8 @@
 require "mod/mod"
 require "mod/client_turn"
 
+require "util/error"
+
 # Player mod
 class PlayerMod < Mod
 
@@ -37,7 +39,11 @@ class PlayerMod < Mod
 
    # Send answers to dungeon master
    def next_turn
-      @mailer.send @answers
+      if @answers
+         @mailer.send @answers
+      else
+         put_error "Nothing to send."
+      end
    end
 
 end
