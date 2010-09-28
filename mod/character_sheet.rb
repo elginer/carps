@@ -80,14 +80,7 @@ class CharacterSheet < Message
    private
 
    def verify_type val, type_str
-      optional_math = type_str.match /^\s+optional\s+(\S+)\s+$/
-      optional = false
-      if optional
-         type_str = optional_math[1]
-         optional = true
-      end
-      type_str.downcase!
-      type = TypeParser.parse optional, type_str
+      type = TypeParser.parse type_str
       type.verify val
    end
 

@@ -81,11 +81,20 @@ end
 
 # Parse the sheet types from strings
 class TypeParser
-   def TypeParser.parse optional, type_name
+   def TypeParser.parse type_name
+      type_name.downcase!
+      optional_match = type_name.match /^\s*optional\s+(\S+)\s*$/
+      optional = false
+      if optional_match
+         type_name = optional_match[1]
+         optional = true
+      end
       if type_name == "integer"
          return SheetInt.new optional 
       elsif type_name == "text"
          return SheetText.new optional
+      else
+         raise StandardError, "Could not parse type name: " + type_name
       end
    end
 end
