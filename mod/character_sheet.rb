@@ -53,12 +53,8 @@ class CharacterSheet < Message
    # Perform semantic analysis
    def verify_semantics verifyer
       valid = verifyer.verify @sheet
-      display
-      if valid
-         return confirm "Is the above character sheet correct?"
-      else
+      unless valid
          puts "Invalid character sheet."
-         return false
       end
    end
 

@@ -20,6 +20,7 @@
 require "protocol/message"
 
 require "mod/answers"
+require "mod/question"
 require "mod/status_report"
 
 class ClientTurn < Message

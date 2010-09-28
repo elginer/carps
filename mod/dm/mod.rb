@@ -18,9 +18,9 @@
 require "mod/character_sheet_request"
 require "mod/answers"
 require "mod/character_sheet"
-require "mod/sheet_verifier"
 require "mod/sheet_editor"
 require "mod/question"
+require "mod/mod"
 
 require "mod/dm/reporter"
 require "mod/dm/character"
@@ -30,10 +30,7 @@ require "util/warn"
 # Class for DM mods
 #
 # Functions as a facade to the resource, mailer and reporter classes.
-#
-# Subclasses should override
-# schema, semantic_verifier
-class Mod
+class DMMod < Mod
 
    # Initialize with a resource manager, and a mailer 
    def initialize resource, mailer
@@ -314,11 +311,6 @@ class Mod
    def request_character_sheet moniker
       email = @monikers[moniker]
       @mailer.send email, CharacterSheetRequest.new(schema)
-   end
-
-   # The semantic verifier
-   def semantic_verifier
-      NullVerifier.new
    end
 
    def with_valid_mail mail

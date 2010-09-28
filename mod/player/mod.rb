@@ -15,12 +15,26 @@
 # You should have received a copy of the GNU General Public License
 # along with CARPS.  If not, see <http://www.gnu.org/licenses/>.
 
-require "util/question"
+require "mod/mod"
+require "mod/client_turn"
 
-# Character sheet semantic verifier that asks the user if the sheet is true
-class UserVerifier
-   def verify sheet
-      sheet.display
-      confirm "Is the above character sheet correct?"
+# Player mod
+class PlayerMod < Mod
+
+   def initialize pmailer
+      @mailer = pmailer
    end
+
+   def check
+      turn = @mailer.check ClientTurn
+      if turn
+         @answers = turn.take
+      else
+         puts "No new mail."
+      end
+   end
+
+   def done
+   end
+
 end

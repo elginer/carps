@@ -1,42 +1,44 @@
-require "mod/status_report"
-require "mod/answers"
 require "mod/client_turn"
 
-require "mod/question"
-
-Given /^a status report$/ do
-   $status = StatusReport.new "This is some might important information here!"
-end
-
-Then /^the status report should be printed$/ do
-   $status.display
-end
-
-Given /^a question$/ do
-   $question = Question.new "What do you do?"
-end
-
-Then /^the question should be asked$/ do
-   ans = Answers.new
-   $question.ask ans
-   puts "Our conversation:"
-   ans.display
-end
-
-Given /^a status report and a number of questions$/ do
-   s = StatusReport.new "Halt, mortal!"
-   q1 = Question.new "Who are you?"
-   q2 = Question.new "What are you doing here?"
-   $turn = ClientTurn.new s, [q1, q2]
-end
-
-Then /^all the questions should be asked$/ do
-   class Tester
-      def send to, answers
-         puts "To be sent to #{to}"
-         answers.display
-      end
+class PlayerTestMod < PlayerMod
+   def schema
+      $schema
    end
-   tester = Tester.new
-   tester.send "dungeon master", $turn.take
+end
+
+class PlayerModTestMailer
+   def send message
+      puts "Sending:"
+      puts message.emit
+   end
+
+   def check type
+      mail = @mail
+      @mail = nil
+      return mail
+   end
+
+   def turn t
+      @mail = t
+   end
+
+end
+
+Given /^a player mod$/ do
+   $mod = PlayerTestMod.new PlayerModTestMailer.new 
+end
+
+When /^the player receives turn information$/ do
+   status = "You are a player don't you know!"
+   questions = [Question.new("Who are you, you strange man?")]
+   t = ClientTurn.new status, questions
+   $mod.turn t 
+end
+
+Then /^present a user interface to the player$/ do
+   face = PlayerInterface.new mod
+   child = fork do
+      face.run
+   end
+   Process.wait child
 end

@@ -6,7 +6,7 @@ require "mod/dm/interface"
 require "mod/sheet_verifier"
 require "mod/sheet_editor"
 
-class TestMod < Mod
+class TestMod < DMMod
    def schema
       $schema
    end
@@ -77,7 +77,7 @@ Then /^check barry's sheet$/ do
    end
 end
 
-Then /^someone requests to join the mod$/ do
+When /^someone requests to join the mod$/ do
    $mod.add_player $email
 end
 

@@ -15,12 +15,24 @@
 # You should have received a copy of the GNU General Public License
 # along with CARPS.  If not, see <http://www.gnu.org/licenses/>.
 
-require "util/question"
+require "mod/sheet_verifier"
 
-# Character sheet semantic verifier that asks the user if the sheet is true
-class UserVerifier
-   def verify sheet
-      sheet.display
-      confirm "Is the above character sheet correct?"
+# Mod base class supporting character sheet verification
+#
+# Subclasses should override
+# schema, semantic_verifier
+class Mod
+
+   protected
+
+   # The semantic verifier
+   def semantic_verifier
+      UserVerifier.new
    end
+
+   # The schema
+   def schema
+      {}
+   end
+
 end
