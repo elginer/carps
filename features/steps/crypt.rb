@@ -136,11 +136,6 @@ Then /^a hacker pretending to be Alice sends a nefarious message to Bob$/ do
    t.kill
 end
 
-Then /^Alice and Bob's mailers are shut down$/ do
-   $alice.shutdown
-   $bob.shutdown
-end
-
 Then /^a spoofer pretending to be Bob tries to make a handshake with Alice$/ do
    $bob.forget $alice_address 
    Thread.fork do
