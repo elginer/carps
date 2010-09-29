@@ -26,7 +26,7 @@ module CARPS
    # Interface for the player to join games
    class PlayerStartInterface < StartGameInterface
 
-      def initialize continuation, mailer, game_config, message_parser
+      def initialize continuation, mailer, game_config
          super
          add_command "mail", "Check for mail."
       end

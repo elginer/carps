@@ -33,6 +33,7 @@ features/steps/start_player.rb
 features/steps/type_verification.rb
 features/type_verification.feature
 lib/carps.rb
+lib/carps/crypt.rb
 lib/carps/crypt/accept_handshake.rb
 lib/carps/crypt/default_messages.rb
 lib/carps/crypt/handshake.rb
@@ -40,10 +41,12 @@ lib/carps/crypt/mailbox.rb
 lib/carps/crypt/mailer.rb
 lib/carps/crypt/peer.rb
 lib/carps/crypt/public_key.rb
+lib/carps/email.rb
 lib/carps/email/config.rb
 lib/carps/email/imap.rb
 lib/carps/email/smtp.rb
 lib/carps/email/string.rb
+lib/carps/mod.rb
 lib/carps/mod/answers.rb
 lib/carps/mod/character_sheet.rb
 lib/carps/mod/client_turn.rb
@@ -63,8 +66,10 @@ lib/carps/mod/sheet_editor.rb
 lib/carps/mod/sheet_type.rb
 lib/carps/mod/sheet_verifier.rb
 lib/carps/mod/status_report.rb
+lib/carps/protocol.rb
 lib/carps/protocol/keyword.rb
 lib/carps/protocol/message.rb
+lib/carps/service.rb
 lib/carps/service/client_parser.rb
 lib/carps/service/dm/config.rb
 lib/carps/service/dm/mailer.rb
@@ -77,6 +82,7 @@ lib/carps/service/player/mailer.rb
 lib/carps/service/player/start.rb
 lib/carps/service/server_parser.rb
 lib/carps/service/start/interface.rb
+lib/carps/util.rb
 lib/carps/util/colour.rb
 lib/carps/util/config.rb
 lib/carps/util/editor.rb

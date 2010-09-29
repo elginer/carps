@@ -22,10 +22,24 @@ require "drb/acl"
 
 require "set"
 
+# Set up multi processing 
+#
+# Initialize a CARPProcess object into the global variable $process
+def init_process
+   $process = CARPS::Process.new "process.yaml" 
+end
+
+# Set up multi-threading
+#
+# Can be called more than once
+def init_threading
+   Thread.abort_on_exception = true
+end
+
 module CARPS
 
    # Responsible for launching other CARP processes
-   class CARPProcess < YamlConfig
+   class Process < YamlConfig
       def parse_yaml conf
          term = read_conf conf, "launch_terminal"
          port = read_conf(conf, "port").to_i
@@ -74,20 +88,6 @@ module CARPS
          end
       end
 
-   end
-
-   # Set up multi processing 
-   #
-   # Initialize a CARPProcess object into the global variable $process
-   def init_process
-      $process = CARPProcess.new "process.yaml" 
-   end
-
-   # Set up multi-threading
-   #
-   # Can be called more than once
-   def init_threading
-      Thread.abort_on_exception = true
    end
 
 end

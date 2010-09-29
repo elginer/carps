@@ -15,6 +15,43 @@
 # You should have received a copy of the GNU General Public License
 # along with CARPS.  If not, see <http://www.gnu.org/licenses/>.
 
+# Class containing message keywords.  Its name is short :)
+class K
+end
+
+# Class containing message keywords which are associated with values.
+class V
+end
+
+
+# Declare a new protocol keyword which is associated with a value
+def protoval keyword
+   # Use the OLD SKOOL for ruby 1.8 support
+   K.class_eval <<-"END"
+   def K.#{keyword.to_s}
+      prefix + "#{keyword.to_s}" + keyword_end
+   end
+   END
+
+   V.class_eval <<-"END"
+   def V.#{keyword.to_s} data
+      prefix + "#{keyword.to_s}" + keyword_end + data + K.end
+   end
+   END
+end
+
+# Declare a new protocol keyword which is a flag or marker 
+def protoword keyword
+   K.class_eval <<-"END"
+   def K.#{keyword.to_s}
+      mark_prefix + "#{keyword.to_s}" + keyword_end
+   end
+   END
+end
+
+# End keyword 
+protoword "end"
+
 module CARPS
 
    # CARP protocol keywords associated with values are prefixed by ASCII start of text.
@@ -31,41 +68,6 @@ module CARPS
    def keyword_end
    "\3"
    end
-
-   # Class containing message keywords.  Its name is short :)
-   class K
-   end
-
-   # Class containing message keywords which are associated with values.
-   class V
-   end
-
-   # Declare a new protocol keyword which is associated with a value
-   def protoval keyword
-      # Use the OLD SKOOL for ruby 1.8 support
-      K.class_eval <<-"END"
-      def K.#{keyword.to_s}
-         prefix + "#{keyword.to_s}" + keyword_end
-      end
-   END
-      V.class_eval <<-"END"
-      def V.#{keyword.to_s} data
-         prefix + "#{keyword.to_s}" + keyword_end + data + K.end
-      end
-   END
-   end
-
-   # Declare a new protocol keyword which is a flag or marker 
-   def protoword keyword
-      K.class_eval <<-"END"
-      def K.#{keyword.to_s}
-         mark_prefix + "#{keyword.to_s}" + keyword_end
-      end
-   END
-   end
-
-   # End keyword 
-   protoword "end"
 
    class Expected < StandardError
    end

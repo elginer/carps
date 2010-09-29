@@ -30,19 +30,18 @@ module CARPS
       include ControlInterface
 
       # Start interface
-      def StartGameInterface.start_game_interface mailer, config, parser
+      def StartGameInterface.start_game_interface mailer, config
          choice = callcc do |continuation|
-            interface = self.new continuation, mailer, config, parser
+            interface = self.new continuation, mailer, config
             interface.run
          end
          choice.call
       end
 
-      def initialize continuation, mailer, game_config, message_parser
+      def initialize continuation, mailer, game_config
          @mailer = mailer
          @game_config = game_config
          @continuation = continuation
-         @message_parser = message_parser
          super()
          add_command "games", "List existing games."
          add_command "load", "Load an existing game.", "NAME"

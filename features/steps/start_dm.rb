@@ -34,7 +34,7 @@ end
 
 Then /^present the start game interface to the dm$/ do
    child = fork do
-      start = DMStartInterface.start_game_interface nil, MockConfig, []
+      DMStartInterface.start_game_interface nil, MockConfig
    end
    Process.wait child
 end

@@ -1,5 +1,5 @@
 # Copyright 2010 John Morrice
-
+ 
 # This file is part of CARPS.
 
 # CARPS is free software: you can redistribute it and/or modify
@@ -15,13 +15,15 @@
 # You should have received a copy of the GNU General Public License
 # along with CARPS.  If not, see <http://www.gnu.org/licenses/>.
 
-require "carps/crypt/default_messages"
-
-module CARPS
-
-   # Create a parser which parses messages for the server 
-   def server_parser
-      MessageParser.new default_messages 
-   end
-
-end
+require "carps/service/dm/config"
+require "carps/service/dm/mailer"
+require "carps/service/dm/start"
+require "carps/service/player/config"
+require "carps/service/player/mailer"
+require "carps/service/player/start"
+require "carps/service/start/interface"
+require "carps/service/client_parser"
+require "carps/service/game"
+require "carps/service/interface"
+require "carps/service/mod"
+require "carps/service/server_parser"

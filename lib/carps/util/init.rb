@@ -20,13 +20,9 @@ require "carps/util/config"
 
 require "etc"
 
-module CARPS
-
-   # Initialize carps
-   def init dir
-      $ROOT_CONFIG = Etc.getpwuid.dir + "/carps/"
-      $CONFIG = $ROOT_CONFIG + dir + "/"
-      init_process
-   end 
-
-end
+# Initialize carps
+def init dir
+   $ROOT_CONFIG = Etc.getpwuid.dir + "/carps/"
+   $CONFIG = $ROOT_CONFIG + dir + "/"
+   init_process
+end 

@@ -73,9 +73,7 @@ end
 
 Then /^present the start game interface to the player$/ do
    child = fork do
-      PlayerStartInterface.start_game_interface $mailer,
-         MockPlayerConfig,
-         MessageParser.new(default_messages)
+      PlayerStartInterface.start_game_interface $mailer, MockPlayerConfig
    end
    Process.wait child
 end
