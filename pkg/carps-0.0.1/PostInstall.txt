@@ -1,3 +1,0 @@
-
-For more information on carps, see http://carps.rubyforge.org
-

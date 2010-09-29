@@ -1,4 +1,4 @@
-# CARPS, the Computer Assissted Role-Playing Game System,
+# CARPS, the Computer Assisted Role-Playing Game System,
 # is a tool for playing pen and paper RPGs over the internet.
 # 
 # CARPS is:
