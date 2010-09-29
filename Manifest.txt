@@ -3,7 +3,6 @@ GEM_DESCRIPTION
 History.txt
 Manifest.txt
 PostInstall.txt
-README
 README.rdoc
 Rakefile
 features/character_sheet.feature

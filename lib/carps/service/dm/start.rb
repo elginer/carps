@@ -17,7 +17,10 @@
 
 require "carps/service/start/interface"
 
+require "carps/service/mod"
+
 require "carps/util/editor"
+require "carps/util/error"
 
 module CARPS
 
@@ -32,13 +35,18 @@ module CARPS
       protected
 
       def new name, mod, campaign
-         editor = Editor.new "editor.yaml"
-         about = editor.edit "<Replace with description of game>"
-         players = get_players
-         config = @game_config.new mod, campaign, about, players
-         config.save name + ".yaml"
-         game = config.spawn @mailer
-         @continuation.call lambda {game.start}
+         mods = load_mods
+         if mods.member? mod
+            editor = Editor.new "editor.yaml"
+            about = editor.edit "<Replace with description of game>"
+            players = get_players
+            config = @game_config.new mod, campaign, about, players
+            config.save name + ".yaml"
+            game = config.spawn @mailer
+            @continuation.call lambda {game.start}
+         else
+            put_error "No such mod."
+         end
       end
 
       def get_players
