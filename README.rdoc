@@ -20,8 +20,9 @@ secure; CARPS messages are cryptographically signed to prevent spoofing.
 
 == REQUIREMENTS:
 
-rubygems
 ruby
+rake
+rubygems
 openssl
 highline
 cucumber
