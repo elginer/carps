@@ -1,6 +1,6 @@
 = carps
 
-* http://github.com/#{github_username}/#{project_name}
+* http://github.com/elginer/carps
 
 == DESCRIPTION:
 
@@ -10,13 +10,16 @@ is a tool for playing pen and paper RPGs over the internet.
 
 == FEATURES/PROBLEMS:
 
-Extensible:
+* Extensible:
+
 game rules are provided by extensions to CARPS.
  
-Decentralized: 
+* Decentralized: 
+
 CARPS' protocol is implemented on top of email. 
 
-Secure: 
+*Secure: 
+
 CARPS messages are cryptographically signed to prevent spoofing.
 
 == REQUIREMENTS:
