@@ -15,13 +15,24 @@
 # You should have received a copy of the GNU General Public License
 # along with CARPS.  If not, see <http://www.gnu.org/licenses/>.
 
-require "crypt/default_messages"
+require "drb"
 
-require "service/accept_invite"
+# A mailer for the player
+class PlayerMailer
 
-# Create a parser which parses messages for the server 
-def server_parser
-   MessageParser.new default_messages 
+   include DRbUndumped
+
+   def initialize dm, mailer
+      @dm = dm
+      @mailer = mailer
+   end
+
+   def check type
+      @mailer.check type, @dm
+   end
+
+   def send message
+      @mailer.send @dm, message
+   end
+
 end
-
-

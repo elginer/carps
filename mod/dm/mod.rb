@@ -253,15 +253,23 @@ class DMMod < Mod
 
    # Check for mail 
    def check_mail
-      if sheet = @mailer.check(CharacterSheet)
-         with_valid_mail sheet do |moniker|
-            new_character_sheet moniker, sheet
+      
+      if mail = @mailer.check(CharacterSheet)
+         unless @mails.member? mail.from 
+            add_player mail.from
          end
-      elsif answers = @mailer.check(Answers)
-         with_valid_mail answers do |moniker|
-            new_answer moniker, answers
-         end
+      else 
+         mail = @mailer.check(Answers)
       end
+
+      if mail
+         with_valid_mail mail do |moniker|
+            new_character_sheet moniker, mail
+         end
+      else
+         puts "No new mail."
+      end
+
    end
 
    # Register a new character sheet

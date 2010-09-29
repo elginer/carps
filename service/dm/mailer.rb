@@ -15,22 +15,23 @@
 # You should have received a copy of the GNU General Public License
 # along with CARPS.  If not, see <http://www.gnu.org/licenses/>.
 
-require "protocol/message"
+require "drb"
 
-class AcceptInvite < Message
+# A mailer for the DM 
+class DMMailer
 
-   # Extend the protocol for this OKAY message
-   protoword :accept_invite
+   include DRbUndumped
 
-   # Parse from the void
-   def AcceptInvite.parse blob
-      forget, blob = find K.accept_invite, blob
-      [AcceptInvite.new, blob]
+   def initialize mailer
+      @mailer = mailer
    end
 
-   # Emit
-   def emit
-      K.accept_invite
+   def check type
+      @mailer.check type, @dm
+   end
+
+   def send to, message
+      @mailer.send to, message
    end
 
 end

@@ -16,7 +16,10 @@
 # along with CARPS.  If not, see <http://www.gnu.org/licenses/>.
 
 require "service/mod"
-require "service/accept_invite"
+
+require "service/player/mailer"
+
+require "service/dm/mailer"
 
 require "protocol/keyword"
 require "protocol/message"
@@ -96,19 +99,10 @@ class GameServer < Game
 
    private
 
-   def accept_invitations interface
-      # Wait for invitation acceptances
-      loop do
-         accept = @mailer.read AcceptInvite
-         interface.acceptance accept
-      end
-   end
-
    def play
       mod = load_mods[@mod]
-      interface = ServerInterface.new @mailer
-      $process.launch interface, mod["host"] + " " + @campaign
-      interface
+      mailer = DMMailer.new @mailer
+      $process.launch mailer, mod["host"] + " " + @campaign
    end
 
 end
@@ -150,7 +144,6 @@ class GameClient < Game
    # Join this game as a client
    def join_game
       resume
-      @mailer.send @dm, AcceptInvite.new
    end
 
    # Parse this from semi-structured text
@@ -165,7 +158,8 @@ class GameClient < Game
    def resume
       mod = load_mods[@mod]
       main = mod["play"]
-      $process.launch ModInfo.new(@dm, @mailer), main
+      mailer = PlayerMailer.new dm, @mailer
+      $process.launch mailer, main
    end
 
 end
