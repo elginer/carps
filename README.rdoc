@@ -10,13 +10,14 @@ is a tool for playing pen and paper RPGs over the internet.
 
 == FEATURES/PROBLEMS:
 
-CARPS is:
-
-extensible; game rules are provided by extensions to CARPS.
+Extensible:
+game rules are provided by extensions to CARPS.
  
-decentralized; CARPS' protocol is a layer on top of email. 
+Decentralized: 
+CARPS' protocol is implemented on top of email. 
 
-secure; CARPS messages are cryptographically signed to prevent spoofing.
+Secure: 
+CARPS messages are cryptographically signed to prevent spoofing.
 
 == REQUIREMENTS:
 
