@@ -28,8 +28,6 @@ require "carps/crypt/mailbox"
 
 require "yaml"
 
-require "highline"
-
 module CARPS
 
    # Class to read email config.
@@ -39,12 +37,14 @@ module CARPS
          "email.yaml"
       end
 
+      def initialize address, same_pass, smtp_options, imap_options
+         load_resources address, same_pass, imap_options, smtp_options
+      end
+
       # Parse the email config file
       def parse_yaml conf
-         username = read_conf conf, "username"
          address = read_conf conf, "address"
-         h = HighLine.new
-         password = secret "Enter password for #{username}:" 
+         same_pass = read_conf conf, "same_pass"
          imap = read_conf conf, "imap"
          unless imap["server"] and imap["port"] and imap["tls"]
             raise Expected, "Valid IMAP section"
@@ -53,14 +53,38 @@ module CARPS
          unless smtp["server"] and smtp["port"] and smtp["starttls"] and smtp["tls"]
             raise Expected, "Valid SMTP section"
          end
-         [imap, smtp, username, address, password]        
+         [address, same_pass, imap, smtp]        
       end
 
       # Connect to the imap and smtp servers
-      def load_resources imap_settings, smtp_settings, username, address, password
+      def load_resources address, same_pass, imap_settings, smtp_settings
+         @file_struct = {"address" => address, "same_pass" => same_pass, "imap" => imap_settings, "smtp" => smtp_settings}
          @address = address
-         @imap = IMAP.new imap_settings, username, password
-         @smtp = SMTP.new smtp_settings, username, password
+         smtp_password = ""
+         imap_password = ""
+         if same_pass
+            imap_password = smtp_password = secret "Enter password for #{address}:" 
+         else
+            imap_password = secret "Enter password for IMAP account at #{address}:"
+            smtp_password = secret "Enter password for SMTP account at #{address}:"
+         end
+         @imap = IMAP.new imap_settings, username, imap_password
+         @smtp = SMTP.new smtp_settings, username, smtp_password
+      end
+
+      # Emit options as yaml
+      def emit
+         @file_struct.to_yaml
+      end
+
+      # Expose the IMAP client
+      def imap
+         @imap
+      end
+
+      # Expose the SMTP client
+      def smtp
+         @smtp
       end
 
       # Return the high level mail client
