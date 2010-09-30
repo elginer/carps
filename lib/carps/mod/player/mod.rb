@@ -25,61 +25,65 @@ require "carps/util/highlight"
 
 module CARPS
 
-   # Player mod
-   class PlayerMod < Mod
+   module Player
 
-      def initialize pmailer
-         @mailer = pmailer
-         @sheet = CharacterSheet.new({})
-         edit_sheet
-      end
+      # Player mod
+      class Mod < CARPS::Mod
 
-      # Edit the character sheet
-      def edit_sheet
-         edit = SheetEditor.new schema, semantic_verifier
-         @sheet = edit.fill @sheet.dump
-         @edited = true
-      end
+         def initialize pmailer
+            @mailer = pmailer
+            @sheet = CharacterSheet.new({})
+            edit_sheet
+         end
 
-      # Show the character sheet
-      def show_sheet
-         @sheet.display
-      end
+         # Edit the character sheet
+         def edit_sheet
+            edit = SheetEditor.new schema, semantic_verifier
+            @sheet = edit.fill @sheet.dump
+            @edited = true
+         end
 
-      # Take a turn
-      def take_turn
-         if @turn
-            @answers = @turn.take
-         else
-            tu = @mailer.check ClientTurn
-            if tu
-               @turn = tu
-               sheet = @turn.sheet
-               unless sheet.dump.empty?
-                  @sheet = sheet
-                  highlight "Received new character sheet."
-               end
-               @turn.take
+         # Show the character sheet
+         def show_sheet
+            @sheet.display
+         end
+
+         # Take a turn
+         def take_turn
+            if @turn
+               @answers = @turn.take
             else
-               put_error "Turn not received."
+               tu = @mailer.check ClientTurn
+               if tu
+                  @turn = tu
+                  sheet = @turn.sheet
+                  unless sheet.dump.empty?
+                     @sheet = sheet
+                     highlight "Received new character sheet."
+                  end
+                  @turn.take
+               else
+                  put_error "Turn not received."
+               end
             end
          end
-      end
 
-      # Send answers to dungeon master
-      def next_turn
-         if @answers
-            @mailer.send @answers
-            done = true
+         # Send answers to dungeon master
+         def next_turn
+            if @answers
+               @mailer.send @answers
+               done = true
+            end
+            if @edited
+               @edited = false
+               @mailer.send @sheet
+               done = true
+            end
+            unless done
+               put_error "Nothing to send."
+            end
          end
-         if @edited
-            @edited = false
-            @mailer.send @sheet
-            done = true
-         end
-         unless done
-            put_error "Nothing to send."
-         end
+
       end
 
    end

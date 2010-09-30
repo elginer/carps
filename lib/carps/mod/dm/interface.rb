@@ -21,120 +21,124 @@ require "carps/util/editor"
 
 module CARPS
 
-   # A basic user interface for the dm
-   #
-   # Subclass this interface to provide commands
-   class DMInterface < RolePlayInterface
+   module DM
 
-      def initialize mod
-         super()
-         @mod = mod
-         add_command "mail", "Check for new emails."
-         add_command "done", "Send all reports and start the next turn."
-         add_command "players", "Describe all players."
-         add_command "player", "Describe one player.", "PLAYER"
-         add_command "npcs", "Describe all NPCs."
-         add_command "npc", "Describe one NPC.", "NPC"
-         add_command "pcstats", "Edit a player's character sheet.", "PLAYER"
-         add_command "npcstats", "Edit an NPC's character sheet.", "NPC"
-         add_command "warp", "Put all player in this room.", "ROOM"
-         add_command "room", "Put one player in this room.", "PLAYER", "ROOM"
-         add_command "spawn", "Create a new npc", "TYPE", "NAME"
-         add_command "edit", "Edit a player's report.", "PLAYER"
-         add_command "census", "Ask a question of every player."
-         add_command "ask", "Ask a question of one player.", "PLAYER"
-         add_command "survey", "Preview the reports and questions to be sent to every player."
-         add_command "inspect", "Preview the report and questions to be sent to one player.", "PLAYER"
-         add_command "nuke", "Clear all reports and questions for all players."
-         add_command "silence", "Clear all reports for all players."
-         add_command "futile", "Clear all questions for all players."
-         add_command "remit", "Clear the report for one player", "PLAYER"
-         add_command "supress", "Clear the questions for one player", "PLAYER"
-      end
+      # A basic user interface for the dm
+      #
+      # Subclass this interface to provide commands
+      class Interface < RolePlayInterface
 
-      def done 
-         @mod.next_turn
-      end
+         def initialize mod
+            super()
+            @mod = mod
+            add_command "mail", "Check for new emails."
+            add_command "done", "Send all reports and start the next turn."
+            add_command "players", "Describe all players."
+            add_command "player", "Describe one player.", "PLAYER"
+            add_command "npcs", "Describe all NPCs."
+            add_command "npc", "Describe one NPC.", "NPC"
+            add_command "pcstats", "Edit a player's character sheet.", "PLAYER"
+            add_command "npcstats", "Edit an NPC's character sheet.", "NPC"
+            add_command "warp", "Put all player in this room.", "ROOM"
+            add_command "room", "Put one player in this room.", "PLAYER", "ROOM"
+            add_command "spawn", "Create a new npc", "TYPE", "NAME"
+            add_command "edit", "Edit a player's report.", "PLAYER"
+            add_command "census", "Ask a question of every player."
+            add_command "ask", "Ask a question of one player.", "PLAYER"
+            add_command "survey", "Preview the reports and questions to be sent to every player."
+            add_command "inspect", "Preview the report and questions to be sent to one player.", "PLAYER"
+            add_command "nuke", "Clear all reports and questions for all players."
+            add_command "silence", "Clear all reports for all players."
+            add_command "futile", "Clear all questions for all players."
+            add_command "remit", "Clear the report for one player", "PLAYER"
+            add_command "supress", "Clear the questions for one player", "PLAYER"
+         end
 
-      def npcstats name
-         @mod.edit_npc_sheet name
-      end
+         def done 
+            @mod.next_turn
+         end
 
-      def pcstats name
-         @mod.edit_player_sheet name
-      end
+         def npcstats name
+            @mod.edit_npc_sheet name
+         end
 
-      def npc name
-         @mod.describe_npc name
-      end
+         def pcstats name
+            @mod.edit_player_sheet name
+         end
 
-      def npcs
-         @mod.list_npcs
-      end
+         def npc name
+            @mod.describe_npc name
+         end
 
-      def players
-         @mod.list_players
-      end
+         def npcs
+            @mod.list_npcs
+         end
 
-      def player name
-         @mod.describe_player name 
-      end
+         def players
+            @mod.list_players
+         end
 
-      def mail
-         @mod.check_mail
-      end
+         def player name
+            @mod.describe_player name 
+         end
 
-      def supress player
-         @mod.delete_questions player
-      end
+         def mail
+            @mod.check_mail
+         end
 
-      def remit player
-         @mod.delete_report player
-      end
+         def supress player
+            @mod.delete_questions player
+         end
 
-      def futile
-         @mod.delete_all_questions
-      end
+         def remit player
+            @mod.delete_report player
+         end
 
-      def silence
-         @mod.delete_all_reports
-      end
+         def futile
+            @mod.delete_all_questions
+         end
 
-      def nuke
-         silence
-         futile
-      end
+         def silence
+            @mod.delete_all_reports
+         end
 
-      def inspect player
-         @mod.inspect_turn player
-      end
+         def nuke
+            silence
+            futile
+         end
 
-      def survey
-         @mod.inspect_reports
-      end
+         def inspect player
+            @mod.inspect_turn player
+         end
 
-      def census
-         @mod.ask_everyone
-      end
+         def survey
+            @mod.inspect_reports
+         end
 
-      def ask player
-         @mod.ask_player player
-      end
+         def census
+            @mod.ask_everyone
+         end
 
-      def warp room 
-         @mod.everyone_in room
-      end
+         def ask player
+            @mod.ask_player player
+         end
 
-      def room player, room
-         @mod.player_in player, room
-      end
+         def warp room 
+            @mod.everyone_in room
+         end
 
-      def spawn type, name
-         @mod.new_npc type, name
-      end
+         def room player, room
+            @mod.player_in player, room
+         end
 
-      def edit player
-         @mod.edit player
+         def spawn type, name
+            @mod.new_npc type, name
+         end
+
+         def edit player
+            @mod.edit player
+         end
+
       end
 
    end

@@ -27,11 +27,11 @@ class SaltyWizard < Wizard
 end
 
 Given /^a player wizard$/ do
-   $wizard = PlayerWizard.new
+   $wizard = Player::Wizard.new
 end
 
 Given /^a master wizard$/ do
-   $wizard = MasterWizard.new
+   $wizard = DM::Wizard.new
 end
 
 Then /^clean the wizard directory$/ do
@@ -62,7 +62,7 @@ end
 
 Then /^confirm files are present$/ do
    if $wizard.first_time?
-      raise "The wizard thought the files were not present when they were."
+      raise StandardError, "The wizard thought the files were not present when they were."
    end
 end
 

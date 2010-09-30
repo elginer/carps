@@ -19,22 +19,26 @@ require "drb"
 
 module CARPS
 
-   # A mailer for the player
-   class PlayerMailer
+   module Player
 
-      include DRbUndumped
+      # A mailer for the player
+      class Mailer < CARPS::Mailer
 
-      def initialize dm, mailer
-         @dm = dm
-         @mailer = mailer
-      end
+         include DRbUndumped
 
-      def check type
-         @mailer.check type, @dm
-      end
+         def initialize dm, mailer
+            @dm = dm
+            @mailer = mailer
+         end
 
-      def send message
-         @mailer.send @dm, message
+         def check type
+            @mailer.check type, @dm
+         end
+
+         def send message
+            @mailer.send @dm, message
+         end
+
       end
 
    end

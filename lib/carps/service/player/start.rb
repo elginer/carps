@@ -23,29 +23,33 @@ require "carps/util/question"
 
 module CARPS
 
-   # Interface for the player to join games
-   class PlayerStartInterface < StartGameInterface
+   module Player
 
-      def initialize continuation, mailer, game_config
-         super
-         add_command "mail", "Check for mail."
-      end
+      # Interface for the player to join games
+      class StartInterface < StartGameInterface
 
-      protected
-
-      def mail 
-         invite = @mailer.check Invite
-         if invite
-            if invite.ask
-               config = @game_config.new invite.mod, invite.dm, invite.desc
-               fn = question "Enter a name for this game"
-               fn = fn + ".yaml"
-               config.save fn
-               @continuation.call lambda {invite.accept}
-            end
-         else
-            puts "No new mail."
+         def initialize continuation, mailer, game_config
+            super
+            add_command "mail", "Check for mail."
          end
+
+         protected
+
+         def mail 
+            invite = @mailer.check Invite
+            if invite
+               if invite.ask
+                  config = @game_config.new invite.mod, invite.dm, invite.desc
+                  fn = question "Enter a name for this game"
+                  fn = fn + ".yaml"
+                  config.save fn
+                  @continuation.call lambda {invite.accept}
+               end
+            else
+               puts "No new mail."
+            end
+         end
+
       end
 
    end

@@ -19,34 +19,38 @@ require "carps/mod/interface"
 
 module CARPS
 
-   # Player interface
-   class PlayerInterface < RolePlayInterface
+   module Player
 
-      def initialize mod
-         super()
-         @mod = mod
-         add_command "act", "Take your turn."
-         add_command "done", "Send your stuff to the dungeon master and await the next turn."
-         add_command "sheet", "Look at your character sheet."
-         add_command "edit", "Edit your character sheet."
-      end
+      # Player interface
+      class Interface < RolePlayInterface
 
-      protected
+         def initialize mod
+            super()
+            @mod = mod
+            add_command "act", "Take your turn."
+            add_command "done", "Send your stuff to the dungeon master and await the next turn."
+            add_command "sheet", "Look at your character sheet."
+            add_command "edit", "Edit your character sheet."
+         end
 
-      def sheet
-         @mod.show_sheet
-      end
+         protected
 
-      def edit
-         @mod.edit_sheet
-      end
+         def sheet
+            @mod.show_sheet
+         end
 
-      def act
-         @mod.take_turn
-      end
+         def edit
+            @mod.edit_sheet
+         end
 
-      def done
-         @mod.next_turn
+         def act
+            @mod.take_turn
+         end
+
+         def done
+            @mod.next_turn
+         end
+
       end
 
    end

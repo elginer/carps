@@ -16,6 +16,6 @@
 # along with CARPS.  If not, see <http://www.gnu.org/licenses/>.
 
 require "carps/wizard/player"
-require "carps/wizard/master"
+require "carps/wizard/dm"
 require "carps/wizard/steps"
 require "carps/wizard/wizard"

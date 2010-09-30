@@ -22,56 +22,58 @@ require "yaml"
 
 module CARPS
 
-   # Class to read game configuration files
-   class DMGameConfig < YamlConfig
+   module DM
+      # Class to read game configuration files
+      class GameConfig < YamlConfig
 
-      # Create a new GameConfig
-      def initialize mod, campaign, about, players
-         @campaign = campaign
-         @mod = mod
-         @about = about
-         @players = players
-      end
+         # Create a new GameConfig
+         def initialize mod, campaign, about, players
+            @campaign = campaign
+            @mod = mod
+            @about = about
+            @players = players
+         end
 
-      # Parse a game config file
-      def parse_yaml conf
-         @campaign = read_conf conf, "campaign"
-         @mod = read_conf conf, "mod"
-         @about = read_conf conf, "about"
-         @players = read_conf conf, "players"
-      end
+         # Parse a game config file
+         def parse_yaml conf
+            @campaign = read_conf conf, "campaign"
+            @mod = read_conf conf, "mod"
+            @about = read_conf conf, "about"
+            @players = read_conf conf, "players"
+         end
 
-      # Display information on this configuration
-      def display
-         puts "Mod: " + @mod
-         puts "Campaign: " + @campaign
-         puts "Description:"
-         puts @about
-         puts "Invited players:"
-         puts @players
-      end
+         # Display information on this configuration
+         def display
+            puts "Mod: " + @mod
+            puts "Campaign: " + @campaign
+            puts "Description:"
+            puts @about
+            puts "Invited players:"
+            puts @players
+         end
 
-      # Save this game
-      def save filename
-         f = File.new($CONFIG + "/games/" + filename, "w")
-         f.write emit
-         f.close
-      end
+         # Save this game
+         def save filename
+            f = File.new($CONFIG + "/games/" + filename, "w")
+            f.write emit
+            f.close
+         end
 
-      # Emit as yaml
-      def emit
-         {"mod" => @mod, 
+         # Emit as yaml
+         def emit
+            {"mod" => @mod, 
        "campaign" => @campaign, 
        "about" => @about, 
        "players" => @players}.to_yaml
-      end
+         end
 
-      # Receive a mailer 
-      # Return a GameServer object that can communicate with players 
-      def spawn mailer
-         GameServer.new mailer, @mod, @campaign, @about, @players
-      end
+         # Receive a mailer 
+         # Return a GameServer object that can communicate with players 
+         def spawn mailer
+            GameServer.new mailer, @mod, @campaign, @about, @players
+         end
 
+      end
    end
 
 end

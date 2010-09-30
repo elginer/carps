@@ -103,7 +103,7 @@ module CARPS
 
       def play
          mod = load_mods[@mod]
-         mailer = DMMailer.new @mailer
+         mailer = DM::Mailer.new @mailer
          $process.launch mailer, mod["host"] + " " + @campaign
       end
 
@@ -160,7 +160,7 @@ module CARPS
       def resume
          mod = load_mods[@mod]
          main = mod["play"]
-         mailer = PlayerMailer.new dm, @mailer
+         mailer = Player::Mailer.new dm, @mailer
          $process.launch mailer, main
       end
 

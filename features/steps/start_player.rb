@@ -27,7 +27,7 @@ class MockPlayerGame
    end
 end
 
-class MockPlayerConfig < PlayerGameConfig
+class MockPlayerConfig < Player::GameConfig
    def spawn mailer
       MockGame.new
    end
@@ -73,7 +73,7 @@ end
 
 Then /^present the start game interface to the player$/ do
    child = fork do
-      PlayerStartInterface.start_game_interface $mailer, MockPlayerConfig
+      Player::StartInterface.start_game_interface $mailer, MockPlayerConfig
    end
    Process.wait child
 end

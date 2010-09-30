@@ -6,7 +6,7 @@ require "carps/mod/status_report"
 
 include CARPS
 
-class PlayerTestMod < PlayerMod
+class PlayerTestMod < Player::Mod
    def schema
       $schema
    end
@@ -46,7 +46,7 @@ When /^the player receives turn information$/ do
 end
 
 Then /^present a user interface to the player$/ do
-   face = PlayerInterface.new $mod
+   face = Player::Interface.new $mod
    child = fork do
       face.run
    end

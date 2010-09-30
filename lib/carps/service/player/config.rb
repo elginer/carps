@@ -22,50 +22,54 @@ require "yaml"
 
 module CARPS
 
-   # Class to read game configuration files
-   class PlayerGameConfig < YamlConfig
+   module Player
 
-      # Create a new GameConfig
-      def initialize mod, dm, about
-         @mod = mod
-         @dm = dm
-         @about = about
-      end
+      # Class to read game configuration files
+      class GameConfig < YamlConfig
 
-      # Parse a game config file
-      def parse_yaml conf
-         @mod = read_conf conf, "mod"
-         @about = read_conf conf, "about"
-         @dm = read_conf conf, "dm"
-      end
+         # Create a new GameConfig
+         def initialize mod, dm, about
+            @mod = mod
+            @dm = dm
+            @about = about
+         end
 
-      # Display information on this configuration
-      def display
-         puts "Mod: " + @mod
-         puts "Description:"
-         puts @about
-         puts "DM: " + @dm
-      end
+         # Parse a game config file
+         def parse_yaml conf
+            @mod = read_conf conf, "mod"
+            @about = read_conf conf, "about"
+            @dm = read_conf conf, "dm"
+         end
 
-      # Save this game
-      def save filename
-         f = File.new($CONFIG + "/games/" + filename, "w")
-         f.write emit
-         f.close
-      end
+         # Display information on this configuration
+         def display
+            puts "Mod: " + @mod
+            puts "Description:"
+            puts @about
+            puts "DM: " + @dm
+         end
 
-      # Spawn a game object so we can resume the game
-      def spawn mailer
-         GameClient.new mailer, @dm, @mod, @about
-      end
+         # Save this game
+         def save filename
+            f = File.new($CONFIG + "/games/" + filename, "w")
+            f.write emit
+            f.close
+         end
 
-      private
+         # Spawn a game object so we can resume the game
+         def spawn mailer
+            GameClient.new mailer, @dm, @mod, @about
+         end
 
-      # Emit as yaml
-      def emit
-         {"mod" => @mod, 
+         private
+
+         # Emit as yaml
+         def emit
+            {"mod" => @mod, 
        "about" => @about, 
        "dm" => @dm}.to_yaml
+         end
+
       end
 
    end

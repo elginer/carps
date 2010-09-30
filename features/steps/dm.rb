@@ -8,7 +8,7 @@ require "carps/mod/sheet_editor"
 
 include CARPS
 
-class TestMod < DMMod
+class TestMod < DM::Mod
    def schema
       $schema
    end
@@ -84,12 +84,12 @@ Then /^check barry's sheet$/ do
 end
 
 Then /^present a user interface to the DM$/ do
-   DMInterface.class_eval <<-END
+   DM::Interface.class_eval <<-END
    def quit
       @run = false
    end
    END
-   interface = DMInterface.new $mod
+   interface = DM::Interface.new $mod
    interface.run
 end
 

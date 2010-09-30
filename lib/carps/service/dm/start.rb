@@ -24,43 +24,47 @@ require "carps/util/error"
 
 module CARPS
 
-   # Interface for the dm to start games
-   class DMStartInterface < StartGameInterface
+   module DM
 
-      def initialize continuation, mailer, game_config
-         super
-         add_command "new", "Start a new game.", "NAME", "MOD", "CAMPAIGN"
-      end
+      # Interface for the dm to start games
+      class StartInterface < StartGameInterface
 
-      protected
-
-      def new name, mod, campaign
-         mods = load_mods
-         if mods.member? mod
-            editor = Editor.new
-            about = editor.edit "<Replace with description of game>"
-            players = get_players
-            config = @game_config.new mod, campaign, about, players
-            config.save name + ".yaml"
-            game = config.spawn @mailer
-            @continuation.call lambda {game.start}
-         else
-            put_error "No such mod."
+         def initialize continuation, mailer, game_config
+            super
+            add_command "new", "Start a new game.", "NAME", "MOD", "CAMPAIGN"
          end
-      end
 
-      def get_players
-         pl = []
-         done = false
-         until done
-            e = question "Enter email address of player to invite.  Leave blank for no more players."
-            if e.empty?
-               done = true
+         protected
+
+         def new name, mod, campaign
+            mods = load_mods
+            if mods.member? mod
+               editor = Editor.new
+               about = editor.edit "<Replace with description of game>"
+               players = get_players
+               config = @game_config.new mod, campaign, about, players
+               config.save name + ".yaml"
+               game = config.spawn @mailer
+               @continuation.call lambda {game.start}
             else
-               pl.push e
+               put_error "No such mod."
             end
          end
-         pl
+
+         def get_players
+            pl = []
+            done = false
+            until done
+               e = question "Enter email address of player to invite.  Leave blank for no more players."
+               if e.empty?
+                  done = true
+               else
+                  pl.push e
+               end
+            end
+            pl
+         end
+
       end
 
    end

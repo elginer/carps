@@ -29,12 +29,29 @@ def setup_email parser
    config.mailer parser
 end
 
+# Launch CARPS
+def carps config, role
+   wizard = role::Wizard.new
+   if wizard.first_time?
+      wizard.create_files
+      wizard.create_dirs
+      config = true
+   end
+   if config
+      wizard.run
+   else
+      init
+      mailer = setup_email client_parser
+      role::StartInterface.start_game_interface mailer, role::GameConfig
+   end
+end
+
 # The user is a player
 player = false
 # The user is a dungeon master
 dm = false
-# The user is a n00b lol
-noob = false
+# Configure CARPS
+config = false
 
 opts = OptionParser.new do |opts|
 
@@ -52,7 +69,7 @@ opts = OptionParser.new do |opts|
    end
 
    opts.on "-w", "--wizard", "Use this option to configure your settings.  Use with either --master or --player." do
-      noob = true
+      config = true
    end
 
    opts.on "-h", "--help", "Print help." do
@@ -72,25 +89,11 @@ end
 
 if player and not dm
    config_dir "player"
-   if noob or PlayerWizard.first_time?
-      player_wizard
-      wizard = PlayerWizard.new
-      wizard.run
-   else
-      init
-      mailer = setup_email client_parser
-      DMStartInterface.start_game_interface mailer, DMGameConfig
-   end
+   carps config, Player
+
 elsif dm and not player
    config_dir "dm"
-   if noob or MasterWizard.first_time?
-      wizard = MasterWizard.new
-      wizard.run
-   else
-      init
-      mailer = setup_email server_parser
-      PlayerStartInterface.start_game_interface mailer, PlayerGameConfig
-   end
+   carps config, DM
 else
    puts opts
    exit 1

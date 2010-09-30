@@ -21,14 +21,18 @@ require "carps/wizard/wizard"
 
 module CARPS
 
-   # A wizard for configuring the Dungeon Master 
-   class MasterWizard < Wizard
-      
-      def initialize
-         files = ["../mods.yaml", "email.yaml", "process.yaml", "editor.yaml"]
-         dirs = ["games", ".peers", "campaigns"]         
-         super files, dirs
-         set_steps EditorConf.new, ProcessConf.new, EmailConf.new
+   module DM
+
+      # A wizard for configuring the Dungeon Master 
+      class Wizard < CARPS::Wizard
+
+         def initialize
+            files = ["../mods.yaml", "email.yaml", "process.yaml", "editor.yaml"]
+            dirs = ["games", ".peers", "campaigns"]         
+            super files, dirs
+            set_steps EditorConf.new, ProcessConf.new, EmailConf.new
+         end
+
       end
 
    end

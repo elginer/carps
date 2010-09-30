@@ -19,21 +19,25 @@ require "drb"
 
 module CARPS
 
-   # A mailer for the DM 
-   class DMMailer
+   module DM
 
-      include DRbUndumped
+      # A mailer for the DM 
+      class Mailer
 
-      def initialize mailer
-         @mailer = mailer
-      end
+         include DRbUndumped
 
-      def check type
-         @mailer.check type, @dm
-      end
+         def initialize mailer
+            @mailer = mailer
+         end
 
-      def send to, message
-         @mailer.send to, message
+         def check type
+            @mailer.check type, @dm
+         end
+
+         def send to, message
+            @mailer.send to, message
+         end
+
       end
 
    end
