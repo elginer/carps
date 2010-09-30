@@ -55,6 +55,9 @@ module CARPS
       def attempt_connection
          puts "Making IMAP connection for " + @username
          puts "Server: #{@server}, Port: #{@port}"
+         unless @tls or @password.empty?
+            warn "IMAP connection is insecure."
+         end
          @imap = Net::IMAP.new @server, @port, @tls, nil, false
          @imap.login @username, @password
          @imap

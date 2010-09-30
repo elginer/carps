@@ -34,6 +34,7 @@ module CARPS
          @password = password
          @server = settings["server"]
          @starttls = settings["starttls"]
+         @tls = settings["tls"]
          connect
       end
 
@@ -59,7 +60,9 @@ module CARPS
             smtp.enable_starttls
          elsif @tls
             smtp.enable_tls
-         else
+         end
+
+         if not (@starttls or @tls) or @password.empty?
             warn "SMTP connection is insecure."
          end
          smtp.start Socket.gethostname, @username, @password, &todo

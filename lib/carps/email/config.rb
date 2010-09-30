@@ -50,7 +50,7 @@ module CARPS
             raise Expected, "Valid IMAP section"
          end
          smtp = read_conf conf, "smtp"
-         unless smtp["server"] and smtp["port"] and smtp["starttls"]
+         unless smtp["server"] and smtp["port"] and smtp["starttls"] and smtp["tls"]
             raise Expected, "Valid SMTP section"
          end
          [imap, smtp, username, address, password]        

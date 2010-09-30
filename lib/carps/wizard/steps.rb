@@ -73,12 +73,17 @@ module CARPS
 
       def initialize
          super
-         add_command "login", "Sets your username and password for both SMTP and IMAP", "USERNAME"
-         add_command "smtp_login", "Sets your username and password just for SMTP", "USERNAME"
-         add_command "imap_login", "Sets your username and password just for IMAP", "USERNAME"
-         add_command 
-         @imap_pass = ""
-         @smtp_pass = ""
+         add_command "login", "Sets your username and password for both SMTP and IMAP.", "USERNAME"
+         add_command "smtp_server", "Sets your SMTP server.", "SERVER_ADDRESS"
+         add_command "smtp_port", "The SMTP server's port. Default is 25.", "PORT"
+         add_command "smtp_login", "Sets your username and password for SMTP only.", "USERNAME"
+         add_command "smtp_security", "Configure security for your SMTP account\n\tOptions are:\n\t\tnone\nor\n\t\tTLS\nor\n\t\tSTARTTLS\n\n(Some people refer to TLS as SSL, which is a misnomer).", "SECURITY"
+         add_command "imap_server", "Sets your IMAP server.", "SERVER_ADDRESS"
+         add_command "imap port", "The IMAP server's port.  Default is 143." , "PORT"
+         add_command "imap_login", "Sets your username and password for IMAP only.", "USERNAME"
+         add_command "imap_security", "Configure security for your IMAP account.\n\tOptions are:\n\t\tnone\nor\n\t\tTLS\n\n(Some people refer to TLS as SSL, which is a misnomer).", "SECURITY"
+         @smtp_port = 25
+         @imap_port = 143
       end
 
       def description
