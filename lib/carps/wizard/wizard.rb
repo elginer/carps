@@ -35,8 +35,6 @@ module CARPS
       def initialize files, dirs
          @files = files
          @dirs = dirs
-         create_directories 
-         create_files
          @steps = [] 
       end
 
