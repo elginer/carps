@@ -3,38 +3,14 @@ require "carps/util/process"
 require "drb"
 
 include CARPS
-
-class Mutate
-
-   include DRbUndumped
-
-   def initialize
-      @works = "WORK IT DOES NOT!"
-   end
-
-   def mutate!
-      @works = "It works!"
-   end
-
-   def works?
-      @works
-   end
-
-end
+include Test
 
 Given /an object to be mutated/ do
    $mut = Mutate.new
 end
 
 When /^the \$process.ashare method is run with a computation to mutate the object$/ do
-   chld = $process.ashare $mut, lambda {|uri|
-      ob = DRbObject.new nil, uri
-      ob.mutate!
-      puts "In child:"
-      puts "\t" + ob.works?
-   }
-   chld.join
-   puts "Joined!"
+   mutate $process, mut
 end
 
 Then /^I should see 'It works' from the server side$/ do
@@ -43,6 +19,5 @@ Then /^I should see 'It works' from the server side$/ do
 end
 
 When /^the \$process.launch method is called with the name of a ruby subprogram, which I should see in another window$/ do
-   chld = $process.launch $mut, "ruby test_extra/ipc.rb"
-   chld.join
+   test_ipc $process, $mut
 end

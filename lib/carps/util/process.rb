@@ -16,6 +16,7 @@
 # along with CARPS.  If not, see <http://www.gnu.org/licenses/>.
 
 require "carps/util/config"
+require "carps/util/error"
 
 require "drb"
 require "drb/acl"
@@ -38,6 +39,10 @@ module CARPS
          "process.yaml"
       end
 
+      def initialize term, port
+         load_resources term, port
+      end
+
       def parse_yaml conf
          term = read_conf conf, "launch_terminal"
          port = read_conf(conf, "port").to_i
@@ -47,7 +52,6 @@ module CARPS
       def load_resources term, port
          @port = port
          @term = term
-         @used = Set.new
          @semaphore = Mutex.new
       end
 
@@ -72,20 +76,61 @@ module CARPS
       def ashare resource, computation
          Thread.fork do
             @semaphore.synchronize do
-               local_only = ACL.new %w[deny all allow 127.0.0.1]
-               DRb.install_acl local_only
-               uri = "druby://localhost:" + @port.to_s 
-               DRb.start_service uri, resource
-               child = fork do
-                  DRb.start_service
-                  computation.call uri
+               begin
+                  local_only = ACL.new %w[deny all allow 127.0.0.1]
+                  DRb.install_acl local_only
+                  uri = "druby://localhost:" + @port.to_s 
+                  DRb.start_service uri, resource
+                  child = fork do
+                     begin
+                        DRb.start_service
+                        computation.call uri
+                     rescue StandardError => e
+                        put_error e
+                     end
+                  end
+                  Process.wait child
+                  DRb.stop_service
+               rescue StandardError => e
+                  put_error e
                end
-               Process.wait child
-               DRb.stop_service
             end
          end
       end
 
    end
 
+   # Testing utilities, for the wizard (also used for unit tests)
+   module Test
+      class Mutate
+
+         include DRbUndumped
+
+         def initialize
+            @works = "WORK IT DOES NOT!"
+            @working = false
+         end
+
+         def mutate!
+            @works = "It works!"
+            @working = true
+         end
+
+         def works?
+            @works
+         end
+
+         def working?
+            @working
+         end
+
+      end
+   end
+
+end
+
+# Test IPC
+def test_ipc process, mut
+   child = process.launch mut, "carps_ipc_test"
+   child.join
 end

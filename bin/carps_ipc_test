@@ -1,5 +1,6 @@
-# Designed to help test/features/step/ipc.rb
-# To be launched in another shell window
+#! /usr/bin/ruby
+
+# Test CARPS IPC.  Used for unit testing and as part of the wizard. 
 
 require "drb"
 

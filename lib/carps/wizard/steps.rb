@@ -17,6 +17,7 @@
 
 require "carps/service/interface"
 
+require "carps/util/process"
 require "carps/util/editor"
 require "carps/util/error"
 require "carps/util/highlight"
@@ -68,20 +69,77 @@ module CARPS
 
    end
 
+   class EmailConf < ConfInterface
+
+      def initialize
+         super
+         add_command "login", "Sets your username and password for both SMTP and IMAP", "USERNAME"
+         add_command "smtp_login", "Sets your username and password just for SMTP", "USERNAME"
+         add_command "imap_login", "Sets your username and password just for IMAP", "USERNAME"
+         add_command 
+         @imap_pass = ""
+         @smtp_pass = ""
+      end
+
+      def description
+         "Configure your email account settings."
+      end
+
+   end
+
    class ProcessConf < ConfInterface
 
       def initialize
          super
-         add_command "shell", "Specify a command used to launch interactive CARPS sub-programs, typically in another window.\n\tIE., a command which would run a program in a new X-windows terminal editor, or Screen session.\n\tUse %cmd in place of the sub-program to be executed\n\tEnsure that it does not detach itself from the foreground.\n\tExample:\n\t\turxvt -e %cmd", "COMMAND"
+         add_command "terminal", "Specify a command used to launch interactive CARPS sub-programs, typically in another window.\n\tIE., a command which would run a program in a new X-windows terminal editor, or Screen session.\n\tUse %cmd in place of the sub-program to be executed\n\tEnsure that it does not detach itself from the foreground.\n\tExample:\n\t\turxvt -e %cmd", "TERMINAL"
          add_command "port", "Specify a TCP port which will be used for local inter-process communication.\n\tDefault: 51001", "PORT"
+         @port = 51001
+      end
+
+      protected
+
+      def test
+         if @shell
+            puts "You should see 'It works!' in the new window."
+            mut = Test::Mutate.new
+            test_ipc @shell, mut
+            if mut.working?
+               highlight mut.works?
+               good = confirm "Did it say 'It works!' in the new window?"
+               if good
+                  test_passed
+               else
+                  general_fail
+               end
+            else
+               general_fail
+            end
+         else
+            test_failed "You must first choose a shell."
+         end
+      end
+
+      def port pst
+         port = pst.to_i
+         if port > 0
+            @port = port
+         else
+            puts "The port must be a natural number, greater than zero."
+         end
       end
 
       def description
          "Choose a shell for launching sub-processes, and setup inter-process communication."
       end
 
-      def shell command
-         
+      def shell term
+         @shell = Process.new term, @port
+      end
+
+      private
+      
+      def general_fail
+         multi_fail "`#{@shell}` does not work properly.  Ensure it does not detach itself into the background.", "Port #{@port} is unavailable."
       end
 
    end
@@ -110,7 +168,7 @@ module CARPS
          puts "Once you are done editing, save the file and close the editor."
          if after = @editor.edit(before)
             if after == before
-               multi_fail "You did not edit the paragraph.  Do so!", "The editor did not save the file correctly.", "The editor did not load the file correctly."
+               multi_fail "`#{@editor}` is not working properly.  Ensure it does not detach itself into the background.", "You did not edit the paragraph.  Do so!", "The editor did not save the file correctly.", "The editor did not load the file correctly."
             else
                before_good = confirm "Before you starting editing, did the editor display this text?\n#{before}"
                if before_good

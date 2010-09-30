@@ -16,7 +16,7 @@
 # along with CARPS.  If not, see <http://www.gnu.org/licenses/>.
 
 require "carps/util/warn"
-
+require "carps/util/error"
 require "carps/email/string"
 
 require "net/smtp"
@@ -37,18 +37,35 @@ module CARPS
          connect
       end
 
-      def connect
+      # Are the settings okay?
+      def ok?
+         begin
+            with_attempt_connection {}
+            return true
+         rescue StandardError => e
+            put_error e.to_s
+            return false
+         end
+      end
+
+      def with_attempt_connection &todo
+         # Create smtp object
+         smtp = Net::SMTP.new @server, @port
+         # Security measures
+         if @starttls
+            smtp.enable_starttls
+         else
+            warn "SMTP connection is insecure."
+         end
+         smtp.start Socket.gethostname, @username, @password, &todo
+      end
+
+      def with_connection &todo
          until false 
             puts "Making SMTP connection for " + @username
             puts "Server: #{@server}, Port: #{@port}"
             begin
-               # Create smtp object
-               @smtp = Net::SMTP.new @server, @port 
-               if @starttls
-                  # Use an encrypted connection
-                  @smtp.enable_starttls
-               end
-               @smtp.start Socket.gethostname, @username, @password
+               attempt_connection &todo
                return
             rescue
                warn "Could not connect to SMTP server", "Attempting to reconnect in 10 seconds."
@@ -58,18 +75,10 @@ module CARPS
       end
 
       # Send an email message
-      def send to, message 
-         until false
-            begin
-               connect
-               message = to_mail "Content-Type: application/octet-stream\r\n" + message
-               @smtp.send_message message, @username, [to]
-               @smtp.quit
-               return 
-            rescue
-               warn "Could not send email with SMTP", "Attempting to reconnect"
-               connect
-            end
+      def send to, message
+         with_connection do |smtp|
+            message = to_mail "Content-Type: application/octet-stream\r\n" + message
+            smtp.send_message message, @username, [to]
          end
       end
 
