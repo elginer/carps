@@ -26,7 +26,7 @@ require "set"
 #
 # Initialize a CARPProcess object into the global variable $process
 def init_process
-   $process = CARPS::Process.new "process.yaml" 
+   $process = CARPS::Process.load 
 end
 
 # Set up multi-threading
@@ -40,6 +40,11 @@ module CARPS
 
    # Responsible for launching other CARP processes
    class Process < YamlConfig
+
+      def Process.default_file
+         "process.yaml"
+      end
+
       def parse_yaml conf
          term = read_conf conf, "launch_terminal"
          port = read_conf(conf, "port").to_i

@@ -29,7 +29,7 @@ module CARPS
 
       # Fill in the sheet
       def fill current = {}
-         editor = Editor.new "editor.yaml"
+         editor = Editor.new
          sheet = create_sheet current
          filled = nil 
          until filled

@@ -24,11 +24,16 @@ module CARPS
    # Expects a field called "launch_editor"
    class Editor < YamlConfig
 
-      def parse_yaml config
-         read_conf config, "launch_editor"
+      def Editor.default_file
+         "editor.yaml"
       end
 
-      def load_resources editor
+      def editor editor
+         @editor = editor
+      end
+
+      def parse_yaml config
+         read_conf config, "launch_editor"
          @editor = editor
       end
 

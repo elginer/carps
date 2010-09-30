@@ -35,12 +35,9 @@ module CARPS
    # Class to read email config.
    class EmailConfig < YamlConfig
 
-      # The first parameter is the config file to read
-      # the second is the MessageParser for parsing messages from email
-      def initialize conf
-         super conf
+      def EmailConfig.default_file
+         "email.yaml"
       end
-
 
       # Parse the email config file
       def parse_yaml conf

@@ -104,9 +104,3 @@ test_extra/resource/npcs/human.yaml
 test_extra/resource/npcs/orange.yaml
 test_extra/resource/rooms/cave.room
 test_extra/resource/rooms/ship.room
-user_content/mods/fruit/client.rb
-user_content/mods/fruit/server.rb
-user_content/mods/fruit/text/rainbow.rb
-user_content/mods/fruit/util/mailer.rb
-user_content/urxvt/process.yaml
-user_content/urxvt/server_process.yaml

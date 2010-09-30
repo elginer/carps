@@ -24,7 +24,7 @@ require "carps/util/error"
 module CARPS
 
    # Interface for roleplaying
-   class RolePlayInterface < Interface
+   class RolePlayInterface < QuitInterface
 
       def initialize
          super

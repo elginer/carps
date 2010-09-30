@@ -37,7 +37,7 @@ module CARPS
       def new name, mod, campaign
          mods = load_mods
          if mods.member? mod
-            editor = Editor.new "editor.yaml"
+            editor = Editor.new
             about = editor.edit "<Replace with description of game>"
             players = get_players
             config = @game_config.new mod, campaign, about, players

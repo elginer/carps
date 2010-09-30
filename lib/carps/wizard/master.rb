@@ -1,5 +1,5 @@
 # Copyright 2010 John Morrice
- 
+
 # This file is part of CARPS.
 
 # CARPS is free software: you can redistribute it and/or modify
@@ -15,21 +15,23 @@
 # You should have received a copy of the GNU General Public License
 # along with CARPS.  If not, see <http://www.gnu.org/licenses/>.
 
-require "highline"
+require "carps/wizard/steps"
 
-def rainbow msg
-   msga = msg.split //
-   cols = [:red, :green, :yellow, :blue, :magenta]
-   cols_replicate = msga.length / cols.length
-   extra = msga.length % cols.length
-   if extra
-      cols_replicate += 1
+require "carps/wizard/wizard"
+
+module CARPS
+
+   # A wizard for configuring the Dungeon Master 
+   class MasterWizard < Wizard
+      
+      def initialize
+         super
+         set_steps EditorConf.new, ProcessConf.new, EmailConf.new
+      end
+
    end
-   cols = Array.new(cols_replicate, cols).flatten
-   msga = msga.zip cols
-   h = HighLine.new
-   msga = msga.map do |char, col|
-      h.color char, col
-   end
-   msga.join
+
 end
+
+CARPS::MasterWizard.set_files "../mods.yaml", "email.yaml", "process.yaml", "editor.yaml"
+CARPS::MasterWizard.set_dirs "games", ".peers", "campaigns"

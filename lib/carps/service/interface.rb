@@ -38,7 +38,6 @@ module CARPS
       def initialize 
          @commands = {}
          add_command "help", "Displays this help message."
-         add_command "quit", "Exit the program."
       end
 
       # Ensure consistency 
@@ -76,10 +75,6 @@ module CARPS
 
       protected
 
-      def quit
-         @run = false
-      end
-
       # Check the args are of the correct length
       def check args, length
          if args.length == length
@@ -115,11 +110,36 @@ module CARPS
       end
 
       def repl
+         loop do
+            rep
+         end
+      end
+
+      def rep 
+        line = question "Enter command:"
+        cmd = line.split /\s+/
+        execute cmd
+      end
+
+   end
+
+   class QuitInterface < Interface
+
+      def initialize
+         super
+         add_command "quit", "Quit the program"
+      end
+
+      protected
+
+      def quit
+         @run = false
+      end
+
+      def repl
          @run = true
          while @run
-            line = question "Enter command:"
-            cmd = line.split /\s+/
-            execute cmd
+            rep
          end
       end
 

@@ -26,7 +26,7 @@ module CARPS
 
       # Load a yaml file.
       # Provided so subclasses can override initialize
-      def YamlConfig.load filepath, fatal=true
+      def self.load fatal=true, filepath=self.default_file
          config = self.allocate
          config.read filepath
          config.fail_hard fatal

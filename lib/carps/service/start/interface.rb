@@ -25,7 +25,7 @@ require "continuation"
 module CARPS
 
    # Interface to start games
-   class StartGameInterface < Interface
+   class StartGameInterface < QuitInterface
 
       include ControlInterface
 

@@ -1,5 +1,5 @@
 # Copyright 2010 John Morrice
- 
+
 # This file is part of CARPS.
 
 # CARPS is free software: you can redistribute it and/or modify
@@ -15,13 +15,23 @@
 # You should have received a copy of the GNU General Public License
 # along with CARPS.  If not, see <http://www.gnu.org/licenses/>.
 
-require "service/mod"
+require "carps/wizard/steps"
 
-this_mod "fruit"
+require "carps/wizard/wizard"
 
-require "text/rainbow"
-require "util/mailer"
+module CARPS
 
-puts rainbow "Welcome to Fruit Server, version 0.0.1!"
-mailer = init_mailer
-STDIN.gets
+   # A wizard for configuring the player
+   class PlayerWizard < Wizard
+      
+      def initialize
+         super
+         set_steps EditorConf.new, ProcessConf.new, EmailConf.new
+      end
+
+   end
+
+end
+
+CARPS::PlayerWizard.set_files "../mods.yaml", "email.yaml", "process.yaml", "editor.yaml"
+CARPS::PlayerWizard.set_dirs "games", ".peers"
