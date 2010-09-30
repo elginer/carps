@@ -57,6 +57,7 @@ end
 
 Given /^a salty wizard$/ do
    FileUtils.touch $salty_files.map {|f| $CONFIG + "/" + f}
+   FileUtils.mkdir $salty_dirs.map {|f| $CONFIG + "/" + f}
    $wizard = SaltyWizard.new
 end
 
@@ -75,7 +76,7 @@ Given /^the config directory is (.+)$/ do |dir|
 end
 
 Then /^build needed directories$/ do
-  pending # express the regexp above with the code you wish you had
+   $wizard.create_dirs
 end
 
 When /^a required file is in fact a directory$/ do

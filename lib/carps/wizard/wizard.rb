@@ -74,23 +74,6 @@ module CARPS
          not (fs and ds)
       end
 
-      # Set the files we are going to use
-      def set_files *files
-         @files = files
-      end
-
-      # Set the directories to create upon starting the wizard
-      def set_dirs *dirs
-         @dirs = dirs
-      end
-
-      protected
-
-      # Set the steps the wizard is to use. 
-      def set_steps *steps
-         @steps = steps
-      end
-
       # Create files
       def create_files
          create_all @files, "file" do |path|
@@ -103,6 +86,23 @@ module CARPS
          create_all @dirs, "directory", do |path|
             FileUtils.mkdir path
          end
+      end
+
+      protected
+
+      # Set the files we are going to use
+      def set_files *files
+         @files = files
+      end
+
+      # Set the directories to create upon starting the wizard
+      def set_dirs *dirs
+         @dirs = dirs
+      end
+
+      # Set the steps the wizard is to use. 
+      def set_steps *steps
+         @steps = steps
       end
 
       def create_all files, type
