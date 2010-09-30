@@ -5,6 +5,7 @@ Manifest.txt
 PostInstall.txt
 README.rdoc
 Rakefile
+bin/carps_ipc_test
 features/character_sheet.feature
 features/crypt.feature
 features/dm.feature
@@ -93,13 +94,16 @@ lib/carps/util/init.rb
 lib/carps/util/process.rb
 lib/carps/util/question.rb
 lib/carps/util/warn.rb
+lib/carps/wizard/player.rb
+lib/carps/wizard/master.rb
+lib/carps/wizard/steps.rb
+lib/carps/wizard/wizard.rb
 permission
 script/console
 script/destroy
 script/generate
 test/test_carps.rb
 test/test_helper.rb
-test_extra/ipc.rb
 test_extra/resource/npcs/human.yaml
 test_extra/resource/npcs/orange.yaml
 test_extra/resource/rooms/cave.room

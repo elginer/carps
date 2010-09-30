@@ -282,11 +282,11 @@ module CARPS
                else
                   load_fail
                end
-            else
-               save_fail
             end
-
+         else
+            save_fail
          end
+
       end
 
       private

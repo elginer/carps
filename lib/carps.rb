@@ -24,6 +24,7 @@ require "carps/email"
 require "carps/crypt"
 require "carps/service"
 require "carps/mod"
+require "carps/wizard"
 
 
 # CARPS, the Computer Assisted Role-Playing Game System,
