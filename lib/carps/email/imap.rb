@@ -38,24 +38,39 @@ module CARPS
 
       end
 
+      # Are the settings okay?
+      def ok?
+         good = false
+         begin
+            attempt_connection
+            @imap.logout
+            good = true
+         rescue StandardError => e
+            put_error e.to_s
+         end
+         good
+      end
+
+      # Attempt a connection
+      def attempt_connection
+         puts "Making IMAP connection for " + @username
+         puts "Server: #{@server}, Port: #{@port}"
+         @imap = Net::IMAP.new @server, @port, @tls, nil, false
+         @imap.login @username, @password
+         @imap
+      end
+
       # Connect to imap server
       def connect
          until false
-            puts "Making IMAP connection for " + @username
-            puts "Server: #{@server}, Port: #{@port}"
             begin
-               @imap = Net::IMAP.new @server, @port, @tls, nil, false
-               @imap.login @username, @password
+               attempt_connection
                return
             rescue
                warn "Could not connect to IMAP server", "Attempting to reconnect in 10 seconds."
                sleep 10
             end 
          end
-      end
-
-      def delay
-         10
       end
 
       # Return the a list of email message bodies

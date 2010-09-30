@@ -39,21 +39,26 @@ module CARPS
 
       # Are the settings okay?
       def ok?
+         good = false
          begin
             with_attempt_connection {}
-            return true
+            good = true
          rescue StandardError => e
             put_error e.to_s
-            return false
          end
+         good
       end
 
       def with_attempt_connection &todo
+         puts "Making SMTP connection for " + @username
+         puts "Server: #{@server}, Port: #{@port}"
          # Create smtp object
          smtp = Net::SMTP.new @server, @port
          # Security measures
          if @starttls
             smtp.enable_starttls
+         elsif @tls
+            smtp.enable_tls
          else
             warn "SMTP connection is insecure."
          end
@@ -62,10 +67,8 @@ module CARPS
 
       def with_connection &todo
          until false 
-            puts "Making SMTP connection for " + @username
-            puts "Server: #{@server}, Port: #{@port}"
             begin
-               attempt_connection &todo
+               with_attempt_connection &todo
                return
             rescue
                warn "Could not connect to SMTP server", "Attempting to reconnect in 10 seconds."
