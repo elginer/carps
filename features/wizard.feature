@@ -19,14 +19,14 @@ Feature: wizard
       Then clean the wizard directory
       Given a salty wizard
       Given a partially populated folder
-      Then build needed directories
+      Then the salty wizard builds needed directories
 
    Scenario: fail on error
       Given the config directory is wizard
       Then clean the wizard directory
       Given a salty wizard
-      Given a required file is in fact a directory
-      Then the wizard causes the program to exit
+      Given one of the salty wizard's files is in fact a directory
+      Then the wizard, attempting to create files, causes the program to exit
 
    Scenario: configure player
       Given the config directory is wizard

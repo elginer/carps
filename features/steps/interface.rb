@@ -2,14 +2,19 @@ require "carps/service/interface"
 
 include CARPS
 
-class Cheesey < Interface
+class Cheesey < QuitInterface
 
    include ControlInterface
 
    def initialize
       super
       add_command "cheese", "Have some cheese.", "AGE", "TYPE"
+      add_raw_command "echo", "I say what you say!", "MESSAGE"
       add_command "cracker", "Have a cracker."
+   end
+
+   def echo arg
+      puts arg
    end
 
    def cheese age, type

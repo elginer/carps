@@ -75,14 +75,24 @@ Given /^the config directory is (.+)$/ do |dir|
    config_dir dir
 end
 
-Then /^build needed directories$/ do
-   $wizard.create_dirs
+Then /^the salty wizard builds needed directories$/ do
+   $wizard.create_directories
+   dirs_exist = $salty_dirs.map {|f| File.exists?($CONFIG + "/" + f)}
+   unless dirs_exist.all?
+      raise StandardError, "Salty Wizard did not create needed directories."
+   end
 end
 
-When /^a required file is in fact a directory$/ do
-  pending # express the regexp above with the code you wish you had
+When /^one of the salty wizard's files is in fact a directory$/ do
+   file = $CONFIG + "/" + $salty_files[0]
+   FileUtils.rm file
+   FileUtils.mkdir file
 end
 
-Then /^the wizard causes the program to exit$/ do
-  pending # express the regexp above with the code you wish you had
+Then /^the wizard, attempting to create files, causes the program to exit$/ do
+   begin
+      $wizard.create_files
+   rescue SystemExit => e
+      puts e
+   end
 end

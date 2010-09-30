@@ -62,7 +62,7 @@ module CARPS
       end
 
       # Add a command which receives the text after it, as one, argument: a possibly empty string
-      def add_raw_command name, help, arg
+      def add_raw_command name, help, *args
          @commands[name] = {"help" => help, "args" => args}
          eval <<-END
          def exec_#{name} args
