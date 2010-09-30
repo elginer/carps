@@ -1,0 +1,5 @@
+# Ignore vim .swp files
+*.swp
+# Ignore everything in the pkg and doc folders
+doc/
+pkg/
