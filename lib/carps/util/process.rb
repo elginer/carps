@@ -22,13 +22,6 @@ require "drb/acl"
 
 require "set"
 
-# Set up multi processing 
-#
-# Initialize a CARPProcess object into the global variable $process
-def init_process
-   $process = CARPS::Process.load 
-end
-
 # Set up multi-threading
 #
 # Can be called more than once

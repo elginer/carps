@@ -19,6 +19,8 @@ require "carps/service/interface"
 
 require "carps/util/error"
 
+require "carps/util/highlight"
+
 require "fileutils"
 
 # A wizard is composed of a number of Interfaces.
@@ -39,7 +41,9 @@ module CARPS
       def run
          puts description
          @steps.each do |step|
-            puts "This wizard will configure CARPS, under your instructions."
+            highlight "Welcome to the CARPS Configuration Wizard"
+            puts ""
+            puts "This program will configure CARPS, under your instructions."
             puts "There are a number of steps:"
             puts ""
          end

@@ -20,9 +20,26 @@ require "carps/util/config"
 
 require "etc"
 
+# The root config directory
+def root_config
+   Etc.getpwuid.dir + "/carps/"
+end
+
+# Set the configuration directory
+def config_dir dir
+   $CONFIG = root_config + dir + "/"
+end
+
 # Initialize carps
-def init dir
-   $ROOT_CONFIG = Etc.getpwuid.dir + "/carps/"
-   $CONFIG = $ROOT_CONFIG + dir + "/"
-   init_process
+#
+# Optionally set the config_dir at the same time
+#
+# Initialize a CARPS::Process object into the global variable $process.
+#
+# FIXME:  instead of setting a global variable, should use the singleton pattern
+def init dir=nil
+   if dir
+      config_dir dir
+   end
+   $process = CARPS::Process.load
 end 

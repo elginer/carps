@@ -69,21 +69,23 @@ end
 
 
 if player and not dm
-   init "player"
+   config_dir "player"
    if noob or PlayerWizard.first_time?
       player_wizard
       wizard = PlayerWizard.new
       wizard.run
    else
+      init
       mailer = setup_email client_parser
       DMStartInterface.start_game_interface mailer, DMGameConfig
    end
 elsif dm and not player
-   init "dm"
+   config_dir "dm"
    if noob or MasterWizard.first_time?
       wizard = MasterWizard.new
       wizard.run
    else
+      init
       mailer = setup_email server_parser
       PlayerStartInterface.start_game_interface mailer, PlayerGameConfig
    end

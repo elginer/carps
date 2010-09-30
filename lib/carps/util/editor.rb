@@ -16,6 +16,7 @@
 # along with CARPS.  If not, see <http://www.gnu.org/licenses/>.
 
 require "carps/util/config"
+require "carps/util/error"
 
 require "tempfile"
 
@@ -41,14 +42,19 @@ module CARPS
       #
       # Not re-entrant
       def edit string
-         file = Tempfile.new "carp_edit"
-         path = file.path
-         file.write string
-         file.close
-         string = edit_file path
-         file = Tempfile.new "carp_edit"
-         file.close!
-         string
+         begin
+            file = Tempfile.new "carp_edit"
+            path = file.path
+            file.write string
+            file.close
+            string = edit_file path
+            file = Tempfile.new "carp_edit"
+            file.close!
+            string
+         rescue StandardError => e
+            put_error e.to_s
+            nil
+         end
       end
 
       def edit_file filepath

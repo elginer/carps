@@ -15,6 +15,8 @@
 # You should have received a copy of the GNU General Public License
 # along with CARPS.  If not, see <http://www.gnu.org/licenses/>.
 
+require "carps/util/init"
+
 require "drb"
 
 require "yaml"
@@ -23,7 +25,7 @@ module CARPS
 
    # Load the available mods 
    def load_mods
-      mod_file = $ROOT_CONFIG + "/mods.yaml"
+      mod_file = root_config + "/mods.yaml"
       mods = {}
       begin
          mods = YAML.load(File.read mod_file)
