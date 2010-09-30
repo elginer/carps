@@ -195,9 +195,13 @@ module CARPS
 
       def initialize
          super
-         add_command "terminal", "Specify a command used to launch interactive CARPS sub-programs, typically in another window.\n\tIE., a command which would run a program in a new X-windows terminal editor, or Screen session.\n\tUse %cmd in place of the sub-program to be executed\n\tEnsure that it does not detach itself from the foreground.\n\tExample:\n\t\turxvt -e %cmd", "TERMINAL"
+         add_raw_command "terminal", "Specify a command used to launch interactive CARPS sub-programs, typically in another window.\n\tIE., a command which would run a program in a new X-windows terminal editor, or Screen session.\n\tUse %cmd in place of the sub-program to be executed\n\tEnsure that it does not detach itself from the foreground.\n\tExample:\n\t\turxvt -e %cmd", "TERMINAL"
          add_command "port", "Specify a TCP port which will be used for local inter-process communication.\n\tDefault: 51000", "PORT"
          @port = 51000
+      end
+
+      def description
+         "Choose a shell for launching sub-processes, and setup inter-process communication."
       end
 
       protected
@@ -229,10 +233,6 @@ module CARPS
          end
       end
 
-      def description
-         "Choose a shell for launching sub-processes, and setup inter-process communication."
-      end
-
       def shell term
          @shell = Process.new term, @port
       end
@@ -249,7 +249,7 @@ module CARPS
 
       def initialize
          super
-         add_command "editor", "Specify a command used to edit a file.\n\tUse %f in place of the filepath.\n\tEnsure that the editor does not detach itself from the foreground.\n\tExample:\n\t\t gvim --nofork %f", "COMMAND"
+         add_raw_command "editor", "Specify a command used to edit a file.\n\tUse %f in place of the filepath.\n\tEnsure that the editor does not detach itself from the foreground.\n\tExample:\n\t\t gvim --nofork %f", "COMMAND"
       end
 
       def description

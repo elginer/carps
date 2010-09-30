@@ -28,13 +28,6 @@ module CARPS
    # Subclass this interface to provide commands
    class Interface
 
-      def self.new *args
-         i = self.allocate
-         i.send :initialize, *args
-         i.consistent!
-         i
-      end
-
       def initialize 
          @commands = {}
          add_command "help", "Displays this help message."
@@ -68,7 +61,18 @@ module CARPS
       END
       end
 
+      # Add a command which receives the text after it, as one, argument: a possibly empty string
+      def add_raw_command name, help, arg
+         @commands[name] = {"help" => help, "args" => args}
+         eval <<-END
+         def exec_#{name} args
+            #{name} args.join " "
+         end
+         END
+      end
+
       def run
+         consistent!
          help
          repl
       end

@@ -25,7 +25,9 @@ module CARPS
    class MasterWizard < Wizard
       
       def initialize
-         super
+         files = ["../mods.yaml", "email.yaml", "process.yaml", "editor.yaml"]
+         dirs = ["games", ".peers", "campaigns"]         
+         super files, dirs
          set_steps EditorConf.new, ProcessConf.new, EmailConf.new
       end
 
@@ -33,5 +35,3 @@ module CARPS
 
 end
 
-CARPS::MasterWizard.set_files "../mods.yaml", "email.yaml", "process.yaml", "editor.yaml"
-CARPS::MasterWizard.set_dirs "games", ".peers", "campaigns"

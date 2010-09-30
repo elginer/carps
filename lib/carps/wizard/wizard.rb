@@ -30,25 +30,25 @@ require "fileutils"
 module CARPS
 
    # A wizard
-   class Wizard < Interface
+   class Wizard
 
-      def initialize
-         create_directories
+      def initialize files, dirs
+         @files = files
+         @dirs = dirs
+         create_directories 
+         create_files
          @steps = [] 
       end
 
       # Run the wizard
       def run
-         puts description
-         @steps.each do |step|
-            highlight "Welcome to the CARPS Configuration Wizard"
-            puts ""
-            puts "This program will configure CARPS, under your instructions."
-            puts "There are a number of steps:"
-            puts ""
-         end
-         (1..@steps.length).each do |step_num|
-            puts "#{step_num}: #{@steps[step_num].description}"
+         highlight "Welcome to the CARPS Configuration Wizard"
+         puts ""
+         puts "This program will configure CARPS, under your instructions."
+         puts "There are a number of steps:"
+         puts ""
+         @steps.each_index do |step_num|
+            puts "#{step_num + 1}: #{@steps[step_num].description}"
          end
          @steps.each do |step|
             step.run
@@ -56,9 +56,14 @@ module CARPS
       end
 
       # Would this be the first time the wizard has run?
-      def self.first_time?
+      def first_time?
          fs = @files.all? do |file|
-            File.exists? $CONFIG + "/" + file
+            real_file = $CONFIG + "/" + file
+            if File.exists? real_file
+               File.ftype(real_file) == "file"
+            else
+               false
+            end
          end
          ds = @dirs.all? do |dir|
             real_dir = $CONFIG + "/" + dir
@@ -72,12 +77,12 @@ module CARPS
       end
 
       # Set the files we are going to use
-      def self.set_files *files
+      def set_files *files
          @files = files
       end
 
       # Set the directories to create upon starting the wizard
-      def self.set_dirs *dirs
+      def set_dirs *dirs
          @dirs = dirs
       end
 
@@ -88,16 +93,29 @@ module CARPS
          @steps = steps
       end
 
+      # Create files
+      def create_files
+         create_all @files, "file" do |path|
+            FileUtils.touch path
+         end
+      end
+
       # Create directories
       def create_directories
-         @dirs.each do |dir|
+         create_all @dirs, "directory", do |path|
+            FileUtils.mkdir path
+         end
+      end
+
+      def create_all files, type
+         files.each do |dir|
             real_dir = $CONFIG + "/" + dir
             if File.exists? real_dir
-               unless File.ftype(real_dir) == "directory"
-                  fatal "#{real_dir} was not a directory.  CARPS needs this space:  move it elsewhere!"
+               unless File.ftype(real_dir) == type
+                  fatal "#{real_dir} was not a #{type}.  CARPS needs this space:  move it elsewhere!"
                end
             else
-               FileUtils.mkdir real_dir
+               yield real_dir
             end
          end
       end
@@ -105,6 +123,3 @@ module CARPS
    end
 
 end
-
-CARPS::Wizard.set_files
-CARPS::Wizard.set_dirs

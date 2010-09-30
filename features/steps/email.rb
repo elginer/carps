@@ -23,7 +23,7 @@ class EmailConfig
 end
 
 Given /^the email account$/ do
-   $email_config = EmailConfig.new
+   $email_config = EmailConfig.load
 end
 
 Then /^an email is sent$/ do
