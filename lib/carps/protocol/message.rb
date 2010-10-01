@@ -81,6 +81,16 @@ module CARPS
          @from
       end
 
+      # Set the session
+      def session= session
+         @session = session
+      end
+
+      # Get the session
+      def session
+         @session
+      end
+
       # Set the path
       def path= path
          @path = path

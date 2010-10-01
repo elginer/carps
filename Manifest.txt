@@ -5,6 +5,7 @@ Manifest.txt
 PostInstall.txt
 README.rdoc
 Rakefile
+bin/carps
 bin/carps_ipc_test
 bin/carps_mod_test
 features/character_sheet.feature

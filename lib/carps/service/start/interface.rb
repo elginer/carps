@@ -30,17 +30,19 @@ module CARPS
       include ControlInterface
 
       # Start interface
-      def StartGameInterface.start_game_interface mailer, config
+      def StartGameInterface.start_game_interface mailer, session, config
          loop do
             choice = callcc do |continuation|
-               interface = self.new continuation, mailer, config
+               interface = self.new continuation, mailer, session, config
                interface.run
             end
             choice.call
          end
       end
 
-      def initialize continuation, mailer, game_config
+      def initialize continuation, mailer, game_config, session
+         @session = session
+         @session.none
          @mailer = mailer
          @game_config = game_config
          @continuation = continuation
@@ -64,8 +66,15 @@ module CARPS
             name = File.basename(f, ".yaml")
             puts ""
             highlight "Name: " + name
-            g = @game_config.load "games/" + File.basename(f)
-            g.display
+            g = nil
+            begin
+               g = @game_config.load "games/" + File.basename(f)
+            rescue StandardError => e
+               put_error "#{e}"
+            end
+            if g
+               g.display
+            end
          end
 
       end
@@ -80,7 +89,10 @@ module CARPS
          end
          if config
             game = config.spawn
-            @continuation.call lambda {game.resume @mailer}
+            @continuation.call lambda {
+               config.session @session
+               game.resume @mailer
+            }
          end
       end
 

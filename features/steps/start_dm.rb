@@ -1,10 +1,22 @@
 require "carps/service/dm/config"
-
 require "carps/service/dm/start"
+
+require "carps/service/session"
 
 include CARPS
 
+class MockDmStartMailer
+   def address
+      "howdy"
+   end
+end
+
 class MockGame
+
+   def dm= dm
+      @dm = dm
+   end
+
    def start mailer
       puts "Starting game..."
    end
@@ -21,7 +33,7 @@ class MockConfig < DM::GameConfig
 end
 
 Then /^host a new game called (.+) with resource (.+) and mod (.+)$/ do |game_name, campaign, mod_name|
-   $game = DM::GameConfig.new mod_name, campaign, "A game about things", ["joe@bloggs.com"]
+   $game = DM::GameConfig.new mod_name, campaign, "A game about things", ["joe@bloggs.com"], "session12345" 
 end
 
 Then /^save the game as (.+)$/ do |filename|
@@ -33,8 +45,8 @@ Then /^the dm resumes a previous game called (.+)$/ do |filename|
 end
 
 Then /^present the start game interface to the dm$/ do
-   child = fork do
-      DM::StartInterface.start_game_interface nil, MockConfig
+   begin
+      DM::StartInterface.start_game_interface MockDmStartMailer.new, MockConfig, $session 
+   rescue SystemExit
    end
-   Object::Process.wait child
 end

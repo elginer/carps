@@ -6,11 +6,11 @@ require "carps/protocol/message"
 include CARPS
 
 class MockPlayerGame
-   def join_game
+   def join_game mailer
       puts "Joining game."
    end
 
-   def resume
+   def resume mailer
       puts "Resuming game"
    end
 
@@ -28,7 +28,7 @@ class MockPlayerGame
 end
 
 class MockPlayerConfig < Player::GameConfig
-   def spawn mailer
+   def spawn
       MockGame.new
    end
 end
@@ -60,6 +60,7 @@ class PlayerStartMailer
 
    def invite
       @mail = Invite.new MockPlayerGame.new
+      @mail.session = "dandy motherfucker!"
    end
 end
 
@@ -72,8 +73,8 @@ When /^an invite is sent to the player$/ do
 end
 
 Then /^present the start game interface to the player$/ do
-   child = fork do
-      Player::StartInterface.start_game_interface $mailer, MockPlayerConfig
+   begin
+      Player::StartInterface.start_game_interface $mailer, MockPlayerConfig, $session
+   rescue SystemExit
    end
-   Object::Process.wait child
 end

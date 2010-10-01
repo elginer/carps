@@ -8,6 +8,8 @@ require "carps/protocol/message"
 
 require "carps/util/init"
 
+require "carps/service/session"
+
 require "fileutils"
 
 require "thread"
@@ -22,9 +24,9 @@ class EvilMessage < Message
 
    def EvilMessage.parse blob
       if blob.match(/EVIL/)
-         return EvilMessage.new
+         return [EvilMessage.new, ""]
       else
-         return nil
+         raise Expected, "Could not parse evil message."
       end
    end
 
@@ -152,13 +154,13 @@ Given /^two peers, Alice and Bob$/ do
    # Alice's stuff
    init "test/server"
    delete_key "bob"
-   $alice_box = Mailbox.new send_bob, receive_bob, MessageParser.new(default_messages)
+   $alice_box = Mailbox.new send_bob, receive_bob, MessageParser.new(default_messages), SessionManager.new
    $alice = TwistedMailer.new $alice_address, $alice_box
 
    # Bob's stuff
    init "test/client"
    delete_key "alice"
-   $bob_box = TwistedMailbox.new send_alice, receive_alice, MessageParser.new(default_messages.push EvilMessage)
+   $bob_box = TwistedMailbox.new send_alice, receive_alice, MessageParser.new(default_messages.push EvilMessage), SessionManager.new
    $bob = TwistedMailer.new $bob_address, $bob_box
 end
 

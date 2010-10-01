@@ -15,24 +15,46 @@
 # You should have received a copy of the GNU General Public License
 # along with CARPS.  If not, see <http://www.gnu.org/licenses/>.
 
+require "carps/protocol/keyword"
+
 require "thread"
 
 module CARPS
 
    # A session manager
    #
+   # It coordinates sessions between the game and the email system
+   # The idea is to prevent a game from receiving messages
+   # intended for another game.
+   #
    # Its methods are reentrant
    class SessionManager
 
+      # Extend the protocol for sessions
+      protoval :session
+
       def initialize
+         @session = ""
          @semaphore = Mutex.new
+         @syms = (" ".."~").to_a
+      end
+
+      # Generate a number of random symbols 
+      def randoms size
+         ras = Array.new size do |forget|
+            @syms[rand(95)]
+         end
+         ras.join
       end
 
       # Generate a new session from a key
       def generate key
          t = Time.new
+         # It will be unlikely that anyone will guess this session
+         ra = randoms 1000
+         new_session = ra + key + t.to_f.to_s
          @semaphore.synchronize do
-            @session = key + t.to_f.to_s
+            @session = new_session 
          end
          @session
       end
@@ -47,14 +69,16 @@ module CARPS
       # Remove the current session
       def none
          @semaphore.synchronize do
-            @session = nil
+            @session = "" 
          end
       end
 
       # Is this message appropriate for the current session
       def belong? message
          @semaphore.synchronize do
-            if @session
+            if not message.session
+               false
+            elsif not @session.empty?
                message.session == @session
             else
                true
@@ -62,11 +86,9 @@ module CARPS
          end
       end
 
-      # Set a message's session
+      # Tag a string with a message 
       def tag message
-         @semaphore.synchronize do
-            message.session = @session
-         end
+         V.session(@session) + message
       end
 
    end

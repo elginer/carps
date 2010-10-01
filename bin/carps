@@ -23,10 +23,10 @@ require "carps"
 include CARPS
 
 # Set up the email
-def setup_email parser
+def setup_email parser, session
    config = EmailConfig.load
    config.connect!
-   config.mailer parser
+   config.mailer parser, session
 end
 
 # Launch CARPS
@@ -41,8 +41,9 @@ def carps config, role
       wizard.run
    else
       init
-      mailer = setup_email client_parser
-      role::StartInterface.start_game_interface mailer, role::GameConfig
+      session = SessionManager.new
+      mailer = setup_email client_parser, session
+      role::StartInterface.start_game_interface mailer, session, role::GameConfig
    end
 end
 

@@ -15,8 +15,8 @@
 # You should have received a copy of the GNU General Public License
 # along with CARPS.  If not, see <http://www.gnu.org/licenses/>.
 
-require "carps/util/config"
 require "carps/service/game"
+require "carps/service/start/config"
 
 require "yaml"
 
@@ -25,14 +25,15 @@ module CARPS
    module Player
 
       # Class to read game configuration files
-      class GameConfig < UserConfig
+      class GameConfig < SessionConfig
 
          # Create a new GameConfig
-         def initialize mod, dm, about
+         def initialize mod, dm, about, session
             super()
             @mod = mod
             @dm = dm
             @about = about
+            @session = session
          end
 
          # Parse a game config file
@@ -40,6 +41,7 @@ module CARPS
             @mod = read_conf conf, "mod"
             @about = read_conf conf, "about"
             @dm = read_conf conf, "dm"
+            @session = read_conf conf, "session"
          end
 
          # Display information on this configuration
@@ -66,7 +68,8 @@ module CARPS
          def emit
             {"mod" => @mod, 
              "about" => @about, 
-             "dm" => @dm}
+             "dm" => @dm,
+             "session" => @session}
          end
 
       end

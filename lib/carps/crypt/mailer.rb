@@ -39,21 +39,17 @@ module CARPS
 
    # High level CARPS mail client supporting strong cryptographic message signing.
    #
-   # It has knowledge of our own public and private key
+   # It has knowledge of our own public and private key.  Its big responsibility is turning Messages into Strings and signing them.
    class Mailer
 
       # Extend protocol for sharing our address
       protoval :addr  
 
-      # The first parameter is the username.
+      # The first parameter is the email address
       #
-      # The second the mail receiver 
-      #
-      # The third is the mail sender.
-      #
-      # The fourth is a message parser
+      # The second the Mailbox.
       def initialize address, mailbox
-         @addr = address 
+         @addr = address
          @mailbox = mailbox
          @private_key = get_keys
          @public_key = @private_key.public_key

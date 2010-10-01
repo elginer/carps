@@ -68,6 +68,7 @@ module CARPS
       # Send a message
       def send to, message
          @ssemaphore.synchronize do
+            message = @session.tag message
             @sender.send to, message
          end
       end
@@ -185,8 +186,17 @@ module CARPS
 
       # Read a new mail message from a blob of text
       def decode_mail blob, persistence = {:save_mail => true}
-         who = nil
          input = blob
+         # Find the message's session
+         session = nil
+         begin
+            session, blob = find K.session, blob
+         rescue Expected
+            warn "Mail message did not contain session.", blob
+            return
+         end
+         who = nil
+
          begin
             # Find who sent the message
             who, blob = find K.addr, blob
@@ -202,6 +212,7 @@ module CARPS
          msg = @parser.parse blob
 
          if msg
+            msg.session = session
             msg.crypt = delayed_crypt
             msg.from = who 
             puts "Mail from #{who}: #{msg.class.to_s}"
