@@ -65,11 +65,15 @@ module CARPS
       # The fourth is the description.
       # The fifth is a list of email addresses of players to be invited
       def initialize mod, campaign, desc, players
-         @dm = mailer.address
          @campaign = campaign
          @mod = mod
          @about = desc
          @players = players
+      end
+
+      # Set the dm
+      def dm= master
+         @dm = master
       end
 
       # Invite players to this game and begin

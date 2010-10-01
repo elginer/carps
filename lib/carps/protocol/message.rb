@@ -48,7 +48,6 @@ module CARPS
          input = text
          begin
             msg, blob = choose_parser text
-            puts "parsed"
             return msg
          rescue Expected
             warn "An invalid email was received:", input
