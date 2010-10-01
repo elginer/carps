@@ -57,6 +57,12 @@ module CARPS
             save_file "/games/" + filename
          end
 
+         # Receive a mailer 
+         # Return a GameServer object that can communicate with players 
+         def spawn mailer
+            GameServer.new mailer, @mod, @campaign, @about, @players
+         end
+
          protected
 
          # Emit as hash 
@@ -65,12 +71,6 @@ module CARPS
              "campaign" => @campaign, 
              "about" => @about, 
              "players" => @players}
-         end
-
-         # Receive a mailer 
-         # Return a GameServer object that can communicate with players 
-         def spawn mailer
-            GameServer.new mailer, @mod, @campaign, @about, @players
          end
 
       end

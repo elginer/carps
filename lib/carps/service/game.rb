@@ -64,22 +64,24 @@ module CARPS
       # The second is the mod.
       # The fourth is the description.
       # The fifth is a list of email addresses of players to be invited
-      def initialize mailer, mod, campaign, desc
-         @dm = mailer.address 
+      def initialize mailer, mod, campaign, desc, players
+         @dm = mailer.address
+         @campaign = campaign
          @mailer = mailer 
          @mod = mod
          @about = desc
+         @players = players
       end
 
       # Invite players to this game and begin
-      def start players
+      def start
 
          # Begin playing
          interface = play
 
          Thread.fork do
             # Perform handshakes
-            players.each do |player|
+            @players.each do |player|
                # Handshakes are done asychronously
                thread = @mailer.handshake player
                if thread
@@ -90,13 +92,11 @@ module CARPS
                @mailer.send player, invite
             end
          end
-         accept_invitations interface
       end
 
       # Resume this game
       def resume
-         interface = play
-         accept_invitations interface
+         play
       end
 
       private
