@@ -96,16 +96,12 @@ module CARPS
 
       def parse_yaml conf
          key_pem = read_conf conf, "key"
-         addr = read_conf conf, "addr"
-
-         key = OpenSSL::PKey::DSA.new key_pem
-         [key, addr]
+         @addr = read_conf conf, "addr"
+         [key_pem]
       end
 
-      def load_resources key, addr
-         p = Peer.new addr
-         p.your_key key
-         p
+      def load_resources key_pem
+         @peer_key = OpenSSL::PKey::DSA.new key_pem
       end
 
    end

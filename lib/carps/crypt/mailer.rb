@@ -215,7 +215,8 @@ module CARPS
 
       # Load a peer
       def load_peer peer_file_name
-         peer = Peer.load ".peers/" + File.basename(peer_file_name) 
+         puts "loading peer: #{peer_file_name}"
+         peer = Peer.load ".peers/" + File.basename(peer_file_name)
          @mailbox.add_peer peer
       end
 

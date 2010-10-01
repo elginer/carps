@@ -54,7 +54,11 @@ module CARPS
 
       # Is this already a peer?
       def peer? peer
-         @peers.member? peer
+         puts "Is peer a peer?"
+         is = @peers.member? peer
+         puts is
+         puts @peers
+         is
       end
 
       # Send a message
