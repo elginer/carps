@@ -54,7 +54,7 @@ module CARPS
 
          # Save this game
          def save filename
-            save_file $CONFIG + "/games/" + filename
+            save_file "/games/" + filename
          end
 
          protected

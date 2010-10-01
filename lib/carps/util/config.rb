@@ -67,7 +67,7 @@ module CARPS
             file.write y
             file.close
          rescue StandardError => e
-            put_error "Could not save #{self.class} as #{path}: e"
+            put_error "Could not save #{self.class} as #{path}: #{e}"
          end
       end
 

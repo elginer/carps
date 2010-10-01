@@ -29,7 +29,7 @@ Then /^save the game as (.+)$/ do |filename|
 end
 
 Then /^the dm resumes a previous game called (.+)$/ do |filename|
-   $game = DM::GameConfig.load :file => "games/" + filename
+   $game = DM::GameConfig.load "games/" + filename
 end
 
 Then /^present the start game interface to the dm$/ do
