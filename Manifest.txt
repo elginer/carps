@@ -94,6 +94,7 @@ lib/carps/util/init.rb
 lib/carps/util/process.rb
 lib/carps/util/question.rb
 lib/carps/util/warn.rb
+lib/carps/wizard.rb
 lib/carps/wizard/player.rb
 lib/carps/wizard/dm.rb
 lib/carps/wizard/steps.rb

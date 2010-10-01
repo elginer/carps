@@ -1,5 +1,4 @@
-#! /usr/bin/ruby
-
+#!/usr/local/bin/ruby
 # Copyright 2010 John Morrice
  
 # This file is part of CARPS.
@@ -34,7 +33,7 @@ def carps config, role
    wizard = role::Wizard.new
    if wizard.first_time?
       wizard.create_files
-      wizard.create_dirs
+      wizard.create_directories
       config = true
    end
    if config

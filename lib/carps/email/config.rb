@@ -34,7 +34,7 @@ module CARPS
    class EmailConfig < SystemConfig
 
       def EmailConfig.filepath
-         $CONFIG + "/email.yaml"
+         "email.yaml"
       end
 
       def initialize address, same_pass, imap_options, smtp_options

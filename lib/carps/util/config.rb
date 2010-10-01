@@ -122,7 +122,7 @@ module CARPS
 
       # Load a user file.
       def self.load filepath
-         self.allocate
+         config = self.allocate
          config.read filepath
          config.fail_hard false 
          config
@@ -142,7 +142,7 @@ module CARPS
 
       # Load a system file.
       def self.load
-         self.allocate
+         config = self.allocate
          config.read self.filepath
          config.fail_hard false 
          config

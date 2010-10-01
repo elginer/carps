@@ -36,7 +36,7 @@ module CARPS
    class Process < SystemConfig
 
       def Process.filepath
-         $CONFIG + "/process.yaml"
+         "process.yaml"
       end
 
       def initialize term, port

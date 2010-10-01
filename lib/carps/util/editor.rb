@@ -26,7 +26,7 @@ module CARPS
    class Editor < SystemConfig
 
       def Editor.filepath
-         $CONFIG + "/editor.yaml"
+         "editor.yaml"
       end
 
       def initialize editor
