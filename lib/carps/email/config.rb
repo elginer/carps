@@ -28,6 +28,14 @@ require "carps/crypt/mailbox"
 
 require "yaml"
 
+class Hash
+   # Like member? but for array of members.
+   def members? elements
+      present = elements.map {|field| member? field}
+      present.all?
+   end
+end
+
 module CARPS
 
    # Class to read email config.
@@ -46,12 +54,12 @@ module CARPS
          address = read_conf conf, "address"
          same_pass = read_conf conf, "same_pass"
          imap = read_conf conf, "imap"
-         unless imap["user"] and imap["server"] and imap["port"] and imap["tls"]
-            raise Expected, "Valid IMAP section"
+         unless imap.members?(["user", "server", "port", "tls"])
+            raise Expected, "Expected IMAP section to be valid."
          end
          smtp = read_conf conf, "smtp"
-         unless smtp["user"] and smtp["server"] and smtp["port"] and smtp["starttls"] and smtp["tls"]
-            raise Expected, "Valid SMTP section"
+         unless smtp.members?(["user", "server", "port", "tls", "starttls"])
+            raise Expected, "Expected SMTP section to be valid."
          end
          [address, same_pass, imap, smtp]        
       end

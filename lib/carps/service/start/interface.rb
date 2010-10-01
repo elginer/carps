@@ -31,11 +31,13 @@ module CARPS
 
       # Start interface
       def StartGameInterface.start_game_interface mailer, config
-         choice = callcc do |continuation|
-            interface = self.new continuation, mailer, config
-            interface.run
+         loop do
+            choice = callcc do |continuation|
+               interface = self.new continuation, mailer, config
+               interface.run
+            end
+            choice.call
          end
-         choice.call
       end
 
       def initialize continuation, mailer, game_config
@@ -48,6 +50,11 @@ module CARPS
       end
 
       protected
+
+      def help
+         highlight "Welcome to CARPS #{VERSION}"
+         super
+      end
 
       def games
          dir = $CONFIG + "/games"

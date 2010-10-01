@@ -82,6 +82,10 @@ module CARPS
          end
       end
 
+      def delay
+         30
+      end
+
       # Return the a list of email message bodies
       #
       # If the inbox is empty, wait delay seconds before polling it again
