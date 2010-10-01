@@ -23,7 +23,12 @@ class EmailConfig
 end
 
 Given /^the email account$/ do
-   $email_config = EmailConfig.load
+   imap_options = {"user" => "carps", "server" => "killersmurf.com" , "tls" => true, "port" => 993}
+   smtp_options = imap_options.clone
+   smtp_options["starttls"] = true
+   smtp_options["tls"] = false
+   smtp_options["port"] = 25
+   $email_config = EmailConfig.new "carps@killersmurf.com", true, imap_options, smtp_options
 end
 
 Then /^an email is sent$/ do
@@ -32,6 +37,8 @@ end
 
 Then /^an email is received$/ do
    puts "The email reads:"
-   puts $email_config.imap.read.to_s
+   imap = $email_config.imap
+   imap.connect
+   puts imap.read.to_s
    puts "End email."
 end

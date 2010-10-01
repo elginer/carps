@@ -75,5 +75,5 @@ Then /^present the start game interface to the player$/ do
    child = fork do
       Player::StartInterface.start_game_interface $mailer, MockPlayerConfig
    end
-   Process.wait child
+   Object::Process.wait child
 end

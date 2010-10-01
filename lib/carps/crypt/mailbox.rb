@@ -32,8 +32,11 @@ module CARPS
       include DRbUndumped
 
       # Create the mailbox from a simple, synchronous mail client
+      #
+      # Calls 'connect' on the receiever
       def initialize sender, receiver, parser
          @receiver = receiver
+         receiver.connect
          @parser = parser
          @sender = sender
          @mail = []

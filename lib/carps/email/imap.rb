@@ -27,15 +27,15 @@ module CARPS
    # Administer IMAP connections
    class IMAP
 
-      # Connect to the server with username and password
-      def initialize settings, username, password
+      # Initialize with a hash of IMAP settings and password
+      #
+      # Uh, poorly documented.  See source.
+      def initialize settings, password
          @port = settings["port"]
          @server = settings["server"]
          @tls = settings["tls"]
-         @username = username
+         @username = settings["user"]
          @password = password
-         connect
-
       end
 
       # Are the settings okay?
@@ -55,7 +55,7 @@ module CARPS
       def attempt_connection
          puts "Making IMAP connection for " + @username
          puts "Server: #{@server}, Port: #{@port}"
-         unless @tls or @password.empty?
+         if not @tls or @password.empty?
             warn "IMAP connection is insecure."
          end
          @imap = Net::IMAP.new @server, @port, @tls, nil, false

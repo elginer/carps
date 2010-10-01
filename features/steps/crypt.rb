@@ -10,6 +10,8 @@ require "carps/util/init"
 
 require "fileutils"
 
+require "thread"
+
 include CARPS
 
 class EvilMessage < Message
@@ -48,6 +50,10 @@ class TwistedMailer < Mailer
       puts "Message sent to " + to
    end
 
+   def accept_handshake? from
+      true
+   end
+
    def forget person
       @mailbox.forget person
    end
@@ -71,6 +77,10 @@ class TestReceiver
       @message = message
    end
 
+   def connect
+      puts "Pretending to connect."
+   end
+
    def read
       until @message
          sleep 1
@@ -92,6 +102,33 @@ def delete_key person
    end
 end
 
+class ThreadList
+
+   def initialize
+      @semaphore = Mutex.new
+      @threads = []
+   end
+
+   def push t
+      @semaphore.synchronize do
+         @threads.push t
+      end
+   end
+
+   def kill
+      h = HighLine.new
+      h.ask ""
+      @threads.each do |t| 
+         begin
+            t.kill
+         rescue StandardError => e
+            puts "ThreadList testing utility: Couldn't kill thread: #{e}"
+         end
+      end
+   end
+
+end
+
 Given /^two peers, Alice and Bob$/ do
    receive_alice = TestReceiver.new
    receive_bob = TestReceiver.new
@@ -99,7 +136,7 @@ Given /^two peers, Alice and Bob$/ do
    send_bob.send_to receive_alice
    send_alice = TestSender.new
    send_alice.send_to receive_bob
-   
+
    $alice_address = "alice"
    $bob_address = "bob"
 
@@ -117,36 +154,25 @@ Given /^two peers, Alice and Bob$/ do
 end
 
 Then /^Alice initiates a handshake request and Bob accepts$/ do
-   Thread.fork do
-      bchild = $bob.expect_handshake
-      if bchild
-         bchild.join
-      end
-   end
-   child = $alice.handshake $bob_address
-   if child
-      child.join
-   end
+   $alice.handshake $bob_address
+   $bob.expect_handshake.join
 end
 
 Then /^a hacker pretending to be Alice sends a nefarious message to Bob$/ do
    $alice.evil $bob_address, EvilMessage.new
-   t = Thread.fork do
-      $bob.read EvilMessage
-   end
-   sleep 5
-   t.kill
+   $thrs.push Thread.fork { $bob.read EvilMessage }
 end
 
 Then /^a spoofer pretending to be Bob tries to make a handshake with Alice$/ do
    $bob.forget $alice_address 
-   Thread.fork do
-      bchild = $bob.handshake $alice_address
-      sleep 5
-      bchild.kill
-   end
-   child = $alice.expect_handshake
-   if child
-      child.join
-   end
+   $bob.handshake $alice_address
+   $thrs.push $alice.expect_handshake
+end
+
+When /^threading starts$/ do
+   $thrs = ThreadList.new
+end
+
+When /^the user presses enter, threading stops$/ do
+   $thrs.kill
 end

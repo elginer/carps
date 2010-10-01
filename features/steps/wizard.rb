@@ -18,20 +18,49 @@ class SweetWizard < Wizard
 
 end
 
-class SaltyWizard < Wizard
+class SillyStep < Setup::Interface
 
    def initialize
-      super $salty_files, $salty_dirs
+      super
+   end
+
+   def description
+      "A pretty silly configuration step that doesn't do much."
+   end
+
+   def test
+      puts "Yup, looks good to me."
+      test_passed
    end
 
 end
 
-Given /^a player wizard$/ do
-   $wizard = Player::Wizard.new
+class SaltyWizard < Wizard
+
+   def initialize
+      super $salty_files, $salty_dirs
+      set_steps SillyStep.new
+   end
+
 end
 
-Given /^a master wizard$/ do
-   $wizard = DM::Wizard.new
+Then /^setup email$/ do
+   em = Setup::Email.new
+   em.run
+end
+
+Then /^setup processing$/ do
+   pr = Setup::Process.new
+   pr.run
+end
+
+Then /^setup editor$/ do
+   ed = Setup::Editor.new
+   ed.run
+end
+
+Given /^a player wizard$/ do
+   $wizard = Player::Wizard.new
 end
 
 Then /^clean the wizard directory$/ do

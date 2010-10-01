@@ -27,15 +27,14 @@ module CARPS
    # SMTP connection
    class SMTP
 
-      # Connect to the server with username and password
-      def initialize settings, user, password
+      # Connects to the server
+      def initialize settings, password
          @port = settings["port"]
-         @username = user
+         @username = settings["user"]
          @password = password
          @server = settings["server"]
          @starttls = settings["starttls"]
          @tls = settings["tls"]
-         connect
       end
 
       # Are the settings okay?

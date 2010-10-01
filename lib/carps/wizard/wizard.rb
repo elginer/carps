@@ -48,9 +48,12 @@ module CARPS
          @steps.each_index do |step_num|
             puts "#{step_num + 1}: #{@steps[step_num].description}"
          end
+         puts ""
          @steps.each do |step|
             step.run
+            puts ""
          end
+         highlight "Tada!  Wizard complete."
       end
 
       # Would this be the first time the wizard has run?

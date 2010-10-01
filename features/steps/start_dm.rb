@@ -29,12 +29,12 @@ Then /^save the game as (.+)$/ do |filename|
 end
 
 Then /^the dm resumes a previous game called (.+)$/ do |filename|
-   $game = DM::GameConfig.load "games/" + filename
+   $game = DM::GameConfig.load :file => "games/" + filename
 end
 
 Then /^present the start game interface to the dm$/ do
    child = fork do
       DM::StartInterface.start_game_interface nil, MockConfig
    end
-   Process.wait child
+   Object::Process.wait child
 end

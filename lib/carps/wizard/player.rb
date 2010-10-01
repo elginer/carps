@@ -30,7 +30,7 @@ module CARPS
             files = ["../mods.yaml", "email.yaml", "process.yaml", "editor.yaml"]
             dirs = ["games", ".peers"]
             super files, dirs
-            set_steps EditorConf.new, ProcessConf.new, EmailConf.new
+            set_steps Setup::Editor.new, Setup::Process.new, Setup::Email.new
          end
 
       end

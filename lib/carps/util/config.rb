@@ -26,7 +26,21 @@ module CARPS
 
       # Load a yaml file.
       # Provided so subclasses can override initialize
-      def self.load fatal=true, filepath=self.default_file
+      #
+      # Receives a hash with possible members
+      #
+      # * opts[:file] => filepath to load.  Default:  self.default_file
+      #
+      # * opts[:fatal] => raise system exit if something goes wrong.  Default: true
+      def self.load opts = {}
+         filepath = opts[:file]         
+         fatal = true
+         unless filepath
+            filepath = self.default_file
+         end
+         if opts.member? :fatal
+            fatal = opts[:fatal]
+         end
          config = self.allocate
          config.read filepath
          config.fail_hard fatal
@@ -87,7 +101,7 @@ module CARPS
       # it is called with the result of parse_yaml, like so: 
       #
       # load_resources *parse_yaml conf 
-      def load_resources forget
+      def load_resources *forget
       end
 
       # Attempt to find field within the conf hash

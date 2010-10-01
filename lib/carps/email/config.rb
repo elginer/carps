@@ -37,7 +37,7 @@ module CARPS
          "email.yaml"
       end
 
-      def initialize address, same_pass, smtp_options, imap_options
+      def initialize address, same_pass, imap_options, smtp_options
          load_resources address, same_pass, imap_options, smtp_options
       end
 
@@ -46,11 +46,11 @@ module CARPS
          address = read_conf conf, "address"
          same_pass = read_conf conf, "same_pass"
          imap = read_conf conf, "imap"
-         unless imap["server"] and imap["port"] and imap["tls"]
+         unless imap["user"] and imap["server"] and imap["port"] and imap["tls"]
             raise Expected, "Valid IMAP section"
          end
          smtp = read_conf conf, "smtp"
-         unless smtp["server"] and smtp["port"] and smtp["starttls"] and smtp["tls"]
+         unless smtp["user"] and smtp["server"] and smtp["port"] and smtp["starttls"] and smtp["tls"]
             raise Expected, "Valid SMTP section"
          end
          [address, same_pass, imap, smtp]        
@@ -68,8 +68,8 @@ module CARPS
             imap_password = secret "Enter password for IMAP account at #{address}:"
             smtp_password = secret "Enter password for SMTP account at #{address}:"
          end
-         @imap = IMAP.new imap_settings, username, imap_password
-         @smtp = SMTP.new smtp_settings, username, smtp_password
+         @imap = IMAP.new imap_settings, imap_password
+         @smtp = SMTP.new smtp_settings, smtp_password
       end
 
       # Emit options as yaml

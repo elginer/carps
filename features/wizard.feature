@@ -28,14 +28,23 @@ Feature: wizard
       Given one of the salty wizard's files is in fact a directory
       Then the wizard, attempting to create files, causes the program to exit
 
+   Scenario: setup email
+      Given the config directory is wizard
+      Then clean the wizard directory
+      Then setup email
+
+   Scenario: setup processing
+      Given the config directory is wizard
+      Then clean the wizard directory
+      Then setup processing
+
+    Scenario: setup editor
+      Given the config directory is wizard
+      Then clean the wizard directory
+      Then setup editor
+
    Scenario: configure player
       Given the config directory is wizard
       Then clean the wizard directory
-      Given a player wizard
-      Then run the wizard
-
-   Scenario: configure dungeon master
-      Given the config directory is wizard
-      Then clean the wizard directory
-      Given a master wizard
+      Given a salty wizard
       Then run the wizard

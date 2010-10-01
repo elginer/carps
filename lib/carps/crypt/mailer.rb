@@ -52,7 +52,7 @@ module CARPS
       # The third is the mail sender.
       #
       # The fourth is a message parser
-      def initialize address, mailbox 
+      def initialize address, mailbox
          @addr = address 
          @mailbox = mailbox
          @private_key = get_keys
@@ -99,7 +99,7 @@ module CARPS
             warn "Handshake request from #{from} has been dropped because #{from} is already a known peer",  "Possible spoofing attack."
          else
             # See if the user accepts the handshake.
-            accept = confirm "Accept handshake from #{from}?"
+            accept = accept_handshake? from
             Thread.fork do
                if accept
                   # Send our key to the peer
@@ -143,6 +143,15 @@ module CARPS
       # Check for a message.  Don't block!  Return nil if nothing is available.
       def check type, must_be_from=nil
          @mailbox.check type, must_be_from
+      end
+
+      protected
+
+      # Ask the user if they accept the handshake.
+      #
+      # Refactored out for tinkering and automated testing.
+      def accept_handshake? from
+         confirm "Accept handshake from #{from}?"
       end
 
 
@@ -205,7 +214,7 @@ module CARPS
 
       # Load a peer
       def load_peer peer_file_name
-         peer = Peer.load ".peers/" + File.basename(peer_file_name) 
+         peer = Peer.load :file => ".peers/" + File.basename(peer_file_name) 
          @mailbox.add_peer peer
       end
 

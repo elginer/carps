@@ -29,7 +29,7 @@ module CARPS
          "editor.yaml"
       end
 
-      def editor editor
+      def initialize editor
          @editor = editor
       end
 
@@ -61,7 +61,7 @@ module CARPS
          child = fork do
             exec @editor.gsub "%f", filepath
          end
-         Process.wait child
+         Object::Process.wait child
 
          if File.exists? filepath
             return File.read filepath

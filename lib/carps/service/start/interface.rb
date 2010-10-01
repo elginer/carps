@@ -56,7 +56,7 @@ module CARPS
             name = File.basename(f, ".yaml")
             puts ""
             highlight "Name: " + name
-            g = @game_config.load "games/" + File.basename(f), false
+            g = @game_config.load :file => "games/" + File.basename(f), :fatal => false
             g.display
          end
 
@@ -66,7 +66,7 @@ module CARPS
          filename = "games/" + name + ".yaml"
          config = nil
          begin
-            config = @game_config.load filename, false
+            config = @game_config.load :file => filename, :fatal => false
          rescue StandardError => e
             put_error e.to_s
          end

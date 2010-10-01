@@ -111,6 +111,7 @@ module CARPS
             puts cmd + " " + info["args"].join(" ")
             puts info["help"]
          end
+         puts ""
       end
 
       def repl

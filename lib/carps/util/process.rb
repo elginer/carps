@@ -57,12 +57,12 @@ module CARPS
 
       # Launch a ruby program in another terminal window, which can access the resource over drb
       def launch resource, program
-         ashare resource, lambda { |uri|
+         ashare resource do |uri|
             program = program + " " + uri 
             cmd = shell_cmd program 
             puts "Launching: #{cmd}"
             exec cmd
-         }
+         end
       end
 
       # The command which would open a new window running the given command
@@ -70,10 +70,10 @@ module CARPS
          @term.gsub "%cmd", program
       end
 
-      # Run computation in the second argument in a new process allowing access the first
+      # Run a block in a new process, allowing access the first argument by passing it a URI referring to a DRb object.
       #
       # If already running, then the process will not launch until till the first process has completed.
-      def ashare resource, computation
+      def ashare resource
          Thread.fork do
             @semaphore.synchronize do
                begin
@@ -84,12 +84,12 @@ module CARPS
                   child = fork do
                      begin
                         DRb.start_service
-                        computation.call uri
+                        yield uri
                      rescue StandardError => e
                         put_error e
                      end
                   end
-                  Process.wait child
+                  Object::Process.wait child
                   DRb.stop_service
                rescue StandardError => e
                   put_error e
