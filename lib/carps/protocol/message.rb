@@ -81,6 +81,11 @@ module CARPS
          @from
       end
 
+      # Set the path
+      def path= path
+         @path = path
+      end
+
       # Save the mail
       #
       # Only use once.  Raises exception if called multiple times.
@@ -89,13 +94,13 @@ module CARPS
             raise StandardError, "#{self} has already been saved!"
          else
             t = Time.new
-            @path = $CONFIG + ".mail/" + (from + self.class.to_s + t.to_f.to_s).gsub(/(\.|@)/, "")
+            @path = $CONFIG + ".mail/" + (self.class.to_s + t.to_f.to_s).gsub(/(\.|@)/, "")
             begin
                file = File.new @path, "w"
                file.write blob
                file.close
             rescue StandardError => e
-               put_error "Could not save message in #{@path}: #{e}"
+               put_error "Could not save message: #{e}"
             end
          end
          @path
@@ -112,12 +117,6 @@ module CARPS
                end
             end
          end
-      end
-
-      # Top level parser.  Saves the mail.
-      def parse_mail text
-         parse text
-         save text
       end
 
       # Parse.

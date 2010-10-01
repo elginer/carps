@@ -40,6 +40,8 @@ end
 Then /^an email is received$/ do
    puts "The email reads:"
    imap = $email_config.imap
-   puts imap.read.to_s
+   message = imap.read[0].to_s
+   puts "Ruby encodes the message as: #{message.encoding.name}"
+   puts message 
    puts "End email."
 end

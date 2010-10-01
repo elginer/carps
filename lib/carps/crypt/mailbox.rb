@@ -1,5 +1,5 @@
 # Copyright 2010 John Morrice
- 
+
 # This file is part of CARPS.
 
 # CARPS is free software: you can redistribute it and/or modify
@@ -19,6 +19,7 @@
 
 require "carps/util/warn"
 require "carps/util/process"
+require "carps/util/files"
 
 require "drb"
 
@@ -43,6 +44,8 @@ module CARPS
          @ssemaphore = Mutex.new
          # Semaphore to make sure only one thread can receive mail at any one time 
          @rsemaphore = Mutex.new
+         # Load mails from the last session
+         load_old_mails
          # Receive mail
          receive_forever
       end
@@ -141,7 +144,7 @@ module CARPS
             @mail.each_index do |index|
                mail = @mail[index]
                pass = true
-   
+
                if type
                   pass = mail.class == type
                end
@@ -167,40 +170,66 @@ module CARPS
          end
       end
 
-      # Shutdown the mailbox
-      def shutdown
-         @child.kill
-      end
-
       # Read new mail messages into the mail box
       def receive_new
          mail = @receiver.read
-   
+
          mail.each do |blob|
-            who = nil
-            begin
-               # Find who sent the message
-               who, blob = find K.addr, blob
-            rescue Expected
-               warn "Mail message did not contain sender.", blob 
-               next
+            decode_mail blob
+         end
+      end
+
+      # Read a new mail message from a blob of text
+      def decode_mail blob, persistence = {:save_mail => true}
+         who = nil
+         input = blob
+         begin
+            # Find who sent the message
+            who, blob = find K.addr, blob
+         rescue Expected
+            warn "Mail message did not contain sender.", blob
+            return
+         end
+
+         # Get the security information from the mail
+         delayed_crypt, blob = security_info blob
+
+         # Parse a message
+         msg = @parser.parse blob
+
+         if msg
+            msg.crypt = delayed_crypt
+            msg.from = who 
+            puts "Mail from #{who}: #{msg.class.to_s}"
+            # Save the text we parsed the message from.
+            if persistence[:save_mail] 
+               msg.save input
             end
+            path = persistence[:path]
+            if path
+               msg.path = path
+            end
+            @rsemaphore.synchronize do
+               @mail.push msg
+            end
+         else
+            warn "Failed to parse message from #{who}", blob
+         end
+      end
 
-            # Get the security information from the mail
-            delayed_crypt, blob = security_info blob
-
-            # Parse a message
-            msg = @parser.parse_mail blob
-
-            if msg
-               msg.crypt = delayed_crypt
-               msg.from = who 
-               puts "Mail from #{who}: #{msg.class.to_s}"
-               @rsemaphore.synchronize do
-                  @mail.push msg
-               end
-            else
-               warn "Failed to parse message from #{who}", blob
+      # Load mails from the last session
+      def load_old_mails
+         old_mails = files $CONFIG + "/.mail"
+         old_mails.each do |fn|
+            blob = nil
+            begin
+               blob = File.read fn
+            rescue StandardError => e
+               put_error "Could not read old message: #{e}"
+            end
+            if blob
+               blob.force_encoding "ASCII-8BIT"
+               decode_mail blob, {:save_mail => false, :path => fn}
             end
          end
       end

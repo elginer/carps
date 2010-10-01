@@ -81,6 +81,7 @@ module CARPS
 
    # Find a field in semi-structured text
    def find field, text
+      check text, "Expected String for input"
       if field.start_with? mark_prefix
          forget, blob = text.split field, 2
          check blob, field
