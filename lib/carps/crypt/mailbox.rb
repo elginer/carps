@@ -32,8 +32,13 @@ module CARPS
 
       include DRbUndumped
 
-      # Create the mailbox from a simple, synchronous mail client
-      def initialize sender, receiver, parser
+      # Create the mailbox from a simple, synchronous mail sender and receiver.
+      #
+      # The third parameter is a MessageParser.
+      #
+      # The fourth parameter is a SessionManager.
+      def initialize sender, receiver, parser, session
+         @session = session
          @receiver = receiver
          @parser = parser
          @sender = sender
@@ -109,28 +114,35 @@ module CARPS
             @mail.each_index do |index|
                mail = @mail[index]
                from = mail.from
-               pass = false 
                if secure from
                   unless @peers[from].verify mail
-                     mail.delete
-                     @mail.delete_at index
+                     remove_mail index
                      next
                   end
                end
-               if type
-                  pass = mail.class == type
-               end
-               if must_be_from
-                  pass = pass and mail.from == must_be_from
-               end
+               pass = appropriate?(mail, type, must_be_from)
                if pass
-                  mail.delete
-                  @mail.delete_at index
+                  remove_mail index
                   return mail
                end
             end
             nil
          end
+      end
+
+      # Was the mail message appropriate?
+      def appropriate? mail, type, must_be_from
+         pass = mail.class == type
+         if must_be_from
+            pass = pass and mail.from == must_be_from
+         end
+         pass and @session.belong? mail
+      end
+
+      # Remove a mail message
+      def remove_mail index
+         @mail[index].delete
+         @mail.delete_at index
       end
 
       # Communication with someone is secure if there is a peer for them
@@ -143,17 +155,9 @@ module CARPS
          @rsemaphore.synchronize do
             @mail.each_index do |index|
                mail = @mail[index]
-               pass = true
-
-               if type
-                  pass = mail.class == type
-               end
-               if must_be_from
-                  pass = pass and mail.from == must_be_from
-               end
+               pass = appropriate?(mail, type, must_be_from)
                if pass
-                  mail.delete
-                  @mail.delete_at index
+                  remove_mail index
                   return mail
                end
             end

@@ -15,39 +15,58 @@
 # You should have received a copy of the GNU General Public License
 # along with CARPS.  If not, see <http://www.gnu.org/licenses/>.
 
+require "thread"
+
 module CARPS
 
    # A session manager
+   #
+   # Its methods are reentrant
    class SessionManager
 
+      def initialize
+         @semaphore = Mutex.new
+      end
+
       # Generate a new session from a key
-      def new key
+      def generate key
          t = Time.new
-         @session = key + t.to_f.to_s
+         @semaphore.synchronize do
+            @session = key + t.to_f.to_s
+         end
+         @session
       end
 
       # Set the current session
       def session= sess
-         @session = sess
+         @semaphore.synchronize do
+            @session = sess
+         end
       end
 
       # Remove the current session
       def none
-         @session = nil
+         @semaphore.synchronize do
+            @session = nil
+         end
       end
 
       # Is this message appropriate for the current session
       def belong? message
-         if @session
-            message.session == @session
-         else
-            true
+         @semaphore.synchronize do
+            if @session
+               message.session == @session
+            else
+               true
+            end
          end
       end
 
       # Set a message's session
       def tag message
-         message.session = @session
+         @semaphore.synchronize do
+            message.session = @session
+         end
       end
 
    end
