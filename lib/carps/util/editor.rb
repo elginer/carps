@@ -25,8 +25,8 @@ module CARPS
    # Expects a field called "launch_editor"
    class Editor < YamlConfig
 
-      def Editor.default_file
-         "editor.yaml"
+      def Editor.filepath
+         $CONFIG + "/editor.yaml"
       end
 
       def initialize editor
@@ -56,6 +56,8 @@ module CARPS
          end
       end
 
+      protected
+
       def edit_file filepath
          child = fork do
             exec @editor.gsub "%f", filepath
@@ -67,6 +69,12 @@ module CARPS
          else
             return ""
          end
+      end
+
+
+      # Emit as hash
+      def emit
+         {"launch_editor" => @editor}
       end
 
    end

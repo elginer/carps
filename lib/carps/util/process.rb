@@ -35,8 +35,8 @@ module CARPS
    # Responsible for launching other CARP processes
    class Process < YamlConfig
 
-      def Process.default_file
-         "process.yaml"
+      def Process.filepath
+         $CONFIG + "/process.yaml"
       end
 
       def initialize term, port
@@ -65,11 +65,6 @@ module CARPS
          end
       end
 
-      # The command which would open a new window running the given command
-      def shell_cmd program
-         @term.gsub "%cmd", program
-      end
-
       # Run a block in a new process, allowing access the first argument by passing it a URI referring to a DRb object.
       #
       # If already running, then the process will not launch until till the first process has completed.
@@ -96,6 +91,18 @@ module CARPS
                end
             end
          end
+      end
+
+      protected
+
+      # Emit as hash
+      def emit
+         {"launch_terminal" => @term, "port" => @port}
+      end
+
+      # The command which would open a new window running the given command
+      def shell_cmd program
+         @term.gsub "%cmd", program
       end
 
    end

@@ -24,7 +24,7 @@ module CARPS
 
    module DM
       # Class to read game configuration files
-      class GameConfig < YamlConfig
+      class GameConfig < UserConfig
 
          # Create a new GameConfig
          def initialize mod, campaign, about, players
@@ -54,17 +54,17 @@ module CARPS
 
          # Save this game
          def save filename
-            f = File.new($CONFIG + "/games/" + filename, "w")
-            f.write emit
-            f.close
+            save_file $CONFIG + "/games/" + filename
          end
 
-         # Emit as yaml
+         protected
+
+         # Emit as hash 
          def emit
             {"mod" => @mod, 
-       "campaign" => @campaign, 
-       "about" => @about, 
-       "players" => @players}.to_yaml
+             "campaign" => @campaign, 
+             "about" => @about, 
+             "players" => @players}
          end
 
          # Receive a mailer 
@@ -74,6 +74,7 @@ module CARPS
          end
 
       end
+
    end
 
 end

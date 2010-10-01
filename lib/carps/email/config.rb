@@ -33,8 +33,8 @@ module CARPS
    # Class to read email config.
    class EmailConfig < YamlConfig
 
-      def EmailConfig.default_file
-         "email.yaml"
+      def EmailConfig.filepath
+         $CONFIG + "/email.yaml"
       end
 
       def initialize address, same_pass, imap_options, smtp_options
@@ -72,9 +72,9 @@ module CARPS
          @smtp = SMTP.new smtp_settings, smtp_password
       end
 
-      # Emit options as yaml
+      # Emit options as hash
       def emit
-         @file_struct.to_yaml
+         @file_struct
       end
 
       # Expose the IMAP client

@@ -24,38 +24,9 @@ module CARPS
    # Configuration files that read yaml
    class YamlConfig 
 
-      # Load a yaml file.
-      # Provided so subclasses can override initialize
-      #
-      # Receives a hash with possible members
-      #
-      # * opts[:file] => filepath to load.  Default:  self.default_file
-      #
-      # * opts[:fatal] => raise system exit if something goes wrong.  Default: true
-      def self.load opts = {}
-         filepath = opts[:file]         
-         fatal = true
-         unless filepath
-            filepath = self.default_file
-         end
-         if opts.member? :fatal
-            fatal = opts[:fatal]
-         end
-         config = self.allocate
-         config.read filepath
-         config.fail_hard fatal
-         config
-      end
-
       # Should we fail hard, quiting the program?
       def fail_hard fatal
          @fatal = fatal
-      end
-
-      # Takes as an argument a path to a yaml configuration file
-      def initialize filepath, fatal=true
-         fail_hard fatal
-         read filepath
       end
 
       # Read a resource using the subclass' parse_yaml.
@@ -87,6 +58,22 @@ module CARPS
       end
 
       protected
+
+      # Save as a YAML file
+      def save_file path
+         y = emit 
+         begin
+            file = File.new path, "w"
+            file.write y
+            file.close
+         rescue StandardError => e
+            put_error "Could not save #{self.class} as #{path}: e"
+         end
+      end
+
+      # Emit as yaml
+      def emit
+      end
 
       # Subclasses must create a method parse_yaml which takes YAML returns an array
       def parse_yaml conf
@@ -121,6 +108,51 @@ module CARPS
             raise StandardError, msg
          end
       end
+
+   end
+
+   # User configurations, which may be stored in many files
+   # and which should not crash the system on an error
+   class UserConfig < YamlConfig
+
+      # Subclasses must call super
+      def initialize
+         fail_hard false
+      end
+
+      # Load a user file.
+      def self.load filepath
+         self.allocate
+         config.read filepath
+         config.fail_hard false 
+         config
+      end
+
+   end
+
+   # System configurations, which exist in strictly predefined locations
+   # and which should crash the system if they do not exist, because they
+   # are critical to its operation.
+   class SystemConf < YamlConfig
+
+      # Subclasses must call super
+      def initialize
+         fail_hard true
+      end
+
+      # Load a system file.
+      def self.load
+         self.allocate
+         config.read self.filepath
+         config.fail_hard false 
+         config
+      end
+
+      # Save the user config
+      def save
+         save_file self.class.filepath
+      end
+      
 
    end
 

@@ -184,6 +184,7 @@ module CARPS
                good = confirm "Are the above settings correct?"
                if good
                   if config.imap.ok? and config.smtp.ok?
+                     config.save
                      test_passed
                   end
                end
@@ -291,6 +292,7 @@ module CARPS
                   highlight mut.works?
                   good = confirm "Did it say 'It works!' in the new window?"
                   if good
+                     @shell.save
                      test_passed
                   else
                      general_fail
@@ -355,6 +357,7 @@ module CARPS
                      if before_good
                         after_good = confirm "Did you change that to this?\n#{after}"
                         if after_good
+                           @editor.save
                            test_passed
                         else
                            save_fail

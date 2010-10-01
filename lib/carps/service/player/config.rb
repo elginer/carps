@@ -25,10 +25,11 @@ module CARPS
    module Player
 
       # Class to read game configuration files
-      class GameConfig < YamlConfig
+      class GameConfig < UserConfig
 
          # Create a new GameConfig
          def initialize mod, dm, about
+            super()
             @mod = mod
             @dm = dm
             @about = about
@@ -51,9 +52,7 @@ module CARPS
 
          # Save this game
          def save filename
-            f = File.new($CONFIG + "/games/" + filename, "w")
-            f.write emit
-            f.close
+            save_file $CONFIG + "/games/" + filename
          end
 
          # Spawn a game object so we can resume the game
@@ -61,13 +60,13 @@ module CARPS
             GameClient.new mailer, @dm, @mod, @about
          end
 
-         private
+         protected
 
-         # Emit as yaml
+         # Emit as hash 
          def emit
             {"mod" => @mod, 
-       "about" => @about, 
-       "dm" => @dm}.to_yaml
+             "about" => @about, 
+             "dm" => @dm}
          end
 
       end
