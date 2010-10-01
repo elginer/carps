@@ -102,8 +102,8 @@ module CARPS
       end
 
       # Return the high level mail client
-      def mailer message_parser
-         mailbox = Mailbox.new @smtp, @imap, message_parser
+      def mailer message_parser, session_manager
+         mailbox = Mailbox.new @smtp, @imap, message_parser, session_manager
          Mailer.new @address, mailbox
       end
 

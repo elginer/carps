@@ -30,10 +30,10 @@ module CARPS
       include ControlInterface
 
       # Start interface
-      def StartGameInterface.start_game_interface mailer, session, config
+      def StartGameInterface.start_game_interface mailer, config, session
          loop do
             choice = callcc do |continuation|
-               interface = self.new continuation, mailer, session, config
+               interface = self.new continuation, mailer, config, session
                interface.run
             end
             choice.call

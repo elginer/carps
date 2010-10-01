@@ -29,7 +29,7 @@ module CARPS
       # Interface for the dm to start games
       class StartInterface < StartGameInterface
 
-         def initialize continuation, mailer, session, game_config
+         def initialize continuation, mailer, game_config, session
             super
             add_command "new", "Start a new game.", "NAME", "MOD", "CAMPAIGN"
          end

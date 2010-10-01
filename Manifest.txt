@@ -84,6 +84,8 @@ lib/carps/service/player/config.rb
 lib/carps/service/player/mailer.rb
 lib/carps/service/player/start.rb
 lib/carps/service/server_parser.rb
+lib/carps/service/session.rb
+lib/carps/service/start/config.rb
 lib/carps/service/start/interface.rb
 lib/carps/util.rb
 lib/carps/util/colour.rb
