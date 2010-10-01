@@ -3,3 +3,4 @@
 # Ignore everything in the pkg and doc folders
 doc/
 pkg/
+tmp/

@@ -34,8 +34,7 @@ module CARPS
       end
 
       def parse_yaml config
-         read_conf config, "launch_editor"
-         @editor = editor
+         @editor = read_conf config, "launch_editor"
       end
 
       # Edit a string

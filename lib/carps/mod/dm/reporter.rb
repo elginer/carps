@@ -70,7 +70,7 @@ module CARPS
 
       # Edit the report for a player 
       def edit player
-         editor = Editor.new
+         editor = Editor.load
          stat = @status[player]
          unless stat
             stat = ""
