@@ -75,23 +75,16 @@ module CARPS
 
       # Invite players to this game and begin
       def start
-
-         # Begin playing
-         interface = play
-
          Thread.fork do
             # Perform handshakes
             @players.each do |player|
                # Handshakes are done asychronously
-               thread = @mailer.handshake player
-               if thread
-                  thread.join
-               end
+               @mailer.handshake(player).join
                invite = Invite.new self
-
                @mailer.send player, invite
             end
          end
+         play
       end
 
       # Resume this game
@@ -104,7 +97,8 @@ module CARPS
       def play
          mod = load_mods[@mod]
          mailer = DM::Mailer.new @mailer
-         $process.launch mailer, mod["host"] + " " + @campaign
+         thrd = $process.launch mailer, mod["host"] + " " + @campaign
+         thrd.join
       end
 
    end

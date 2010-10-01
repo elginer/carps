@@ -37,6 +37,15 @@ class TwistedMailbox < Mailbox
 end
 
 class TwistedMailer < Mailer
+
+   # Expect someone else will begin the handshake
+   #
+   # British stereotype?
+   def expect_handshake
+      handshake = @mailbox.insecure_read Handshake
+      handle_handshake handshake
+   end
+
    # Send an evil message.  The recipent should drop this.
    def evil to, message
       text = message.emit

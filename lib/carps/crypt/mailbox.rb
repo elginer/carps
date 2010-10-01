@@ -93,6 +93,11 @@ module CARPS
          return msg
       end
 
+      # Check for new messages insecurely.  Don't block.
+      def insecure_check type, must_be_from=nil
+         insecure_search type, must_be_from
+      end
+
       private
 
       # See if there is an appropriate message in the mail box

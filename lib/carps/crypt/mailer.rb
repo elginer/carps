@@ -86,12 +86,13 @@ module CARPS
          end
       end
 
-      # Wait for someone to begin the handshake
-      #
-      # A British stereotype?
-      def expect_handshake
-         # Get the handshake 
-         handshake = @mailbox.insecure_read Handshake
+      # Check for handshakes
+      def check_handshake
+         @mailbox.insecure_check Handshake
+      end
+
+      # Respond to a handshake request
+      def handle_handshake handshake
          # Get the peer's address
          from = handshake.from
          puts "Receiving handshake request from #{from}."
