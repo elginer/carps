@@ -1,6 +1,6 @@
 #!/usr/local/bin/ruby
 # Copyright 2010 John Morrice
- 
+
 # This file is part of CARPS.
 
 # CARPS is free software: you can redistribute it and/or modify
@@ -19,15 +19,36 @@
 # Test CARPS IPC.  Used for unit testing and as part of the wizard. 
 require "drb"
 
+require "highline"
+
+def its_over status=0
+   h = HighLine.new
+   h.ask "Press enter to exit"
+   exit status
+end
+
+url = ""
+if ARGV[0] == "-p"
+   url = ARGV[1]
+elsif ARGV[0] == "-h"
+   url = ARGV[2]
+else
+   url = ARGV[0]
+end
+
+unless url
+   its_over 1
+end
+puts "Listening on " + url
+
 begin
-   url = ARGV.shift
-   puts "Listening on " + url
    mut = DRbObject.new nil, url
    mut.mutate!
    puts mut.works?
-rescue Exception => e
+rescue StandardError => e
    puts "ERROR:"
    puts e
+   its_over 1
 end
-puts "Press enter to exit"
-gets
+
+its_over

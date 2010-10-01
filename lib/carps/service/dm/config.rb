@@ -57,7 +57,6 @@ module CARPS
             save_file "/games/" + filename
          end
 
-         # Receive a mailer 
          # Return a GameServer object that can communicate with players 
          def spawn
             GameServer.new @mod, @campaign, @about, @players
