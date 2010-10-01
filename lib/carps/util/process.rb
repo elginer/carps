@@ -61,7 +61,11 @@ module CARPS
             program = program + " " + uri 
             cmd = shell_cmd program 
             puts "Launching: #{cmd}"
-            exec cmd
+            begin
+               exec cmd
+            rescue StandardError => e
+               put_error "Problem launching sub-program: #{e}"
+            end
          end
       end
 
@@ -79,15 +83,15 @@ module CARPS
                   child = fork do
                      begin
                         DRb.start_service
-                        yield uri
                      rescue StandardError => e
-                        put_error e
+                        put_error "Problem starting inter-process communication in the sub-program: #{e}"
                      end
+                     yield uri
                   end
                   Object::Process.wait child
                   DRb.stop_service
                rescue StandardError => e
-                  put_error e
+                  put_error "Malfunction in inter-process communication: #{e}"
                end
             end
          end
