@@ -27,14 +27,24 @@ def its_over status=0
    exit status
 end
 
-url = ARGV.shift
+puts ARGV
+url = ""
+if ARGV[0] == "-p"
+   url = ARGV[1]
+elsif ARGV[0] == "-h"
+   url = ARGV[2]
+else
+   url = ARGV[0]
+end
 
+unless url
+   its_over 1
+end
 puts "Listening on " + url
 
 begin
-   mut = DRbObject.new nil, url
-   mut.mutate!
-   puts mut.works?
+   mail = DRbObject.new nil, url
+   puts "mail.class: #{mail.class}"
 rescue StandardError => e
    puts "ERROR:"
    puts e

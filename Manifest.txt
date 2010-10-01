@@ -6,6 +6,7 @@ PostInstall.txt
 README.rdoc
 Rakefile
 bin/carps_ipc_test
+bin/carps_mod_test
 features/character_sheet.feature
 features/crypt.feature
 features/dm.feature
