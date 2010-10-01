@@ -33,7 +33,7 @@ end
 module CARPS
 
    # Responsible for launching other CARP processes
-   class Process < YamlConfig
+   class Process < SystemConfig
 
       def Process.filepath
          $CONFIG + "/process.yaml"

@@ -23,7 +23,7 @@ require "tempfile"
 module CARPS
 
    # Expects a field called "launch_editor"
-   class Editor < YamlConfig
+   class Editor < SystemConfig
 
       def Editor.filepath
          $CONFIG + "/editor.yaml"

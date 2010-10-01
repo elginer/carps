@@ -180,7 +180,7 @@ module CARPS
                smtp_options = {"user" => @smtp_user, "server" => @smtp_server, "tls" => @smtp_tls, "starttls" => @smtp_starttls, "port" => @smtp_port}
                imap_options = {"user" => @imap_user, "server" => @imap_server, "tls" => @imap_tls, "port" => @imap_port}
                config = EmailConfig.new @address, @same_pass, imap_options, smtp_options
-               puts config.emit
+               puts config.emit.to_yaml
                good = confirm "Are the above settings correct?"
                if good
                   if config.imap.ok? and config.smtp.ok?

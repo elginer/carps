@@ -31,7 +31,7 @@ require "yaml"
 module CARPS
 
    # Class to read email config.
-   class EmailConfig < YamlConfig
+   class EmailConfig < SystemConfig
 
       def EmailConfig.filepath
          $CONFIG + "/email.yaml"

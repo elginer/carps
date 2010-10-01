@@ -95,7 +95,7 @@ lib/carps/util/process.rb
 lib/carps/util/question.rb
 lib/carps/util/warn.rb
 lib/carps/wizard/player.rb
-lib/carps/wizard/master.rb
+lib/carps/wizard/dm.rb
 lib/carps/wizard/steps.rb
 lib/carps/wizard/wizard.rb
 permission

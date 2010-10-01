@@ -61,7 +61,7 @@ module CARPS
 
       # Save as a YAML file
       def save_file path
-         y = emit 
+         y = emit.to_yaml 
          begin
             file = File.new path, "w"
             file.write y
@@ -133,7 +133,7 @@ module CARPS
    # System configurations, which exist in strictly predefined locations
    # and which should crash the system if they do not exist, because they
    # are critical to its operation.
-   class SystemConf < YamlConfig
+   class SystemConfig < YamlConfig
 
       # Subclasses must call super
       def initialize
