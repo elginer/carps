@@ -23,18 +23,6 @@ require "drb"
 
 module CARPS
 
-   # Parse, choosing from a number of alternative messages, return the first one that suceeds
-   def choose messages, blob 
-      messages.each do |message|
-         begin
-            result, text = message.parse blob
-            return [result, text] 
-         rescue Expected
-         end
-      end
-      raise Expected
-   end
-
    # Parse a message from a block of unformatted text
    class MessageParser
 
@@ -43,11 +31,24 @@ module CARPS
          @choices = choices
       end
 
+      # Parse, choosing from a number of alternative messages, return the first one that suceeds
+      def choose_parser blob 
+         @choices.each do |message|
+            begin
+               result, text = message.parse blob
+               return [result, text] 
+            rescue Expected
+            end
+         end
+         raise Expected
+      end
+
       # Parse the text into a message 
       def parse text
          input = text
          begin
-            msg, blob = choose @choices, text
+            msg, blob = choose_parser text
+            puts "parsed"
             return msg
          rescue Expected
             warn "An invalid email was received:", input

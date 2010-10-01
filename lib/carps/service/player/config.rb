@@ -56,8 +56,8 @@ module CARPS
          end
 
          # Spawn a game object so we can resume the game
-         def spawn mailer
-            GameClient.new mailer, @dm, @mod, @about
+         def spawn
+            GameClient.new @dm, @mod, @about
          end
 
          protected

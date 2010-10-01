@@ -44,8 +44,8 @@ module CARPS
                players = get_players
                config = @game_config.new mod, campaign, about, players
                config.save name + ".yaml"
-               game = config.spawn @mailer
-               @continuation.call lambda {game.start}
+               game = config.spawn
+               @continuation.call lambda {game.start @mailer}
             else
                put_error "No such mod."
             end

@@ -5,17 +5,17 @@ require "carps/service/dm/start"
 include CARPS
 
 class MockGame
-   def start
+   def start mailer
       puts "Starting game..."
    end
 
-   def resume
+   def resume mailer
       puts "Resuming game..."
    end
 end
 
 class MockConfig < DM::GameConfig
-   def spawn mailer
+   def spawn
       MockGame.new
    end
 end

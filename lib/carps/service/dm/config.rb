@@ -59,8 +59,8 @@ module CARPS
 
          # Receive a mailer 
          # Return a GameServer object that can communicate with players 
-         def spawn mailer
-            GameServer.new mailer, @mod, @campaign, @about, @players
+         def spawn
+            GameServer.new @mod, @campaign, @about, @players
          end
 
          protected

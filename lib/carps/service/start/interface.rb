@@ -79,8 +79,8 @@ module CARPS
             put_error e.to_s
          end
          if config
-            game = config.spawn @mailer
-            @continuation.call lambda {game.resume}
+            game = config.spawn
+            @continuation.call lambda {game.resume @mailer}
          end
       end
 
