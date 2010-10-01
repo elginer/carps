@@ -21,6 +21,8 @@ require "carps/util/warn"
 
 require "drb"
 
+require "fileutils"
+
 module CARPS
 
    # Parse a message from a block of unformatted text
@@ -77,6 +79,45 @@ module CARPS
       # Who we're from
       def from
          @from
+      end
+
+      # Save the mail
+      #
+      # Only use once.  Raises exception if called multiple times.
+      def save blob
+         if @path
+            raise StandardError, "#{self} has already been saved!"
+         else
+            t = Time.new
+            @path = $CONFIG + ".mail/" + (from + self.class.to_s + t.to_f.to_s).gsub(/(\.|@)/, "")
+            begin
+               file = File.new @path, "w"
+               file.write blob
+               file.close
+            rescue StandardError => e
+               put_error "Could not save message in #{@path}: #{e}"
+            end
+         end
+         @path
+      end
+
+      # Delete the path
+      def delete
+         if @path
+            if File.exists?(@path)
+               begin
+                  FileUtils.rm @path
+               rescue StandardError => e
+                  put_error "Could not delete message: #{e}"
+               end
+            end
+         end
+      end
+
+      # Top level parser.  Saves the mail.
+      def parse_mail text
+         parse text
+         save text
       end
 
       # Parse.

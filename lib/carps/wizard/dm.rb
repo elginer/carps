@@ -28,7 +28,7 @@ module CARPS
 
          def initialize
             files = ["../mods.yaml", "email.yaml", "process.yaml", "editor.yaml"]
-            dirs = ["games", ".peers", "campaigns"]         
+            dirs = ["games", ".peers", ".mail", "campaigns"]         
             super files, dirs
             set_steps Setup::Editor.new, Setup::Process.new, Setup::Email.new
          end

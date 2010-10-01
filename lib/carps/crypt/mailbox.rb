@@ -109,6 +109,7 @@ module CARPS
                pass = false 
                if secure from
                   unless @peers[from].verify mail
+                     mail.delete
                      @mail.delete_at index
                      next
                   end
@@ -120,6 +121,7 @@ module CARPS
                   pass = pass and mail.from == must_be_from
                end
                if pass
+                  mail.delete
                   @mail.delete_at index
                   return mail
                end
@@ -147,6 +149,7 @@ module CARPS
                   pass = pass and mail.from == must_be_from
                end
                if pass
+                  mail.delete
                   @mail.delete_at index
                   return mail
                end
@@ -187,7 +190,7 @@ module CARPS
             delayed_crypt, blob = security_info blob
 
             # Parse a message
-            msg = @parser.parse blob
+            msg = @parser.parse_mail blob
 
             if msg
                msg.crypt = delayed_crypt
