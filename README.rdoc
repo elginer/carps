@@ -1,4 +1,6 @@
-= CARPS is hosted on github:
+= CARPS, the Computer Assisted Role-Playing Game System
+
+== CARPS is hosted on github:
 
 * http://github.com/elginer/carps
 
