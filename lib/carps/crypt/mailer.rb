@@ -76,7 +76,7 @@ module CARPS
                # Get the peer's key
                their_key = @mailbox.insecure_read PublicKey, to
                peer.your_key their_key.key
-               write_peer peer
+               peer.save 
                # Send our key
                send to, PublicKey.new(@public_key)
                # Receive an okay message
@@ -111,7 +111,7 @@ module CARPS
                   peer = Peer.new from
                   @mailbox.add_peer peer
                   peer.your_key peer_key.key
-                  write_peer peer
+                  peer.save
                   # Send an okay message
                   send from, AcceptHandshake.new
                   puts "Established spoof-proof communications with #{from}."
@@ -215,15 +215,8 @@ module CARPS
 
       # Load a peer
       def load_peer peer_file_name
-         peer = Peer.load :file => ".peers/" + File.basename(peer_file_name) 
+         peer = Peer.load ".peers/" + File.basename(peer_file_name) 
          @mailbox.add_peer peer
-      end
-
-      # Note a new peer
-      def write_peer peer
-         pf = File.new peer_dir + peer.addr, "w"
-         pf.write peer.to_yaml
-         pf.close
       end
 
    end

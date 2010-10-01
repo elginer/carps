@@ -52,7 +52,7 @@ module CARPS
    end
 
    # Peers  
-   class Peer < YamlConfig
+   class Peer < UserConfig
 
       # Extend protocol for signed data
       protoval :sig 
@@ -83,12 +83,16 @@ module CARPS
          end
       end
 
-      # Emit this peer as a yaml document
-      def to_yaml
-         {"addr" => @addr, "key" => @peer_key.to_pem}.to_yaml
+      def save
+         save_file ".peers/" + @addr
       end
 
-      private
+      protected
+
+      # Emit this peer as a yaml document
+      def emit
+         {"addr" => @addr, "key" => @peer_key.to_pem}
+      end
 
       def parse_yaml conf
          key_pem = read_conf conf, "key"

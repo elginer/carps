@@ -45,6 +45,8 @@ module CARPS
                   config.save fn
                   @continuation.call lambda {invite.accept}
                end
+            elsif shake = @mailer.check_handshake
+               @mailer.handle_handshake shake
             else
                puts "No new mail."
             end

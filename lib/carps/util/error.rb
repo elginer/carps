@@ -33,7 +33,7 @@ module CARPS
    # Output an error message
    def put_error msg
       h = HighLine.new
-      puts h.color("Error:  " + msg, :error)
+      puts h.color("Error:  #{msg}", :error)
    end
 
 end
