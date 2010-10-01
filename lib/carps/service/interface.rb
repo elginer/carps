@@ -105,6 +105,7 @@ module CARPS
       end
 
       def help
+         puts ""
          puts "The available commands, and their formal parameters, are:"
          @commands.each do |cmd, info|
             puts ""

@@ -58,7 +58,7 @@ opts = OptionParser.new do |opts|
    opts.banner = "Usage: carps [OPTION]"
 
    opts.separator ""
-   opts.separator "Options:"
+   opts.separator "Game options:"
 
    opts.on "-p", "--player", "Play a game." do
       player = true
@@ -68,12 +68,20 @@ opts = OptionParser.new do |opts|
       dm = true
    end
 
+   opts.separator ""
+   opts.separator "Other options:"
+
    opts.on "-w", "--wizard", "Use this option to configure your settings.  Use with either --master or --player." do
       config = true
    end
 
    opts.on "-h", "--help", "Print help." do
       puts opts
+      exit
+   end
+
+   opts.on "-v", "--version", "Print version number." do
+      puts VERSION
       exit
    end
 end

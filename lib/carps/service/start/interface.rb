@@ -52,6 +52,7 @@ module CARPS
       protected
 
       def help
+         puts ""
          highlight "Welcome to CARPS #{VERSION}"
          super
       end
