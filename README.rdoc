@@ -11,16 +11,18 @@ is a tool for playing pen and paper RPGs over the internet.
 
 CARPS is a highly customizable system with many features:
 
-* Game rules are provided by 'mods': extensions to CARPS.
+Game rules are provided by 'mods': extensions to CARPS.
 
-* CARPS supports these mods by providing:
+CARPS supports these mods by providing:
 
-- Text-mode user interfaces for the players and the dungeon master.
+* Text-mode user interfaces for the players and the dungeon master.
 
-- Automated character sheet verification, according to a schema defined as part of the game's rules.
+* Automated character sheet verification, according to a schema defined as part of the game's rules.
 
-- Support for the semantic validation of character sheets (ie., a cap on your character's possible strength)
- 
+* Support for the semantic validation of character sheets (ie., a cap on your character's possible strength)
+
+CARPS has other strengths:
+
 * Anyone can play or host a CARPS game because CARPS' protocol is implemented on top of email. 
 
 * CARPS is designed to be secure.  Multiple email security options are supported, and all CARPS messages are cryptographically signed to prevent spoofing.
@@ -33,25 +35,25 @@ CARPS is a highly customizable system with many features:
 
 For users:
 
-ruby
+* ruby
 
-rake
+* rake
 
-rubygems
+* rubygems
 
-openssl
+* openssl
 
-highline
+* highline
 
-cucumber
+* cucumber
 
 For developing CARPS, you will also need:
 
-hoe
+* hoe
 
-newgem
+* newgem
 
-cucumber
+* cucumber
 
 == INSTALL:
 
