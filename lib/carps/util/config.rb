@@ -63,7 +63,7 @@ module CARPS
       def save_file path
          y = emit.to_yaml 
          begin
-            file = File.new path, "w"
+            file = File.new $CONFIG + path, "w"
             file.write y
             file.close
          rescue StandardError => e

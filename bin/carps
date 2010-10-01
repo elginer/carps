@@ -24,7 +24,8 @@ include CARPS
 
 # Set up the email
 def setup_email parser
-   config = EmailConfig.new "email.yaml"
+   config = EmailConfig.load
+   config.connect!
    config.mailer parser
 end
 

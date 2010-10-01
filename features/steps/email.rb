@@ -29,16 +29,17 @@ Given /^the email account$/ do
    smtp_options["tls"] = false
    smtp_options["port"] = 25
    $email_config = EmailConfig.new "carps@killersmurf.com", true, imap_options, smtp_options
+   $email_config.connect!
 end
 
 Then /^an email is sent$/ do
-   $email_config.smtp.send $email_config.address, "It works!" 
+   smtp = $email_config.smtp
+   smtp.send $email_config.address, "It works!" 
 end
 
 Then /^an email is received$/ do
    puts "The email reads:"
    imap = $email_config.imap
-   imap.connect
    puts imap.read.to_s
    puts "End email."
 end

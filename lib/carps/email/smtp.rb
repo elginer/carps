@@ -72,6 +72,9 @@ module CARPS
             begin
                with_attempt_connection &todo
                return
+            rescue Net::SMTPAuthenticationError => e
+               put_error e.to_s
+               @password = secret "Enter SMTP password for #{@username}:"
             rescue
                warn "Could not connect to SMTP server", "Attempting to reconnect in 10 seconds."
                sleep 10

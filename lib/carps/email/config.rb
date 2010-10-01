@@ -72,6 +72,12 @@ module CARPS
          @smtp = SMTP.new smtp_settings, smtp_password
       end
 
+      # Relentlessly continue until we can connect to IMAP and SMTP
+      def connect!
+         @smtp.with_connection {}
+         @imap.connect
+      end
+
       # Emit options as hash
       def emit
          @file_struct

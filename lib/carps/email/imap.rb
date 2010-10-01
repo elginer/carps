@@ -69,9 +69,15 @@ module CARPS
             begin
                attempt_connection
                return
+            rescue Net::IMAP::NoResponseError => e
+               if e.message == "Authentication failed."
+                  put_error e.to_s
+                  @password = secret "Enter IMAP password for #{@username}"
+               else
+                  warn_delay
+               end
             rescue
-               warn "Could not connect to IMAP server", "Attempting to reconnect in 10 seconds."
-               sleep 10
+               warn_delay
             end 
          end
       end
@@ -108,6 +114,14 @@ module CARPS
             end
          end
          mails
+      end
+
+      protected
+
+      # Warn that we're going to delay before trying again
+      def warn_delay
+         warn "Could not connect to IMAP server", "Attempting to reconnect in 10 seconds."
+         sleep 10
       end
 
    end
