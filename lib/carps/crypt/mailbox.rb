@@ -233,7 +233,7 @@ module CARPS
                @mail.push msg
             end
          else
-            warn "Failed to parse message from #{who}", blob
+            warn "Failed to parse message from #{who}"
          end
       end
 
