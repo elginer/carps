@@ -30,6 +30,15 @@ class PlayerModTestMailer
 
 end
 
+Then /^test all inputs to the player's interface$/ do
+   commands = []
+   commands.push [:act]
+   commands.push [:edit]
+   commands.push [:sheet]
+   test_interface $interface, commands
+end
+
+
 Given /^a player test mailer$/ do
    $mailer = PlayerModTestMailer.new 
 end
@@ -45,10 +54,14 @@ When /^the player receives turn information$/ do
    $mailer.turn t 
 end
 
+Given /^a player interface$/ do
+   $interface = Player::Interface.new $mod
+end
+
 Then /^present a user interface to the player$/ do
-   face = Player::Interface.new $mod
-   child = fork do
-      face.run
+   begin
+      $interface.run
+   rescue SystemExit => e
+      "Quit program: #{e}"
    end
-   Process.wait child
 end
