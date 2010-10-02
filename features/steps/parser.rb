@@ -6,8 +6,7 @@ require "carps/service/client_parser"
 include CARPS
 
 Given /^an invitation$/ do
-   game = GameClient.new "the dm", "a mod", "the description"
-   $invite = Invite.new game
+   $invite = Invite.new "the dm", "the mod", "the description" 
 end
 
 Given /^a client parser$/ do

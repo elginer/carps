@@ -140,7 +140,9 @@ module CARPS
    class Invite < Message
 
       # We are part of the protocol :)
-      protoword "invite"
+      protoval :master
+      protoval :mod
+      protoval :about
 
       def initialize dm, mod, about
          @dm = dm
@@ -177,7 +179,7 @@ module CARPS
       end
 
       def emit 
-         K.invite + @game.emit
+         V.master(@dm) + V.mod(@mod) + V.about(@about)
       end
 
    end
