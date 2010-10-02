@@ -97,6 +97,7 @@ lib/carps/util/highlight.rb
 lib/carps/util/init.rb
 lib/carps/util/process.rb
 lib/carps/util/question.rb
+lib/carps/util/timeout.rb
 lib/carps/util/warn.rb
 lib/carps/wizard.rb
 lib/carps/wizard/player.rb
