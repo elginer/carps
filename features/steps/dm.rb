@@ -53,6 +53,13 @@ class TestMailer
 
 end
 
+# Test an interface by calling the commands
+def test_interface interface, commands
+   commands.each do |cmd|
+      interface.send *cmd
+   end
+end
+
 Given /^a DM mod$/ do
    resource = Resource.new "test_extra/resource"
    $mailer = TestMailer.new
@@ -83,14 +90,57 @@ Then /^check barry's sheet$/ do
    end
 end
 
-Then /^present a user interface to the DM$/ do
+Given /^a DM interface$/ do
    DM::Interface.class_eval <<-END
    def quit
       @run = false
    end
    END
-   interface = DM::Interface.new $mod
-   interface.run
+   $interface = DM::Interface.new $mod
+end
+
+Then /^test all inputs to interface$/ do
+   commands = []
+   commands.push [:mail]
+   commands.push [:done]
+   commands.push [:players]
+   commands.push [:npcs]
+   commands.push [:player, "bob"]
+   commands.push [:player, "barry"]
+   commands.push [:spawn, "orange", "dick"]
+   commands.push [:npc, "dick"]
+   commands.push [:npc, "bob"]
+   commands.push [:npcs]
+   commands.push [:players]
+   commands.push [:done]
+   commands.push [:warp, "cave"]
+   commands.push [:warp, "hello"]
+   commands.push [:decree]
+   commands.push [:edit, "barry"]
+   commands.push [:edit, "bob"]
+   commands.push [:census]
+   commands.push [:pcstats, "bob"]
+   commands.push [:npcstats, "bob"]
+   commands.push [:pcstats, "barry"]
+   commands.push [:npcstats, "dick"]
+   commands.push [:survey]
+   commands.push [:ask, "bob"]
+   commands.push [:ask, "barry"]
+   commands.push [:inspect, "bob"]
+   commands.push [:inspect, "barry"]
+   commands.push [:nuke]
+   commands.push [:silence]
+   commands.push [:futile]
+   commands.push [:remit, "bob"]
+   commands.push [:remit, "barry"]
+   commands.push [:supress, "bob"]
+   commands.push [:supress, "barry"]
+   commands.push [:done]
+   test_interface $interface, commands
+end
+
+Then /^present a user interface to the DM$/ do
+   $interface.run
 end
 
 Then /^create an NPC called (.+) of type (.+)$/ do |name, type|

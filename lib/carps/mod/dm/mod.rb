@@ -85,7 +85,7 @@ module CARPS
          # Ask a question of the player
          def ask_player player
             with_player player do
-               edit = Editor.new
+               edit = Editor.load
                question = edit.edit "<Replace with question for #{player}>"
                @reporter.ask_player player, question
             end
@@ -93,7 +93,7 @@ module CARPS
 
          # Ask a question of everyone
          def ask_everyone
-            edit = Editor.new
+            edit = Editor.load
             question = edit.edit "<Replace with question for everyone>"
             @players.each_key do |player|
                @reporter.ask_player player, question
@@ -172,6 +172,16 @@ module CARPS
          def next_turn
             send_reports
             @reporter = Reporter.new
+         end
+
+         # Create a report that all players will see
+         def create_global_report
+            e = Editor.load
+            global = e.edit ""
+            @players.each_key do |player|
+               puts "global: " + global
+               @reporter.update_player player, global
+            end
          end
 
          # Edit the report for a player 

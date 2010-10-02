@@ -42,6 +42,7 @@ module CARPS
             add_command "warp", "Put all player in this room.", "ROOM"
             add_command "room", "Put one player in this room.", "PLAYER", "ROOM"
             add_command "spawn", "Create a new npc", "TYPE", "NAME"
+            add_command "decree", "Create a report for all players to see."
             add_command "edit", "Edit a player's report.", "PLAYER"
             add_command "census", "Ask a question of every player."
             add_command "ask", "Ask a question of one player.", "PLAYER"
@@ -100,6 +101,10 @@ module CARPS
 
          def silence
             @mod.delete_all_reports
+         end
+
+         def decree
+            @mod.create_global_report
          end
 
          def nuke
