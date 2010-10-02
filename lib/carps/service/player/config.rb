@@ -66,7 +66,6 @@ module CARPS
 
          # Emit as hash 
          def emit
-            puts "@about was #{@about}"
             {"mod" => @mod, 
              "about" => @about, 
              "dm" => @dm,

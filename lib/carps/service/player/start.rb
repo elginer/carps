@@ -38,14 +38,14 @@ module CARPS
          def mail 
             invite = @mailer.check Invite
             if invite
-               if invite.ask
-                  config = @game_config.new invite.mod, invite.dm, invite.desc, invite.session
+               if config = invite.ask(@game_config, @session)
                   fn = question "Enter a name for this game"
                   fn = fn + ".yaml"
                   config.save fn
+                  config.session @session
+                  game = config.spawn
                   @continuation.call lambda {
-                     config.session @session
-                     invite.accept @mailer
+                     game.join_game @mailer
                   }
                end
             elsif shake = @mailer.check_handshake

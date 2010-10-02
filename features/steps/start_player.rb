@@ -14,22 +14,11 @@ class MockPlayerGame
       puts "Resuming game"
    end
 
-   def mod
-      "fruit"
-   end
-
-   def dm
-      "bob"
-   end
-
-   def desc
-      "A game about stuff"
-   end
 end
 
 class MockPlayerConfig < Player::GameConfig
    def spawn
-      MockGame.new
+      MockPlayerGame.new
    end
 end
 
@@ -59,7 +48,7 @@ class PlayerStartMailer
    end
 
    def invite
-      @mail = Invite.new MockPlayerGame.new
+      @mail = Invite.new "the dm", "test", "the description" 
       @mail.session = "dandy motherfucker!"
    end
 end

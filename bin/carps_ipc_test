@@ -30,6 +30,8 @@ end
 url = ARGV.shift
 
 puts "Listening on " + url
+puts "Waiting to see if it triggers a race condition bug..."
+sleep 2
 
 begin
    mut = DRbObject.new nil, url

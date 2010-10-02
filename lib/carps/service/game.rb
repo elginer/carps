@@ -86,7 +86,7 @@ module CARPS
                if thr
                   thr.join
                end
-               invite = Invite.new self
+               invite = Invite.new @dm, @mod, @about
                mailer.send player, invite
             end
          end
@@ -121,44 +121,15 @@ module CARPS
          @about = desc
       end
 
-      # Expose the mod so the client decide if he can even think of joining
-      #
-      # ANTI-PATTERN
-      def mod
-         @mod
-      end
-
-      # Expose the dm
-      #
-      # ANTI-PATTERN
-      def dm
-         @dm
-      end
-
-      # Expose the description
-      #
-      # ANTI-PATTERN
-      def desc
-         @desc
-      end
-
       # Join this game as a client
       def join_game mailer
          resume mailer
       end
 
-      # Parse this from semi-structured text
-      def GameClient.parse blob
-         dm, blob = find K.master, blob
-         mod, blob = find K.mod, blob
-         about, blob = find K.about, blob
-         [GameClient.new(dm, mod, about), blob] 
-      end
-
       # Play the game
       def resume mailer
          mod = load_mods[@mod]
-         player_mailer = Player::Mailer.new dm, mailer
+         player_mailer = Player::Mailer.new @dm, mailer
          thrd = $process.launch player_mailer, mod + " -p"
          thrd.join
       end
@@ -171,52 +142,38 @@ module CARPS
       # We are part of the protocol :)
       protoword "invite"
 
-      def initialize game
-         @game = game
+      def initialize dm, mod, about
+         @dm = dm
+         @mod = mod
+         @about = about
       end
 
+      # Parse this from semi-structured text
       def Invite.parse blob
-         forget, blob = find K.invite, blob
-         info, blob = GameClient.parse blob
-         [Invite.new(info), blob]
-      end
-
-      # Expose the mod so the client decide if he can even think of joining
-      #
-      # ANTI-PATTERN
-      def mod
-         @game.mod
-      end
-
-      # Expose the dm
-      #
-      # ANTI-PATTERN
-      def dm
-         @game.dm
-      end
-
-      # Expose the description
-      #
-      # ANTI-PATTERN
-      def desc
-         @game.desc
+         dm, blob = find K.master, blob
+         mod, blob = find K.mod, blob
+         about, blob = find K.about, blob
+         [Invite.new(dm, mod, about), blob] 
       end
 
       # Ask if the player wants to accept this invitation
-      def ask
+      #
+      # If true, return a new game_config_class object, passing the session to it
+      def ask game_config_class, session
          puts "You have been invited to a game!"
-         unless load_mods.member? @game.mod
-            puts "But it's for the mod: " + @game.mod
+         if load_mods.member? @mod
+            @game = game_config_class.new @mod, @dm, @about, session 
+            @game.display
+            if confirm("Do you want to join?")
+               return @game
+            else
+               return nil
+            end
+         else
+            puts "But it's for the mod: " + @mod 
             puts "Which you don't have installed."
-            return false
+            return nil 
          end
-         @game.display
-         confirm "Do you want to join?"
-      end
-
-      # Accept the invitation
-      def accept mailer
-         @game.join_game mailer
       end
 
       def emit 
