@@ -119,6 +119,17 @@ module CARPS
             end
          end
 
+         # The argument must be either yes or no.  Pass the argument and two procs, the first is executed on yes.
+         def yes_no opt, yes, no
+            if opt == "yes"
+               yes.call
+            elsif opt == "no"
+               no.call
+            else
+               put_error "Argument must be either 'yes' or 'no'"
+            end
+         end
+
       end
 
       # Configure email
@@ -133,17 +144,40 @@ module CARPS
             add_command "smtp_server", "Sets your SMTP server.", "SERVER_ADDRESS"
             add_command "smtp_port", "The SMTP server's port. Default is 25.", "PORT"
             add_command "smtp_user", "Sets your username for SMTP only.", "USERNAME"
-            add_command "smtp_crypt", "Configure encryption for your SMTP account\nOptions are:\n\tnone\n\t\tor\n\ttls\n\t\tor\n\tstarttls", "SECURITY"
+            add_command "smtp_auth", 
+               "Configure authentication mechanism for your SMTP account\n" + options("plain", "plain", "login", "cram_md5"), "AUTHENTICATION"
+            add_command "smtp_crypt", "Configure encryption for your SMTP account\n" + options("none", "none", "tls", "starttls"), "SECURITY"
             add_command "imap_server", "Sets your IMAP server.", "SERVER_ADDRESS"
             add_command "imap_port", "The IMAP server's port.  Default is 143." , "PORT"
             add_command "imap_user", "Sets your username for IMAP only.", "USERNAME"
-            add_command "imap_crypt", "Configure encryption for your IMAP account.\nOptions are:\n\tnone\n\t\tor\n\ttls", "SECURITY"
+            add_command "imap_auth", 
+               "Configure authentication mechanism for your IMAP account\n" + options("plain", "plain", "login", "cram_md5"), "AUTHENTICATION"
+
+            add_command "imap_crypt", 
+               "Configure encryption for your IMAP account.\n" + options("none", "none", "tls"), 
+               "SECURITY"
+            add_command "imap_cert", "Set the certificate for your IMAP account.", "PATH_TO_CERTIFICATE"
+            add_command "imap_no_cert", "Don't use a certificate for your IMAP account."
+            add_command "imap_verify", "Verify the authenticity of your IMAP provider using certificates. Default: no.", "yes/no" 
             @same_pass = true 
             @smtp_port = 25
             @smtp_starttls = false
             @smtp_tls = false
+            @smtp_login = false
+            @smtp_cram_md5 = false
             @imap_port = 143
             @imap_tls = false
+            @imap_login = false
+            @imap_cram_md5 = false
+            @imap_verify = false
+         end
+
+         # Provide a string of options
+         def options defa, *opts
+            out = "Options are:\n\t"
+            out += opts.join("\n\t\tor\n\t")
+            out += "\nDefault: #{defa}"
+            out
          end
 
          def description
@@ -152,19 +186,69 @@ module CARPS
 
          protected
 
+         # Run the block if the string matches a valid authentication mechanism
+         def with_valid_auth mech
+            mech.downcase!
+            if mech == "plain"
+               yield :plain
+            elsif mech == "login"
+               yield :login
+            elsif mech == "cram_md5"
+               yield :cram_md5
+            else
+               put_error "Unsupported mechanism.  Supported: plain, login, cram_md5"
+            end
+         end
+
+         def smtp_auth mech
+            with_valid_auth mech do |type|
+               if type == :plain
+                  @smtp_login = false
+                  @smtp_cram_md5 = false
+               elsif type == :login
+                  @smtp_login = true
+                  @smtp_cram_md5 = false
+               elsif type == :cram_md5
+                  @smtp_login = false
+                  @smtp_cram_md5 = true
+               end
+            end
+         end
+
+         def imap_auth mech
+            with_valid_auth mech do |type|
+               if type == :plain
+                  @imap_login = false
+                  @imap_cram_md5 = false
+               elsif type == :login
+                  @imap_login = true
+                  @imap_cram_md5 = false
+               elsif type == :cram_md5
+                  @imap_login = false
+                  @imap_cram_md5 = true
+               end
+            end
+         end
+
+         def imap_no_cert
+            @imap_cert = nil
+         end
+
+         def imap_cert filepath
+            @imap_cert = filepath
+         end
+
+         def imap_verify opt
+            yes_no opt, lambda {@imap_verify = true}, lambda {@imap_verify = false}
+         end
+
          def server serv
             @smtp_server = serv
             @imap_server = serv
          end
 
          def same_password opt
-            if opt == "yes"
-               @same_pass = true
-            elsif opt == "no"
-               @same_pass = false
-            else
-               put_error "Argument must be either 'yes' or 'no'"
-            end
+            yes_no opt, lambda {@same_pass = true}, lambda {@same_pass = false}
          end
 
          def help
@@ -177,8 +261,25 @@ module CARPS
 
          def test
             if mandatory
-               smtp_options = {"user" => @smtp_user, "server" => @smtp_server, "tls" => @smtp_tls, "starttls" => @smtp_starttls, "port" => @smtp_port}
-               imap_options = {"user" => @imap_user, "server" => @imap_server, "tls" => @imap_tls, "port" => @imap_port}
+               smtp_options = {
+                  "user" => @smtp_user, 
+                  "server" => @smtp_server, 
+                  "tls" => @smtp_tls, 
+                  "starttls" => @smtp_starttls, 
+                  "port" => @smtp_port,
+                  "login" => @smtp_login,
+                  "cram_md5" => @smtp_cram_md5
+               }
+               imap_options = {
+                  "user" => @imap_user, 
+                  "server" => @imap_server, 
+                  "tls" => @imap_tls, 
+                  "port" => @imap_port,
+                  "login" => @imap_login,
+                  "cram_md5" => @imap_cram_md5,
+                  "certificate" => @imap_cert,
+                  "verify" => @imap_verify
+               }
                config = EmailConfig.new @address, @same_pass, imap_options, smtp_options
                puts config.emit.to_yaml
                good = confirm "Are the above settings correct?"
