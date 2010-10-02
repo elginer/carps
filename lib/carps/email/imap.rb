@@ -20,6 +20,9 @@ require "carps/protocol/message"
 require "carps/util/warn"
 require "carps/email/string"
 
+require "carps/util/timeout"
+
+
 require "net/imap"
 
 module CARPS
@@ -35,6 +38,10 @@ module CARPS
          @server = settings["server"]
          @tls = settings["tls"]
          @username = settings["user"]
+         @cert = settings["certificate"]
+         @verify = settings["verify"]
+         @login = settings["login"]
+         @cram_md5 = settings["cram_md5"]
          @password = password
       end
 
@@ -55,12 +62,22 @@ module CARPS
       def attempt_connection
          puts "Making IMAP connection for " + @username
          puts "Server: #{@server}, Port: #{@port}"
-         if not @tls or @password.empty?
-            warn "IMAP connection is insecure."
+         CARPS::timeout 10, "IMAP connection attempt" do
+            if not @tls or @password.empty?
+               warn "IMAP connection is insecure."
+            end
+            @imap = Net::IMAP.new @server, @port, @tls, @certs, @verify
+            if @cram_md5
+               @imap.authenticate "CRAM-MD5", @username, @password
+            elsif @login
+               @imap.authenticate "LOGIN", @username, @password
+            else
+               @imap.login @username, @password
+            end
          end
-         @imap = Net::IMAP.new @server, @port, @tls, nil, false
-         @imap.login @username, @password
-         @imap
+         unless @imap
+            raise StandardError, "No IMAP connection."
+         end
       end
 
       # Connect to imap server

@@ -18,6 +18,7 @@
 require "carps/util/warn"
 require "carps/util/error"
 require "carps/email/string"
+require "carps/util/timeout"
 
 require "net/smtp"
 
@@ -35,6 +36,8 @@ module CARPS
          @server = settings["server"]
          @starttls = settings["starttls"]
          @tls = settings["tls"]
+         @login = settings["login"]
+         @cram_md5 = settings["cram_md5"]
       end
 
       # Are the settings okay?
@@ -61,10 +64,17 @@ module CARPS
             smtp.enable_tls
          end
 
+         auth = :plain
+         if @login
+            auth = :login
+         elsif @cram_md5
+            auth = :cram_md5
+         end
+
          if not (@starttls or @tls) or @password.empty?
             warn "SMTP connection is insecure."
          end
-         smtp.start Socket.gethostname, @username, @password, &todo
+         smtp.start Socket.gethostname, @username, @password, auth, &todo
       end
 
       def with_connection &todo

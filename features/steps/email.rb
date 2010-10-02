@@ -4,7 +4,18 @@ require "carps/email/config"
 
 require "carps/util/question"
 
+require "yaml"
+
 include CARPS
+
+# Clone the original settings and apply the changes to create an array of new settings
+def make_settings settings, changes
+   changes.map do |field, val|
+      new_setting = settings.clone
+      new_setting[field] = val
+      new_setting
+   end
+end
 
 class EmailConfig
 
@@ -22,13 +33,65 @@ class EmailConfig
 
 end
 
+Given /^default IMAP settings$/ do
+   $imap_options = {
+      "user" => "carps", 
+      "server" => "killersmurf.com", 
+      "tls" => true, 
+      "port" => 993, 
+      "certificate" => nil,
+      "verify" => false,
+      "login" => false, 
+      "cram_md5" => false}
+end
+
+Given /^default SMTP settings$/ do
+   $smtp_options = {
+      "login" => false,
+      "cram_md5" => false,
+      "starttls" => true,
+      "tls" => false,
+      "port" => 25,
+      "user" => "carps",
+      "server" => "killersmurf.com"}
+end
+
+Then /^attempt connections with various SMTP security settings$/ do
+   pass = secret "Enter SMTP password for #{$smtp_options["user"]}"
+   log = ["login", true]
+   cram = ["cram_md5", true]
+   tls = ["tls", true]
+   nostarttls = ["starttls", false]
+   settings = make_settings $smtp_options, [log, cram, tls, nostarttls]
+   settings.each do |setting|
+      puts "Testing setting:"
+      puts setting.to_yaml
+      smtp = SMTP.new setting, pass
+      smtp.ok?
+   end
+end
+
+Then /^attempt connections with various IMAP security settings$/ do
+   pass = secret "Enter IMAP password for #{$imap_options["user"]}"
+   log = ["login", true]
+   cram = ["cram_md5", true]
+   notls = ["tls", false]
+   cert = ["certificate", "/home/spoon/cert"]
+   verify = ["verify", true]
+   settings = make_settings $imap_options, [log, cram, notls, cert, verify]
+   settings.each do |setting|
+      puts "Testing setting:"
+      puts setting.to_yaml
+      imap = IMAP.new setting, pass
+      imap.ok?
+   end
+end
+
+
 Given /^the email account$/ do
-   imap_options = {"user" => "carps", "server" => "killersmurf.com" , "tls" => true, "port" => 993}
-   smtp_options = imap_options.clone
-   smtp_options["starttls"] = true
-   smtp_options["tls"] = false
-   smtp_options["port"] = 25
-   $email_config = EmailConfig.new "carps@killersmurf.com", true, imap_options, smtp_options
+
+
+   $email_config = EmailConfig.new "carps@killersmurf.com", true, $imap_options, $smtp_options
    $email_config.connect!
 end
 

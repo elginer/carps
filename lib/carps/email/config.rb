@@ -54,11 +54,11 @@ module CARPS
          address = read_conf conf, "address"
          same_pass = read_conf conf, "same_pass"
          imap = read_conf conf, "imap"
-         unless imap.members?(["user", "server", "port", "tls"])
+         unless imap.members?(["user", "server", "port", "tls", "certificate", "verify", "login", "cram_md5"])
             raise Expected, "Expected IMAP section to be valid."
          end
          smtp = read_conf conf, "smtp"
-         unless smtp.members?(["user", "server", "port", "tls", "starttls"])
+         unless smtp.members?(["user", "server", "port", "tls", "starttls", "login", "cram_md5"])
             raise Expected, "Expected SMTP section to be valid."
          end
          [address, same_pass, imap, smtp]        
