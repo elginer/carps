@@ -122,7 +122,6 @@ lib/carps/wizard/dm.rb
 lib/carps/wizard/player.rb
 lib/carps/wizard/steps.rb
 lib/carps/wizard/wizard.rb
-manifest.patch
 permission
 script/console
 script/destroy
