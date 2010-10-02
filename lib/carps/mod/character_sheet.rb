@@ -38,8 +38,17 @@ module CARPS
 
       # Parse from the void
       def CharacterSheet.parse blob
-         sheety, blob = find K.character_sheet, blob
-         [CharacterSheet.new(YAML.load(sheety)), blob]
+         sheet, blob = find K.character_sheet, blob
+         y = nil
+         begin
+            y = YAML.load sheet
+         rescue ArgumentError => e
+         end
+         if y
+            [CharacterSheet.new(y), blob]
+         else
+            raise Expected, "Expected valid YAML segment."
+         end
       end
 
       # Emit
