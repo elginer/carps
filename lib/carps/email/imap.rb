@@ -96,7 +96,8 @@ module CARPS
             # Block 'till we get one
             while mails.empty?
                @imap.select("inbox")
-               messages = @imap.search(["UNSEEN"])
+               # Get all mails
+               messages = @imap.search(["ALL"])
                if messages.empty?
                   sleep delay
                else
@@ -104,6 +105,11 @@ module CARPS
                   mails = mails.map do |mail|
                      from_mail mail.attr["BODY[TEXT]"]
                   end
+                  # Delete all mails
+                  messages.each do |message_id|
+                     @imap.store(message_id, "+FLAGS", [:Deleted])
+                  end
+                  @imap.expunge
                end
             end
             mails
@@ -113,8 +119,10 @@ module CARPS
             begin
                mails = reader.call
             rescue
-               warn "Could not receive IMAP messages", "Attempting to reconnect" 
-               connect
+               warn "Error receiving messages"
+               if mails.empty?
+                  connect
+               end
             end
          end
          mails
