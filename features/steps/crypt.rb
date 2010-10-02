@@ -128,7 +128,7 @@ class ThreadList
 
    def kill
       h = HighLine.new
-      h.ask ""
+      h.ask h.color("PRESS ENTER TO SHUTDOWN THE SYSTEM", :magenta, :bold)
       @threads.each do |t| 
          begin
             t.kill

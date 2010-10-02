@@ -16,7 +16,7 @@ $hoe = Hoe.spec 'carps' do
   self.rubyforge_name       = self.name
   self.description          = File.read "GEM_DESCRIPTION"
   self.summary              = "Computer Assisted Role-Playing Game System" 
-  self.extra_deps           = [['highline','>= 1.6.1'], ['cucumber', '>= 0.8.5']]
+  self.extra_deps           = [['highline','>= 1.6.1']]
 end
 
 require 'newgem/tasks'

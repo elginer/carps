@@ -72,25 +72,29 @@ module CARPS
    class Expected < StandardError
    end
 
-   # Check that the first argument is not nil, if so, raise an 'expected' parse error, using the second argument
-   def check result, expected
-      if result == nil
-         raise Expected, expected
+   module Protocol
+
+      # Check that the first argument is not nil, if so, raise an 'expected' parse error, using the second argument
+      def Protocol.check result, expected
+         if result == nil
+            raise Expected, expected
+         end
       end
+
    end
 
    # Find a field in semi-structured text
    def find field, text
-      check text, "Expected String for input"
+      Protocol::check text, "Expected String for input"
       if field.start_with? mark_prefix
          forget, blob = text.split field, 2
-         check blob, field
+         Protocol::check blob, field
          return ["", blob]
       elsif field.start_with? prefix
          forget, blob = text.split field, 2
-         check blob, field
+         Protocol::check blob, field
          value, blob = blob.split K.end, 2
-         check value, K.end
+         Protocol::check value, K.end
          return [value, blob] 
       else
          raise StandardError, "Invalid keyword"

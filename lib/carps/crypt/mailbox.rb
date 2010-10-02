@@ -55,6 +55,11 @@ module CARPS
          receive_forever
       end
 
+      # Shutdown the mailbox
+      def shutdown
+         @child.kill
+      end
+
       # Add a new peer
       def add_peer peer
          @peers[peer.addr] = peer
@@ -112,6 +117,7 @@ module CARPS
       # See if there is an appropriate message in the mail box
       def search type, must_be_from
          @rsemaphore.synchronize do
+            puts "Securely searching"
             @mail.each_index do |index|
                mail = @mail[index]
                from = mail.from
@@ -142,6 +148,7 @@ module CARPS
 
       # Remove a mail message
       def remove_mail index
+         puts "Removing mail..."
          @mail[index].delete
          @mail.delete_at index
       end
@@ -154,8 +161,12 @@ module CARPS
       # Insecurely see if there is an appropriate message in the mail box
       def insecure_search type, must_be_from
          @rsemaphore.synchronize do
+            puts "Number of mails: #{@mail.size}"
             @mail.each_index do |index|
                mail = @mail[index]
+               puts "Searching:"
+               puts "mail: #{mail.class}"
+               puts "searching for: #{type}"
                pass = appropriate?(mail, type, must_be_from)
                if pass
                   remove_mail index
@@ -171,6 +182,7 @@ module CARPS
          @child = Thread.fork do
             loop do
                receive_new
+               sleep 1
             end
          end
       end
@@ -178,7 +190,6 @@ module CARPS
       # Read new mail messages into the mail box
       def receive_new
          mail = @receiver.read
-
          mail.each do |blob|
             decode_mail blob
          end
@@ -226,6 +237,7 @@ module CARPS
             end
             @rsemaphore.synchronize do
                @mail.push msg
+               puts "Pushed mail, number of mails: #{@mail.size}"
             end
          else
             warn "Failed to parse message from #{who}", blob
