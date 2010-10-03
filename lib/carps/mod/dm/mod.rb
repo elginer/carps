@@ -339,8 +339,7 @@ module CARPS
             if moniker
                yield moniker
             else
-               warn "BUG",  "Mod received mail from unregistered player #{mail.from}:"
-               puts mail.emit
+               warn "BUG",  "Mod received mail from unregistered player #{mail.from}"
             end
          end
 
