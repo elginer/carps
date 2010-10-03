@@ -15,11 +15,19 @@
 # You should have received a copy of the GNU General Public License
 # along with CARPS.  If not, see <http://www.gnu.org/licenses/>.
 
+require "set"
+
+# These operations are scheduled to go into a new Sheet module
+
 module CARPS
 
    # Types available in character sheets
    #
-   # Subclasses should provide a method called coercion, which should return a symbol referring to a method which coerces a value into a different type (example, :to_s)
+   # Subclasses must provide a method called valid, which takes a value and determines if it is valid.
+   #
+   # Subclasses may provide a method called coercion, which should return a symbol referring to a method which coerces a value into a different type (example, :to_s)
+   #
+   # Subclasses may provide a method called empty which should determine if a value is empty
    class SheetType
 
       def initialize optional
@@ -27,7 +35,12 @@ module CARPS
       end
 
       def verify val
-         ok = valid(val) && val.respond_to?(coercion)
+         ok = false
+         if coercion
+            ok = valid(val) && val.respond_to?(coercion)
+         else
+            ok = valid(val)
+         end
          if val == nil
             if @optional
                return [true, nil]
@@ -36,15 +49,31 @@ module CARPS
             if empty(val) and @optional
                return [true, nil]
             else
-               [true, val.send(coercion)]
+               coerced = nil
+               if coercion
+                  coerced = val.send coercion
+               else
+                  coerced = val
+               end
+               [true, coerced]
             end
          else
             [false, nil]
          end
       end
 
+      # No coercion
+      def coercion
+      end
+
+      # Can't be empty
+      def empty val
+         false
+      end
+
    end
 
+   # Accept Fixnums
    class SheetInt < SheetType
 
       def valid val
@@ -55,12 +84,9 @@ module CARPS
          :to_i
       end
 
-      def empty val
-         false
-      end
-
    end
 
+   # Accept Strings
    class SheetText < SheetType
 
       def valid val
@@ -81,6 +107,32 @@ module CARPS
 
    end
 
+   # Accept one of a Set of possible values
+   class SheetChoice < SheetType
+      
+      # The second argument is the Set of possible values
+      def initialize optional, choices
+         super optional
+         @choices = choices
+      end
+
+      # Only true for a member of the Set of possible values
+      def valid val
+         @choices.member? val
+      end
+
+   end
+
+   # Accept booleans
+   class SheetBool < SheetType
+
+      # Only true for if val.class is TrueClass or FalseClass
+      def valid val
+         val.class == TrueClass or val.class == FalseClass
+      end
+
+   end
+
    # Parse the sheet types from strings
    class TypeParser
       def TypeParser.parse type_name
@@ -95,6 +147,11 @@ module CARPS
             return SheetInt.new optional 
          elsif type_name == "text"
             return SheetText.new optional
+         elsif type_name == "boolean"
+            return SheetBool.new optional
+         elsif match = type_name.match(/^choice (.+)$/)
+            choices = Set.new match[1].split
+            return SheetChoice.new optional, choices
          else
             raise StandardError, "Could not parse type name: " + type_name
          end

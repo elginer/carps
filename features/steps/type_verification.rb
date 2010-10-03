@@ -1,12 +1,14 @@
 require "carps/mod/sheet_type"
 
+require "yaml"
+
 include CARPS
 
 Given /^an integer$/ do
    $val = 123
 end
 
-Then /^verify: (.+) as an (.+)$/ do |opt, type_name|
+Then /^verify: (.+) as a (.+)$/ do |opt, type_name|
    type = TypeParser.parse type_name
    accepted, coerced = type.verify $val
    pass = opt == "accept"
@@ -21,4 +23,16 @@ end
 
 Given /^a string$/ do
    $val = "howdy!"
+end
+
+Given /^'yes'$/ do
+   $val = YAML.load "yes"
+end
+
+Given /^'bronze'$/ do
+   $val = "bronze"
+end
+
+Given /^'gold'$/ do
+   $val = "gold"
 end
