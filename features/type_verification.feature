@@ -30,6 +30,14 @@ Feature: type verification
       Given 'yes'
       Then verify: accept as a boolean
 
+   Scenario: accept nil as optional choice gold silver
+      Given a nil value
+      Then verify: accept as a optional choice gold silver
+
+   Scenario: accept nil as optional boolean
+      Given a nil value
+      Then verify: accept as a optional boolean
+
    Scenario: accept gold as choice gold silver
       Given 'gold'
       Then verify: accept as a choice gold silver

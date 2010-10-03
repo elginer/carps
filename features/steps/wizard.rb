@@ -1,6 +1,4 @@
 require "carps/wizard/wizard"
-require "carps/wizard/player"
-require "carps/wizard/master"
 
 require "fileutils"
 

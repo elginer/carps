@@ -137,7 +137,7 @@ module CARPS
    class TypeParser
       def TypeParser.parse type_name
          type_name.downcase!
-         optional_match = type_name.match /^\s*optional\s+(\S+)\s*$/
+         optional_match = type_name.match /^\s*optional\s+((\S+\s+)*?\S+)\s*$/
             optional = false
          if optional_match
             type_name = optional_match[1]
