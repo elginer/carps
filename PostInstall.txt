@@ -15,7 +15,6 @@
                       CARPS is hosted on github at
                      http://github.com/elginer/carps
 
-                  CARPS is copyright John Morrice 2010,
-      under the terms of the GNU General Public License version 3.
+                  CARPS is copyright John Morrice 2010
 
 =========================================================================
