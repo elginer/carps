@@ -56,7 +56,7 @@ module CARPS
             puts failure
             return false
          else
-            return sheet.verify_semantics @semantics
+            return @semantics.verify sheet
          end
       end
 

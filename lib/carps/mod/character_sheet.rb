@@ -61,15 +61,6 @@ module CARPS
          puts @sheet.to_yaml
       end
 
-      # Perform semantic analysis
-      def verify_semantics verifyer
-         valid = verifyer.verify self 
-         unless valid
-            puts "Invalid character sheet."
-         end
-         valid
-      end
-
       # Verify the sheet's syntax.
       def syntax_error schema
          schema.each do |field, type|
