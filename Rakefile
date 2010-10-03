@@ -12,7 +12,7 @@ Hoe.plugin :cucumberfeatures
 # Run 'rake -T' to see list of generated tasks (from gem root directory)
 $hoe = Hoe.spec 'carps' do
   self.developer 'John Morrice', 'spoon@killersmurf.com'
-  self.post_install_message = 'PostInstall.txt'
+  self.post_install_message = File.read 'PostInstall.txt'
   self.rubyforge_name       = self.name
   self.description          = File.read "GEM_DESCRIPTION"
   self.summary              = "Computer Assisted Role-Playing Game System" 

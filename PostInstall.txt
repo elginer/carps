@@ -1,3 +1,21 @@
+=========================================================================
 
-For more information on carps, see http://carps.rubyforge.org
+                                         0
+                                         O
+                                         o
+                              ><> ><> ><>
 
+                  Thank you for installing CARPS 0.1.0
+
+                             For help, run:
+
+                                carps -h
+
+                                  
+                      CARPS is hosted on github at
+                     http://github.com/elginer/carps
+
+                  CARPS is copyright John Morrice 2010,
+      under the terms of the GNU General Public License version 3.
+
+=========================================================================
