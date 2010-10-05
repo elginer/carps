@@ -45,7 +45,7 @@ module CARPS
 
       # Parse
       def ClientTurn.parse blob
-         forget, blob = find K.client_turn blob
+         forget, blob = find K.client_turn, blob
          sheet, blob = CharacterSheet.parse blob
          status, blob = StatusReport.parse blob
          more = true

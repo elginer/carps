@@ -1,8 +1,9 @@
 require "carps/mod/status_report"
 require "carps/mod/answers"
 require "carps/mod/client_turn"
-
 require "carps/mod/question"
+
+require "carps/protocol/message"
 
 include CARPS
 
@@ -18,6 +19,10 @@ Given /^a question$/ do
    $question = Question.new "What do you do?"
 end
 
+Given /^a parser for the turn$/ do
+   $parser = MessageParser.new [ClientTurn]
+end
+
 Then /^the question should be asked$/ do
    ans = Answers.new
    $question.ask ans
@@ -30,6 +35,10 @@ Given /^a status report and a number of questions$/ do
    q1 = Question.new "Who are you?"
    q2 = Question.new "What are you doing here?"
    $turn = ClientTurn.new CharacterSheet.new({}), s, [q1, q2]
+end
+
+When /^a turn is sent$/ do
+   $message = $turn
 end
 
 Then /^all the questions should be asked$/ do

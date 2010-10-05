@@ -3,7 +3,7 @@ Feature: message parsing
    They must be parsed
 
    Scenario: parse invitation
-      Given an invitation
+      When an invitation is sent
       Given a client parser
-      Then emit the invitation
-      Then parse the invitation
+      Then emit the message
+      Then parse the message
