@@ -3,6 +3,7 @@ Feature: Low-level DM interface components
    To communicate with the players
 
    Scenario: produce reports
+      Given carps is initialized with test/server
       Given a resource manager
       Given a reporter
       Then the reporter is registered with the resource manager
@@ -10,6 +11,7 @@ Feature: Low-level DM interface components
       Then take turns for barry 
 
    Scenario: produce customized report
+      Given carps is initialized with test/server
       Given a resource manager
       Given a reporter
       Then the reporter is registered with the resource manager
@@ -19,6 +21,7 @@ Feature: Low-level DM interface components
       Then take turns for barry 
 
    Scenario: change rooms
+      Given carps is initialized with test/server
       Given a resource manager
       Given a reporter
       Then the reporter is registered with the resource manager
@@ -28,18 +31,13 @@ Feature: Low-level DM interface components
       Then take turns for barry
 
    Scenario: different rooms
+      Given carps is initialized with test/server
       Given a resource manager
       Given a reporter
       Then the reporter is registered with the resource manager
       Given barry are in the cave
       Given paul are in the ship
       Then take turns for barry paul
-
-   Scenario: global question
-      Given a reporter
-      Given barry are in the cave
-      Then ask barry: what do you do?
-      Then take turns for barry
 
    Scenario: individual question
       Given a reporter
@@ -48,5 +46,6 @@ Feature: Low-level DM interface components
       Then take turns for barry paul
 
    Scenario: create NPC
+      Given carps is initialized with test/server
       Given a resource manager
       Then create an NPC of type human

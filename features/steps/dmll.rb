@@ -15,7 +15,7 @@ Given /^(.+) are in the (.+)$/ do |monikers_text, room|
 end
 
 Given /^a resource manager$/ do
-   $resource = Resource.new "test_extra/resource"
+   $resource = Resource.new "resource"
 end
 
 Given /^a reporter$/ do

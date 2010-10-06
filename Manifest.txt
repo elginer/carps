@@ -20,7 +20,6 @@ features/mod.feature
 features/parser.feature
 features/persistent_protocol.feature
 features/player.feature
-features/playter_turns.feature
 features/random.feature
 features/sessions.feature
 features/start_dm.feature

@@ -61,7 +61,7 @@ def test_interface interface, commands
 end
 
 Given /^a DM mod$/ do
-   resource = Resource.new "test_extra/resource"
+   resource = Resource.new "resource"
    $mailer = TestMailer.new
    $mod = TestMod.new resource, $mailer
 end

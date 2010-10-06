@@ -1,8 +1,8 @@
 Feature: High-level DM interface
 
    Scenario: produce report 
-      Given a DM mod
       Given carps is initialized with test/server
+      Given a DM mod
       Given a character sheet schema
       When barry joins the mod
       Then check barry's sheet
@@ -10,8 +10,8 @@ Feature: High-level DM interface
       Then preview player turns
 
    Scenario: create npc
-      Given a DM mod
       Given carps is initialized with test/server
+      Given a DM mod
       Given a character sheet schema
       Then create an NPC called paul of type orange 
       When barry joins the mod
@@ -28,9 +28,9 @@ Feature: High-level DM interface
       Then test all inputs to interface
 
    Scenario: user interaction
+      Given carps is initialized with test/server
       Given a DM mod
       Given a character sheet schema
-      Given carps is initialized with test/server
       When barry joins the mod
       Given a DM interface
       Then present a user interface to the DM

@@ -26,9 +26,9 @@ module CARPS
    # Resource manager
    class Resource
 
-      # Takes as an argument a directory containing resources
+      # Takes as an argument a directory, within the users campaign directory
       def initialize rdir
-         @dir = rdir
+         @dir = $CONFIG + "campaigns/#{rdir}"
       end
 
       # Create a new npc of a given type

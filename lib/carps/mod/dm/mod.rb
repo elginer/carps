@@ -33,6 +33,8 @@ module CARPS
       # Class for DM mods
       #
       # Functions as a facade to the resource, mailer and reporter classes.
+      #
+      # Subclasses should override schema and semantic_verifier
       class Mod < CARPS::Mod
 
          # Initialize with a resource manager, and a mailer 
