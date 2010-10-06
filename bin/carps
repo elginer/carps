@@ -42,7 +42,7 @@ def carps config, role
    else
       init
       session = SessionManager.new
-      mailer = setup_email client_parser, session
+      mailer = setup_email role::parser, session
       role::StartInterface.start_game_interface mailer, role::GameConfig, session
    end
 end

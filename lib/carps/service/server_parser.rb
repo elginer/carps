@@ -23,9 +23,13 @@ require "carps/mod/answers"
 
 module CARPS
 
-   # Create a parser which parses messages for the server 
-   def server_parser
-      MessageParser.new default_messages + [CharacterSheet, Answers]
+   module DM
+
+      # Create a parser which parses messages for the server 
+      def DM::parser
+         MessageParser.new default_messages + [CharacterSheet, Answers]
+      end
+
    end
 
 end

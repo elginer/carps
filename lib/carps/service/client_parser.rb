@@ -22,9 +22,13 @@ require "carps/mod/client_turn"
 
 module CARPS
 
-   # Create a parser which parses messages for the client
-   def client_parser
-      MessageParser.new default_messages + [Invite, ClientTurn] 
+   module Player
+
+      # Create a parser which parses messages for the client
+      def Player::parser
+         MessageParser.new default_messages + [Invite, ClientTurn] 
+      end
+
    end
 
 end

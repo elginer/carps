@@ -61,7 +61,7 @@ module CARPS
                      @sheet = sheet
                      highlight "Received new character sheet."
                   end
-                  @turn.take
+                  @answers = @turn.take
                else
                   put_error "Turn not received."
                end
@@ -72,6 +72,7 @@ module CARPS
          def next_turn
             if @answers
                @mailer.relay @answers
+               @turn = nil
                done = true
             end
             if @edited

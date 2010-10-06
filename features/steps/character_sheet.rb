@@ -41,7 +41,28 @@ Then /^do not accept the invalid sheet$/ do
 end
 
 When /^an parsable sheet is provided$/ do
-   $input = V.character_sheet "strength: 10"
+   stats = <<-END
+Name: A
+Biography: 
+The Readies: 0
+The Old Grey Matter: 0
+The Outer Crust: 0
+Vim & Vigour: 0
+Luck: 0
+Chances: 0
+Romantic Resistance: 0
+Tolerance for Alcohol: 0
+Conscience: 0
+Etiquette: 0
+Gentleman's Gentleman: 
+Sports Car: 
+Student of the Turf: false
+Specialist Interest: 
+Connections: 
+Difficult Relation: 
+Good Sportsman: 
+END
+   $input = V.character_sheet stats
 end
 
 Then /^parse the sheet$/ do

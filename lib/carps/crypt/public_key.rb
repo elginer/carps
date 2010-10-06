@@ -41,7 +41,7 @@ module CARPS
             key = pkey::DSA.new key
             return [PublicKey.new(key), blob]
          rescue pkey::DSAError
-            throw Expected.new "Public key"
+            raise Expected, "Public key"
          end
       end
 
