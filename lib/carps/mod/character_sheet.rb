@@ -23,10 +23,14 @@ require "carps/mod/sheet_type"
 
 require "yaml"
 
+require "drb"
+
 module CARPS
 
    # A character sheet filled in by a player.
    class CharacterSheet < Message
+
+      include DRbUndumped
 
       # Extend the protocol
       protoval :character_sheet
