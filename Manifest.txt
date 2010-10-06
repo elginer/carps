@@ -127,7 +127,3 @@ script/destroy
 script/generate
 test/test_carps.rb
 test/test_helper.rb
-test_extra/resource/npcs/human.yaml
-test_extra/resource/npcs/orange.yaml
-test_extra/resource/rooms/cave.room
-test_extra/resource/rooms/ship.room
