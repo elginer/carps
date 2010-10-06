@@ -15,6 +15,12 @@ Feature: client turns
       Given a status report and a number of questions
       Then all the questions should be asked#
 
+   Scenario: parse answers
+      Given answers from a player's turn
+      Given a parser for the answers
+      Then emit the message
+      Then parse the message
+
    Scenario: parse turn
       Given a status report and a number of questions
       When a turn is sent

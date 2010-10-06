@@ -37,7 +37,7 @@ module CARPS
       end
 
       # Parse
-      def Answers.parse from, blob, delayed_crypt
+      def Answers.parse blob
          yaml, blob = find K.answers, blob
          answers = YAML::load yaml
          [Answers.new(answers), blob]

@@ -41,6 +41,14 @@ When /^a turn is sent$/ do
    $message = $turn
 end
 
+Given /^answers from a player's turn$/ do
+   $message = Answers.new({"What do you do?" => "Things!", "Who are you?" => "me."})
+end
+
+Given /^a parser for the answers$/ do
+   $parser = MessageParser.new [Answers]
+end
+
 Then /^all the questions should be asked$/ do
    class Tester
       def send to, answers
