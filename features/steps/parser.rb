@@ -6,7 +6,7 @@ require "carps/service/client_parser"
 include CARPS
 
 When /^an invitation is sent$/ do
-   $message = Invite.new "the dm", "the mod", "the description" 
+   $message = Invite.new "the dm", "the mod", "the description", "The session" 
 end
 
 Given /^a client parser$/ do
