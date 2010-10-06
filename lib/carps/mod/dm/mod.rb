@@ -273,15 +273,16 @@ module CARPS
                unless @mails.member? mail.from 
                   add_player mail.from
                end
-            else 
-               mail = @mailer.check(Answers)
-            end
-
-            if mail
                with_valid_mail mail do |moniker|
                   new_character_sheet moniker, mail
                end
-            else
+            elsif mail = @mailer.check(Answers)
+               with_valid_mail mail do |moniker|
+                  new_answer moniker, mail
+               end
+            end
+
+            unless mail
                puts "No new mail."
             end
 
