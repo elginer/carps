@@ -17,11 +17,15 @@
 
 require "carps/crypt/default_messages"
 
+require "carps/mod/character_sheet"
+
+require "carps/mod/answers"
+
 module CARPS
 
    # Create a parser which parses messages for the server 
    def server_parser
-      MessageParser.new default_messages 
+      MessageParser.new default_messages + [CharacterSheet, Answers]
    end
 
 end

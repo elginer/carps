@@ -18,11 +18,13 @@
 require "carps/service/game"
 require "carps/crypt/default_messages"
 
+require "carps/mod/client_turn"
+
 module CARPS
 
    # Create a parser which parses messages for the client
    def client_parser
-      MessageParser.new default_messages + [Invite] 
+      MessageParser.new default_messages + [Invite, ClientTurn] 
    end
 
 end
