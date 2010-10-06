@@ -35,7 +35,7 @@ module CARPS
             @mailer.check type, @dm
          end
 
-         def send message
+         def relay message
             @mailer.send @dm, message
          end
 

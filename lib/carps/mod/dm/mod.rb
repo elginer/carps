@@ -312,7 +312,7 @@ module CARPS
             turns = @reporter.player_turns @players.keys
             turns.each do |moniker, turn|
                addr = @monikers[moniker]
-               @mailer.send addr, turn
+               @mailer.relay addr, turn
             end
          end
 

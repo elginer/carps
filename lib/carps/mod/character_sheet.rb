@@ -30,8 +30,6 @@ module CARPS
    # A character sheet filled in by a player.
    class CharacterSheet < Message
 
-      include DRbUndumped
-
       # Extend the protocol
       protoval :character_sheet
 

@@ -71,12 +71,12 @@ module CARPS
          # Send answers to dungeon master
          def next_turn
             if @answers
-               @mailer.send @answers
+               @mailer.relay @answers
                done = true
             end
             if @edited
                @edited = false
-               @mailer.send @sheet
+               @mailer.relay @sheet
                done = true
             end
             unless done
