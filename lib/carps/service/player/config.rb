@@ -59,7 +59,7 @@ module CARPS
 
          # Spawn a game object so we can resume the game
          def spawn
-            GameClient.new @dm, @mod, @about
+            GameClient.new @dm, @mod
          end
 
          protected

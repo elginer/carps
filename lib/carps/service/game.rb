@@ -64,11 +64,13 @@ module CARPS
       # The second is the mod.
       # The fourth is the description.
       # The fifth is a list of email addresses of players to be invited
-      def initialize mod, campaign, desc, players
+      # The fourth is the session key
+      def initialize mod, campaign, desc, players, session
          @campaign = campaign
          @mod = mod
          @about = desc
          @players = players
+         @session = session
       end
 
       # Set the dm
@@ -86,7 +88,7 @@ module CARPS
                if thr
                   thr.join
                end
-               invite = Invite.new @dm, @mod, @about
+               invite = Invite.new @dm, @mod, @about, @session
                mailer.send player, invite
             end
          end
@@ -115,10 +117,9 @@ module CARPS
       # The first parameter is the dungeon master's name
       # The second is the mod.
       # The third is the description.
-      def initialize dm, mod, desc
+      def initialize dm, mod
          @dm = dm
          @mod = mod
-         @about = desc
       end
 
       # Join this game as a client
@@ -143,11 +144,13 @@ module CARPS
       protoval :master
       protoval :mod
       protoval :about
+      protoval :session
 
-      def initialize dm, mod, about
+      def initialize dm, mod, about, session
          @dm = dm
          @mod = mod
          @about = about
+         @session = session
       end
 
       # Parse this from semi-structured text
@@ -155,16 +158,17 @@ module CARPS
          dm, blob = find K.master, blob
          mod, blob = find K.mod, blob
          about, blob = find K.about, blob
-         [Invite.new(dm, mod, about), blob] 
+         session, blob = find K.session, blob
+         [Invite.new(dm, mod, about, session), blob] 
       end
 
       # Ask if the player wants to accept this invitation
       #
       # If true, return a new game_config_class object, passing the session to it
-      def ask game_config_class, session
+      def ask game_config_class
          puts "You have been invited to a game!"
          if load_mods.member? @mod
-            @game = game_config_class.new @mod, @dm, @about, session 
+            @game = game_config_class.new @mod, @dm, @about, @session 
             @game.display
             if confirm("Do you want to join?")
                return @game
@@ -179,7 +183,7 @@ module CARPS
       end
 
       def emit 
-         V.master(@dm) + V.mod(@mod) + V.about(@about)
+         V.master(@dm) + V.mod(@mod) + V.about(@about) + V.session(@session)
       end
 
    end

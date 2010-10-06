@@ -29,7 +29,7 @@ module CARPS
       # Interface for the dm to start games
       class StartInterface < StartGameInterface
 
-         def initialize continuation, mailer, game_config, session
+         def initialize continuation, mailer, game_config, manager 
             super
             add_command "new", "Start a new game.", "NAME", "MOD", "CAMPAIGN"
          end
@@ -42,7 +42,7 @@ module CARPS
                editor = Editor.load
                about = editor.edit "<Replace with description of game>"
                players = get_players
-               session_id = @session.generate name + mod + campaign
+               session_id = @manager.generate name + mod + campaign
                config = @game_config.new mod, campaign, about, players, session_id
                config.save name + ".yaml"
                game = config.spawn

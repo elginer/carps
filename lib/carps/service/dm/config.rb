@@ -61,7 +61,7 @@ module CARPS
 
          # Return a GameServer object that can communicate with players 
          def spawn
-            GameServer.new @mod, @campaign, @about, @players
+            GameServer.new @mod, @campaign, @about, @players, @session
          end
 
          protected

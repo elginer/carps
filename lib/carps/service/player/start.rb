@@ -28,7 +28,7 @@ module CARPS
       # Interface for the player to join games
       class StartInterface < StartGameInterface
 
-         def initialize continuation, mailer, game_config, session
+         def initialize continuation, mailer, game_config, manager
             super
             add_command "mail", "Check for mail."
          end
@@ -38,11 +38,11 @@ module CARPS
          def mail 
             invite = @mailer.check Invite
             if invite
-               if config = invite.ask(@game_config, @session)
+               if config = invite.ask(@game_config)
                   fn = question "Enter a name for this game"
                   fn = fn + ".yaml"
                   config.save fn
-                  config.session @session
+                  config.register_session @manager
                   game = config.spawn
                   @continuation.call lambda {
                      game.join_game @mailer

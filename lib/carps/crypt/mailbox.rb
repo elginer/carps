@@ -37,8 +37,8 @@ module CARPS
       # The third parameter is a MessageParser.
       #
       # The fourth parameter is a SessionManager.
-      def initialize sender, receiver, parser, session
-         @session = session
+      def initialize sender, receiver, parser, manager
+         @manager = manager 
          @receiver = receiver
          @parser = parser
          @sender = sender
@@ -73,7 +73,7 @@ module CARPS
       # Send a message
       def send to, message
          @ssemaphore.synchronize do
-            message = @session.tag message
+            message = @manager.tag message
             @sender.send to, message
          end
       end
@@ -142,7 +142,7 @@ module CARPS
          if must_be_from
             pass = pass and mail.from == must_be_from
          end
-         pass and @session.belong? mail
+         pass and @manager.belong? mail
       end
 
       # Remove a mail message

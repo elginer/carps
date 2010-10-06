@@ -48,8 +48,7 @@ class PlayerStartMailer
    end
 
    def invite
-      @mail = Invite.new "the dm", "test", "the description" 
-      @mail.session = "dandy motherfucker!"
+      @mail = Invite.new "the dm", "test", "the description", "the session" 
    end
 end
 

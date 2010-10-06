@@ -15,8 +15,6 @@
 # You should have received a copy of the GNU General Public License
 # along with CARPS.  If not, see <http://www.gnu.org/licenses/>.
 
-require "carps/protocol/keyword"
-
 require "thread"
 
 module CARPS
@@ -29,9 +27,6 @@ module CARPS
    #
    # Its methods are reentrant
    class SessionManager
-
-      # Extend the protocol for sessions
-      protoval :session
 
       def initialize
          @session = ""

@@ -30,19 +30,19 @@ module CARPS
       include ControlInterface
 
       # Start interface
-      def StartGameInterface.start_game_interface mailer, config, session
+      def StartGameInterface.start_game_interface mailer, config, manager
          loop do
             choice = callcc do |continuation|
-               interface = self.new continuation, mailer, config, session
+               interface = self.new continuation, mailer, config, manager
                interface.run
             end
             choice.call
          end
       end
 
-      def initialize continuation, mailer, game_config, session
-         @session = session
-         @session.none
+      def initialize continuation, mailer, game_config, manager
+         @manager = manager
+         @manager.none
          @mailer = mailer
          @game_config = game_config
          @continuation = continuation
@@ -90,7 +90,7 @@ module CARPS
          if config
             game = config.spawn
             @continuation.call lambda {
-               config.session @session
+               config.register_session @manager
                game.resume @mailer
             }
          end

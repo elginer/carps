@@ -23,7 +23,7 @@ module CARPS
    class SessionConfig < UserConfig
 
       # Set the session used by a session manager
-      def session manager
+      def register_session manager
          manager.session = @session
       end
 
