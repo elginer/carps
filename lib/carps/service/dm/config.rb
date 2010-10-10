@@ -27,7 +27,8 @@ module CARPS
       class GameConfig < SessionConfig
 
          # Create a new GameConfig
-         def initialize mod, campaign, about, players, session
+         def initialize filename, mod, campaign, about, players, session
+            @filename = filename
             @campaign = campaign
             @mod = mod
             @about = about
@@ -42,6 +43,16 @@ module CARPS
             @about = read_conf conf, "about"
             @players = read_conf conf, "players"
             @session = read_conf conf, "session"
+            @filename = read_conf conf, "filename"
+            @save = conf["save"]
+         end
+
+         # Save the mod
+         #
+         # Also saves the file
+         def save_mod svstate
+            @save = svstate
+            save 
          end
 
          # Display information on this configuration
@@ -55,13 +66,18 @@ module CARPS
          end
 
          # Save this game
-         def save filename
-            save_file "/games/" + filename
+         def save 
+            save_file "/games/#{@filename}.yaml"
          end
 
          # Return a GameServer object that can communicate with players 
          def spawn
-            GameServer.new @mod, @campaign, @about, @players, @session
+            GameServer.new @mod, @campaign, @about, @players, @session, self
+         end
+
+         # Return the saved state of the mod
+         def load_mod
+            @save
          end
 
          protected
@@ -72,7 +88,9 @@ module CARPS
              "campaign" => @campaign, 
              "about" => @about, 
              "players" => @players,
-             "session" => @session}
+             "session" => @session,
+             "save" => @save,
+             "filename" => @filename}
          end
 
       end

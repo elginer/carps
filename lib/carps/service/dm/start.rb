@@ -43,8 +43,7 @@ module CARPS
                about = editor.edit "<Replace with description of game>"
                players = get_players
                session_id = @manager.generate name + mod + campaign
-               config = @game_config.new mod, campaign, about, players, session_id
-               config.save name + ".yaml"
+               config = @game_config.new name, mod, campaign, about, players, session_id
                game = config.spawn
                game.dm = @mailer.address
                @continuation.call lambda {

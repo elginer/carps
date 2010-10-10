@@ -1,0 +1,77 @@
+#!/usr/local/bin/ruby
+# Copyright 2010 John Morrice
+
+# This file is part of CARPS.
+
+# CARPS is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+
+# CARPS is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+
+# You should have received a copy of the GNU General Public License
+# along with CARPS.  If not, see <http://www.gnu.org/licenses/>.
+
+# Test that a mod running in another process can save its state via CARPS. 
+require "drb"
+
+require "highline"
+
+def its_over status=0
+   h = HighLine.new
+   h.ask "Press enter to exit"
+   exit status
+end
+
+puts "CARPS mod saver test"
+puts ARGV
+url = ""
+if ARGV[0] == "-p"
+   url = ARGV[1]
+elsif ARGV[0] == "-h"
+   url = ARGV[2]
+else
+   url = ARGV[0]
+end
+
+unless url
+   its_over 1
+end
+puts "Listening on " + url
+
+class Saver
+
+   def initialize
+      @state = 99
+   end
+
+   def inc
+      @state += 1
+      puts "state now #{@state}"
+   end
+
+end
+
+begin
+   mail = DRbObject.new nil, url
+   old = mail.load
+   if old
+      puts "Loading old mod"
+      old.inc
+   else
+      puts "Creating new mod"
+      me = me = Saver.new
+      me.inc
+      mail.save me
+   end
+rescue StandardError => e
+   puts "ERROR:"
+   puts e
+   its_over 1
+end
+
+its_over

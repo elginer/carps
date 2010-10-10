@@ -26,14 +26,28 @@ module CARPS
 
          include DRbUndumped
 
-         def initialize mailer
+         # Initialize with a mailer and a configuration file
+         def initialize mailer, config
             @mailer = mailer
+            @config = config
          end
 
+         # Save the mod
+         def save mod
+            @config.save_mod mod
+         end
+
+         # Load a previously saved state
+         def load
+            @config.load_mod
+         end
+
+         # Check for mail of a given type
          def check type
-            @mailer.check type, @dm
+            @mailer.check type
          end
 
+         # Send mail to the recipient
          def relay to, message
             @mailer.send to, message
          end

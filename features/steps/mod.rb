@@ -1,8 +1,8 @@
 require "carps/service/dm/config"
 require "carps/service/player/config"
 
-Given /^a dm game config$/ do
-   $game_config = DM::GameConfig.new "test", "fun campaign", "game about stuff", [], $session
+Given /^a dm game config, for mod (.+)$/ do |mod|
+   $game_config = DM::GameConfig.new "save_test", mod, "fun campaign", "game about stuff", [], $session
 end
 
 Then /^resume the mod$/ do
@@ -10,6 +10,12 @@ Then /^resume the mod$/ do
    game.resume nil
 end
 
-Given /^a player game config$/ do
-   $game_config = Player::GameConfig.new "test", "the dm", "game about stuff", $session
+Then /^load the DM mod$/ do
+   config = DM::GameConfig.load "games/save_test.yaml"
+   game = config.spawn
+   game.resume nil
+end
+
+Given /^a player game config, for mod (.+)$/ do |mod|
+   $game_config = Player::GameConfig.new "save_test", "test", "the dm", "game about stuff", $session
 end

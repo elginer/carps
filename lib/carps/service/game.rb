@@ -60,17 +60,21 @@ module CARPS
    # Server game
    class GameServer < Game
 
+      # FIXME: too many parameters!
+      #
       # The first parameter is email account information.
       # The second is the mod.
       # The fourth is the description.
-      # The fifth is a list of email addresses of players to be invited
-      # The fourth is the session key
-      def initialize mod, campaign, desc, players, session
+      # The fourth is a list of email addresses of players to be invited
+      # The fifth is the session key
+      # The sixth is the configuration file
+      def initialize mod, campaign, desc, players, session, conf
          @campaign = campaign
          @mod = mod
          @about = desc
          @players = players
          @session = session
+         @conf = conf
       end
 
       # Set the dm
@@ -104,8 +108,8 @@ module CARPS
 
       def play mailer
          mod = load_mods[@mod]
-         dm_mailer = DM::Mailer.new mailer
-         thrd = $process.launch dm_mailer, mod + " -h '" + @campaign + "'"
+         dm_mailer = DM::Mailer.new mailer, @conf
+         thrd = $process.launch dm_mailer, mod + " -h \"" + @campaign + "\""
          thrd.join
       end
 
