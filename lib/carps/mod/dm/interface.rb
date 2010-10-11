@@ -32,6 +32,7 @@ module CARPS
             super()
             @mod = mod
             add_command "mail", "Check for new emails."
+            add_command "save", "Saves the state of the world."
             add_command "done", "Send all reports and start the next turn."
             add_command "players", "Describe all players."
             add_command "player", "Describe one player.", "PLAYER"
@@ -53,6 +54,16 @@ module CARPS
             add_command "futile", "Clear all questions for all players."
             add_command "remit", "Clear the report for one player", "PLAYER"
             add_command "supress", "Clear the questions for one player", "PLAYER"
+         end
+
+         # Quit, but save first
+         def quit
+            save
+            super
+         end
+
+         def save
+            @mod.save
          end
 
          def done 

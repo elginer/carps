@@ -6,6 +6,8 @@ require "carps/mod/dm/interface"
 require "carps/mod/sheet_verifier"
 require "carps/mod/sheet_editor"
 
+require "yaml"
+
 include CARPS
 
 class TestMod < DM::Mod
@@ -21,9 +23,13 @@ end
 
 class TestMailer
 
-   def send addr, mail
+   def relay addr, mail
       puts "Sending to #{addr}:"
       puts mail.emit
+   end
+
+   def save mod
+      puts "Saving: #{mod.to_yaml}" 
    end
 
    def barry
@@ -91,11 +97,6 @@ Then /^check barry's sheet$/ do
 end
 
 Given /^a DM interface$/ do
-   DM::Interface.class_eval <<-END
-   def quit
-      @run = false
-   end
-   END
    $interface = DM::Interface.new $mod
 end
 
@@ -136,6 +137,7 @@ Then /^test all inputs to interface$/ do
    commands.push [:supress, "bob"]
    commands.push [:supress, "barry"]
    commands.push [:done]
+   commands.push [:save]
    test_interface $interface, commands
 end
 

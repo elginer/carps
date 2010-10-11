@@ -50,6 +50,11 @@ module CARPS
             @semaphore = Mutex.new
          end
 
+         # Save the game
+         def save
+            @mailer.save self
+         end
+
          # Edit a player's character sheet
          def edit_player_sheet name
             with_player name do
@@ -172,6 +177,8 @@ module CARPS
 
          # Next turn 
          def next_turn
+            # Save the game
+            save
             send_reports
             @reporter = Reporter.new
          end
