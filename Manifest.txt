@@ -5,7 +5,6 @@ Manifest.txt
 PostInstall.txt
 README.rdoc
 Rakefile
-bin/.carps_mod_test.swp
 bin/carps
 bin/carps_ipc_test
 bin/carps_mod_saver_test
@@ -110,7 +109,6 @@ lib/carps/service/start/config.rb
 lib/carps/service/start/interface.rb
 lib/carps/ui.rb
 lib/carps/ui/colour.rb
-lib/carps/ui/enter_quit.rb
 lib/carps/ui/error.rb
 lib/carps/ui/highlight.rb
 lib/carps/ui/question.rb
@@ -118,6 +116,7 @@ lib/carps/ui/warn.rb
 lib/carps/util.rb
 lib/carps/util/config.rb
 lib/carps/util/editor.rb
+lib/carps/util/enter_quit.rb
 lib/carps/util/error.rb
 lib/carps/util/files.rb
 lib/carps/util/init.rb
