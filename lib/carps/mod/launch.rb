@@ -38,22 +38,32 @@ module CARPS
             DRb.start_service
             mailer = DRbObject.new_with_uri uri
          rescue StandardError => e
-            UI::put_error "Error beginning IPC"
+            UI::put_error "Error beginning IPC: #{e.message}"
             CARPS::enter_quit 1
          end
       end
 
       # Either get the mod from the mailer or create a new one
-      def Launcher::launch_mod role, mailer
+      def Launcher::launch_player_mod role, mailer, *args 
          mod = nil
          if mod = mailer.load
             mod.mailer = mailer
          else
-            mod = namespace::role.create_mod mailer
+            mod = role.create_mod mailer
          end
          role.launch mod
       end
 
+      # Either get the mod from the mailer or create a new one
+      def Launcher::launch_dm_mod role, campaign, mailer
+         mod = nil
+         if mod = mailer.load
+            mod.mailer = mailer
+         else
+            mod = role.create_mod campaign, mailer
+         end
+         role.launch mod
+      end
 
       # Use to launch a mod
       #
@@ -61,8 +71,11 @@ module CARPS
       #
       # The module must contain two further modules, Player and DM
       #
-      # Each of Player and DM must also contain a create_mod method (And I mean defined like `def Player::create_mod`),
-      # this method should take one parameter: the mailer
+      # Each of Player and DM must also contain a create_mod method (And I mean defined like `def Player::create_mod`).
+      #
+      # Player::create_mod should take one parameter: the mailer.
+      #
+      # DM::create_mod should take two parameters: the campaign, then the mailer.
       #
       # Each of Player and DM should also contain a launch method (which should be defined as per above),
       # this method should take one parameter: the mod
@@ -77,14 +90,15 @@ module CARPS
                if role == "-h"
                   if ARGV.length == 2
                      CARPS::config_dir "dm"
-                     Launcher::launch_mod mod::DM, Launcher::get_mailer(ARGV.shift) 
+                     campaign = ARGV.shift
+                     Launcher::launch_dm_mod mod::DM, campaign, Launcher::get_mailer(ARGV.shift)
                   else
                      usage
                   end
                elsif role == "-p"
                   if ARGV.length == 1
                      CARPS::config_dir "player"
-                     Launcher::launch_mod mod::Player, Launcher::get_mailer(ARGV.shift)
+                     Launcher::launch_player_mod mod::Player, Launcher::get_mailer(ARGV.shift)
                   else
                      Launcher::usage
                   end

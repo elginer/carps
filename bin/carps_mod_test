@@ -44,8 +44,8 @@ module TestMod
       class Mod
       end
 
-      def DM::create_mod mailer
-         puts "Creating DM mod with #{mailer}"
+      def DM::create_mod campaign, mailer
+         puts "Creating DM mod with #{mailer}, running campaign: #{campaign}"
          Mod.new
       end
 
