@@ -36,7 +36,7 @@ module CARPS
 
    # Set the configuration directory
    def CARPS::config_dir dir
-      $CONFIG = root_config + dir + "/"
+      $CONFIG = CARPS::root_config + dir + "/"
    end
 
    # Initialize carps

@@ -62,7 +62,7 @@ Given /^a player wizard$/ do
 end
 
 Then /^clean the wizard directory$/ do
-   wiz = root_config + "/wizard/"
+   wiz = CARPS::root_config + "/wizard/"
    FileUtils.rm_rf wiz
    FileUtils.mkdir wiz
 end

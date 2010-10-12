@@ -25,7 +25,7 @@ module CARPS
 
    # Load the available mods 
    def load_mods
-      mod_file = root_config + "/mods.yaml"
+      mod_file = CARPS::root_config + "/mods.yaml"
       mods = {}
       begin
          mods = YAML.load(File.read mod_file)
