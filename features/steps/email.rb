@@ -25,7 +25,7 @@ class EmailConfig
 
    def smtp
       @smtp
-   nd
+   end
 
    def address
       @address

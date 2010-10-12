@@ -17,7 +17,7 @@
 
 require "drb"
 
-require "carps/util/enter_quit"
+require "carps/util"
 
 require "carps/ui"
 
@@ -76,14 +76,14 @@ module CARPS
                role = ARGV.shift
                if role == "-h"
                   if ARGV.length == 2
-                     config_dir "dm"
+                     CARPS::config_dir "dm"
                      Launcher::launch_mod mod::DM, Launcher::get_mailer(ARGV.shift) 
                   else
                      usage
                   end
                elsif role == "-p"
                   if ARGV.length == 1
-                     config_dir "player"
+                     CARPS::config_dir "player"
                      Launcher::launch_mod mod::Player, Launcher::get_mailer(ARGV.shift)
                   else
                      Launcher::usage

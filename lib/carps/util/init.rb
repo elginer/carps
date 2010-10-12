@@ -20,27 +20,38 @@ require "carps/util/config"
 
 require "etc"
 
-# The root config directory
-def root_config
-   Etc.getpwuid.dir + "/carps/"
-end
+module CARPS
 
-# Set the configuration directory
-def config_dir dir
-   $CONFIG = root_config + dir + "/"
-end
-
-# Initialize carps
-#
-# Optionally set the config_dir at the same time
-#
-# Initialize a CARPS::Process object into the global variable $process.
-#
-# FIXME:  instead of setting a global variable, should use the singleton pattern
-def init dir=nil
-   if dir
-      config_dir dir
+   # Set up multi-threading
+   #
+   # Can be called more than once
+   def CARPS::init_threading
+      Thread.abort_on_exception = true
    end
-   $process = CARPS::Process.load
-   init_threading
-end 
+
+   # The root config directory
+   def CARPS::root_config
+      Etc.getpwuid.dir + "/carps/"
+   end
+
+   # Set the configuration directory
+   def CARPS::config_dir dir
+      $CONFIG = root_config + dir + "/"
+   end
+
+   # Initialize carps
+   #
+   # Optionally set the config_dir at the same time
+   #
+   # Initialize a CARPS::Process object into the global variable $process.
+   #
+   # FIXME:  instead of setting a global variable, should use the singleton pattern
+   def CARPS::init dir=nil
+      if dir
+         config_dir dir
+      end
+      $process = CARPS::Process.load
+      CARPS::init_threading
+   end 
+
+end

@@ -99,7 +99,7 @@ Given /^a partially populated folder$/ do
 end
 
 Given /^the config directory is (.+)$/ do |dir|
-   config_dir dir
+   CARPS::config_dir dir
 end
 
 Then /^the salty wizard builds needed directories$/ do

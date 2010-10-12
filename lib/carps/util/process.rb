@@ -24,13 +24,6 @@ require "drb/acl"
 
 require "set"
 
-# Set up multi-threading
-#
-# Can be called more than once
-def init_threading
-   Thread.abort_on_exception = true
-end
-
 module CARPS
 
    # Responsible for launching other CARP processes
