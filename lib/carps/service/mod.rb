@@ -30,7 +30,7 @@ module CARPS
       begin
          mods = YAML.load(File.read mod_file)
       rescue
-         warn "Cannot find mods: could not read #{mod_file}"
+         UI::warn "Cannot find mods: could not read #{mod_file}"
       end
       mods
    end

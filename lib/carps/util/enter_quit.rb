@@ -15,17 +15,14 @@
 # You should have received a copy of the GNU General Public License
 # along with CARPS.  If not, see <http://www.gnu.org/licenses/>.
 
-require "carps/util/colour"
+require "carps/ui/question"
 
 module CARPS
 
-   # Output an error message and quit with exit code 1
-   def CARPS::fatal msg
-      h = HighLine.new
-      $stderr.write h.color("\nFATAL ERROR\n#{msg}\n", :error)
-      puts "\a"
-      exit 1
-    end
+      # Press enter to quit
+      def CARPS::enter_quit status=0
+         UI::question "Press enter to quit."
+         exit status 
+      end
 
 end
-

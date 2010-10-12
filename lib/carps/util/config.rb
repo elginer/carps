@@ -17,6 +17,8 @@
 
 require "carps/util/error"
 
+require "carps/ui/warn"
+
 require "yaml"
 
 module CARPS
@@ -67,7 +69,7 @@ module CARPS
             file.write y
             file.close
          rescue StandardError => e
-            put_error "Could not save #{self.class} as #{path}: #{e}"
+            UI::warn "Could not save #{self.class} as #{path}: #{e}"
          end
       end
 
@@ -103,7 +105,7 @@ module CARPS
       # Raise error
       def err msg
          if @fatal
-            fatal msg
+            CARPS::fatal msg
          else
             raise StandardError, msg
          end

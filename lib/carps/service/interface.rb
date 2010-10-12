@@ -38,7 +38,7 @@ module CARPS
          # Check we're working
          @commands.each_key do |cmd|
             unless respond_to?(cmd)
-               warn "This menu was intended to provide a '#{cmd}' command!", 
+               UI::warn "This menu was intended to provide a '#{cmd}' command!", 
                "However, it has been ommitted due to a programmer error."
                @commands.delete cmd
             end
@@ -84,7 +84,7 @@ module CARPS
          if args.length == length
             yield *args
          else
-            put_error "Expected #{length} parameters."
+            UI::put_error "Expected #{length} parameters."
          end
       end
 
@@ -95,13 +95,13 @@ module CARPS
             if @commands.member? cmd[0]
                self.send "exec_" + cmd[0], cmd[1..-1]
             else
-               put_error "Unknown command: '" + cmd[0] + "'. Try 'help'."
+               UI::put_error "Unknown command: '" + cmd[0] + "'. Try 'help'."
             end
          end
       end
 
       def empty_line
-         put_error "You must enter a command.  Try 'help'."
+         UI::put_error "You must enter a command.  Try 'help'."
       end
 
       def help
@@ -122,7 +122,7 @@ module CARPS
       end
 
       def rep 
-        line = question "Enter command:"
+        line = UI::question "Enter command:"
         cmd = line.split /\s+/
         execute cmd
       end

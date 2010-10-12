@@ -80,7 +80,7 @@ module CARPS
             if player? player
                yield
             else
-               put_error "Unknown player."
+               UI::put_error "Unknown player."
             end
          end
 
@@ -202,7 +202,7 @@ module CARPS
 
          # Add a player
          def add_player email
-            moniker = question "Enter moniker for " + email
+            moniker = UI::question "Enter moniker for " + email
             add_known_player moniker, email
          end
 
@@ -217,7 +217,7 @@ module CARPS
             if @npcs.member? name
                yield
             else
-               put_error "Unknown NPC."
+               UI::put_error "Unknown NPC."
             end
          end
 
@@ -297,7 +297,7 @@ module CARPS
 
          # Register a new character sheet
          def new_character_sheet moniker, sheet
-            highlight "New character sheet for #{moniker}"
+            UI::highlight "New character sheet for #{moniker}"
             unless editor.valid?(sheet)
                sheet = editor.fill sheet.dump
             end

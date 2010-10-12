@@ -52,7 +52,7 @@ module CARPS
             msg, blob = choose_parser text
             return msg
          rescue Expected
-            warn "An invalid email was received:", input
+            UI::warn "An invalid email was received:", input
             return nil
          end
       end
@@ -110,7 +110,7 @@ module CARPS
                file.write blob
                file.close
             rescue StandardError => e
-               put_error "Could not save message: #{e}"
+               UI::put_error "Could not save message: #{e}"
             end
          end
          @path
@@ -123,7 +123,7 @@ module CARPS
                begin
                   FileUtils.rm @path
                rescue StandardError => e
-                  put_error "Could not delete message: #{e}"
+                  UI::put_error "Could not delete message: #{e}"
                end
             end
          end

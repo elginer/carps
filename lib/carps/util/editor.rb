@@ -51,7 +51,7 @@ module CARPS
             file.close!
             string
          rescue StandardError => e
-            put_error e.to_s
+            UI::put_error e.to_s
             nil
          end
       end

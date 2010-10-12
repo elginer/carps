@@ -56,9 +56,9 @@ module CARPS
       # Display answers
       def display
          if @answers.empty?
-            highlight "#{from} did not return any answers."
+            UI::highlight "#{from} did not return any answers."
          else
-            highlight "#{from}'s answers:"
+            UI::highlight "#{from}'s answers:"
             h = HighLine.new
             @answers.each do |que, ans|
                puts ""
@@ -68,7 +68,6 @@ module CARPS
                end
             end
             puts ""
-            highlight "End of #{from}'s answers\n"
          end
       end
 

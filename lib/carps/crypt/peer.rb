@@ -43,7 +43,7 @@ module CARPS
       begin
          sig, blob = find K.sig, blob
       rescue
-         warn "Message signature was malformed", blob
+         UI::warn "Message signature was malformed", blob
          return nil
       end
       # If the digest is the hash of the message and the signature matches the digest then all is well
@@ -78,7 +78,7 @@ module CARPS
          if pass
             return true
          else
-            warn "Someone has attempted to spoof an email from #{mail.from}", mail.to_s 
+            UI::warn "Someone has attempted to spoof an email from #{mail.from}", mail.to_s 
             return false
          end
       end

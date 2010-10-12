@@ -42,4 +42,5 @@ def init dir=nil
       config_dir dir
    end
    $process = CARPS::Process.load
+   init_threading
 end 

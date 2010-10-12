@@ -34,9 +34,6 @@ require "openssl"
 
 module CARPS
 
-   # This won't work unless some initialization is done.
-   init_threading
-
    # High level CARPS mail client supporting strong cryptographic message signing.
    #
    # It has knowledge of our own public and private key.  Its big responsibility is turning Messages into Strings and signing them.
@@ -93,7 +90,7 @@ module CARPS
          from = handshake.from
          puts "Receiving handshake request from #{from}."
          if @mailbox.peer? from
-            warn "Handshake request from #{from} has been dropped because #{from} is already a known peer",  "Possible spoofing attack."
+            UI::warn "Handshake request from #{from} has been dropped because #{from} is already a known peer",  "Possible spoofing attack."
          else
             # See if the user accepts the handshake.
             accept = accept_handshake? from
@@ -166,7 +163,7 @@ module CARPS
             rescue
             end
          end
-         warn "Could not read cryptographic key from #{keyfile}"
+         UI::warn "Could not read cryptographic key from #{keyfile}"
          return keygen
       end 
 
@@ -185,7 +182,7 @@ module CARPS
             pri.write key.to_pem
             pri.close
          rescue
-            warn "Could not save cryptographic keys in #{keyfile}", "They will be regenerated next time CARPS is run."
+            UI::warn "Could not save cryptographic keys in #{keyfile}", "They will be regenerated next time CARPS is run."
          end
          key
       end

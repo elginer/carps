@@ -53,7 +53,7 @@ module CARPS
             @imap.logout
             good = true
          rescue StandardError => e
-            put_error e.to_s
+            UI::put_error e.to_s
          end
          good
       end
@@ -62,9 +62,9 @@ module CARPS
       def attempt_connection
          puts "Making IMAP connection for " + @username
          puts "Server: #{@server}, Port: #{@port}"
-         CARPS::timeout 10, "IMAP connection attempt" do
+         CARPS::timeout 30, "IMAP connection attempt" do
             if not @tls or @password.empty?
-               warn "IMAP connection is insecure."
+               UI::warn "IMAP connection is insecure."
             end
             @imap = Net::IMAP.new @server, @port, @tls, @certs, @verify
             if @cram_md5
@@ -88,7 +88,7 @@ module CARPS
                return
             rescue Net::IMAP::NoResponseError => e
                if e.message == "Authentication failed."
-                  put_error e.to_s
+                  UI::put_error e.to_s
                   @password = secret "Enter IMAP password for #{@username}"
                else
                   warn_delay
@@ -136,7 +136,7 @@ module CARPS
             begin
                mails = reader.call
             rescue
-               warn "Error receiving messages"
+               UI::warn "Error receiving messages"
                if mails.empty?
                   connect
                end
@@ -149,7 +149,7 @@ module CARPS
 
       # Warn that we're going to delay before trying again
       def warn_delay
-         warn "Could not connect to IMAP server", "Attempting to reconnect in 10 seconds."
+         UI::warn "Could not connect to IMAP server", "Attempting to reconnect in 10 seconds."
          sleep 10
       end
 

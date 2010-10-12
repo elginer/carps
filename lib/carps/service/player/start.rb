@@ -39,7 +39,7 @@ module CARPS
             invite = @mailer.check Invite
             if invite
                if config = invite.ask(@game_config)
-                  fn = question "Enter a name for this game"
+                  fn = UI::question "Enter a name for this game"
                   fn = fn + ".yaml"
                   config.save fn
                   config.register_session @manager

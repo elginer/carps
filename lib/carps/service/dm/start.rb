@@ -50,7 +50,7 @@ module CARPS
                   game.start @mailer
                }
             else
-               put_error "No such mod."
+               UI::put_error "No such mod."
             end
          end
 
@@ -58,7 +58,7 @@ module CARPS
             pl = []
             done = false
             until done
-               e = question "Enter email address of player to invite.  Leave blank for no more players."
+               e = UI::question "Enter email address of player to invite.  Leave blank for no more players."
                if e.empty?
                   done = true
                else

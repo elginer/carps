@@ -68,14 +68,14 @@ module CARPS
                if testing
                   test_failed msg
                else
-                  highlight msg
+                  UI::highlight msg
                end
                return false
             end
          end
 
          def help
-            highlight description
+            UI::highlight description
             super
             mandatory false
          end
@@ -87,20 +87,20 @@ module CARPS
             if @passed
                @run = false
             else
-               put_error "The test must pass before configuration can continue."
+               UI::put_error "The test must pass before configuration can continue."
             end
          end
 
          # The test has passed.
          def test_passed
-            highlight "Test passed!"
+            UI::highlight "Test passed!"
             puts "If you are finished, you may proceed by running 'done'."
             @passed = true
          end
 
          # The test has failed.
          def test_failed reason=nil
-            put_error "Test failed."
+            UI::put_error "Test failed."
             if reason
                puts reason
             end
@@ -126,7 +126,7 @@ module CARPS
             elsif opt == "no"
                no.call
             else
-               put_error "Argument must be either 'yes' or 'no'"
+               UI::put_error "Argument must be either 'yes' or 'no'"
             end
          end
 
@@ -196,7 +196,7 @@ module CARPS
             elsif mech == "cram_md5"
                yield :cram_md5
             else
-               put_error "Unsupported mechanism.  Supported: plain, login, cram_md5"
+               UI::put_error "Unsupported mechanism.  Supported: plain, login, cram_md5"
             end
          end
 
@@ -319,7 +319,7 @@ module CARPS
             elsif option == "none"
                @imap_tls = false
             else
-               put_error "Unsupported encryption scheme."
+               UI::put_error "Unsupported encryption scheme."
             end
          end
 
@@ -335,7 +335,7 @@ module CARPS
                @smtp_starttls = false
                @smtp_tls = false
             else
-               put_error "Unsupported encryption scheme."
+               UI::put_error "Unsupported encryption scheme."
             end
 
          end
@@ -353,7 +353,7 @@ module CARPS
                if valid
                   @address = addr
                else
-                  put_error "Invalid email address."
+                  UI::put_error "Invalid email address."
                end
          end
 
@@ -390,7 +390,7 @@ module CARPS
                mut = Test::Mutate.new
                test_ipc @shell, mut
                if mut.working?
-                  highlight mut.works?
+                  UI::highlight mut.works?
                   good = confirm "Did it say 'It works!' in the new window?"
                   if good
                      @shell.save

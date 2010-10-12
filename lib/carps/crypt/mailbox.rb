@@ -197,7 +197,7 @@ module CARPS
          begin
             session, blob = find K.session, blob
          rescue Expected
-            warn "Mail message did not contain session.", blob
+            UI::warn "Mail message did not contain session.", blob
             return
          end
          who = nil
@@ -206,7 +206,7 @@ module CARPS
             # Find who sent the message
             who, blob = find K.addr, blob
          rescue Expected
-            warn "Mail message did not contain sender.", blob
+            UI::warn "Mail message did not contain sender.", blob
             return
          end
 
@@ -233,7 +233,7 @@ module CARPS
                @mail.push msg
             end
          else
-            warn "Failed to parse message from #{who}"
+            UI::warn "Failed to parse message from #{who}"
          end
       end
 
@@ -245,7 +245,7 @@ module CARPS
             begin
                blob = File.read fn
             rescue StandardError => e
-               put_error "Could not read old message: #{e}"
+               UI::put_error "Could not read old message: #{e}"
             end
             if blob
                blob.force_encoding "ASCII-8BIT"

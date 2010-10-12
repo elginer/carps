@@ -21,11 +21,7 @@ require "drb"
 
 require "highline"
 
-def its_over status=0
-   h = HighLine.new
-   h.ask "Press enter to exit"
-   exit status
-end
+require "carps/util/error"
 
 url = ARGV.shift
 
@@ -40,7 +36,7 @@ begin
 rescue StandardError => e
    puts "ERROR:"
    puts e
-   its_over 1
+   CARPS::enter_quit 1
 end
 
-its_over
+CARPS::enter_quit

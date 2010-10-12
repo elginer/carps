@@ -52,7 +52,7 @@ module CARPS
       def valid? sheet
          failure = sheet.syntax_error @schema
          if failure
-            put_error "Character sheet was incorrect:"
+            UI::put_error "Character sheet was incorrect:"
             puts failure
             return false
          else

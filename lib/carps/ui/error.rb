@@ -19,13 +19,14 @@ require "carps/util/colour"
 
 module CARPS
 
-   # Output an error message and quit with exit code 1
-   def CARPS::fatal msg
-      h = HighLine.new
-      $stderr.write h.color("\nFATAL ERROR\n#{msg}\n", :error)
-      puts "\a"
-      exit 1
-    end
+   module UI
 
+      # Output an error message
+      def UI::put_error msg
+         h = HighLine.new
+         $stderr.write h.color("Error:  #{msg}", :error)
+         puts "\a"
+      end
+
+   end
 end
-

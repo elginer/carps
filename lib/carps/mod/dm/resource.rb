@@ -37,7 +37,7 @@ module CARPS
          begin
             return YAML::load File.read sheet_loc
          rescue
-            warn "Could not create NPC: " + sheet_loc
+            UI::warn "Could not create NPC: " + sheet_loc
             return nil
          end
       end
@@ -58,7 +58,7 @@ module CARPS
          begin
             return Room.new room_loc
          rescue Exception => e
-            warn "Could not load room: " + room_loc
+            UI::warn "Could not load room: " + room_loc
             return nil
          end
       end

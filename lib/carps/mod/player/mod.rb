@@ -59,11 +59,11 @@ module CARPS
                   sheet = @turn.sheet
                   unless sheet.dump.empty?
                      @sheet = sheet
-                     highlight "Received new character sheet."
+                     UI::highlight "Received new character sheet."
                   end
                   @answers = @turn.take
                else
-                  put_error "Turn not received."
+                  UI::put_error "Turn not received."
                end
             end
          end
@@ -81,7 +81,7 @@ module CARPS
                done = true
             end
             unless done
-               put_error "Nothing to send."
+               UI::put_error "Nothing to send."
             end
          end
 

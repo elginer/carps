@@ -36,7 +36,7 @@ module CARPS
       def d n
          i = n.to_i
          if i <= 1
-            put_error "A dice must have more than 1 side."
+            UI::put_error "A dice must have more than 1 side."
          else
             puts rint(1, i)
          end
@@ -65,7 +65,7 @@ module CARPS
       private
 
       def bounds_err
-         put_error "MIN must be less than MAX."
+         UI::put_error "MIN must be less than MAX."
       end
 
    end

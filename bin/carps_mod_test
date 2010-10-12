@@ -16,39 +16,47 @@
 # You should have received a copy of the GNU General Public License
 # along with CARPS.  If not, see <http://www.gnu.org/licenses/>.
 
-# Test CARPS IPC.  Used for unit testing and as part of the wizard. 
-require "drb"
+# Test CARPS mod launching.  Used for unit testing and as part of the wizard. 
+require "carps/mod/launch"
+require "carps/util/error"
 
-require "highline"
+module TestMod
 
-def its_over status=0
-   h = HighLine.new
-   h.ask "Press enter to exit"
-   exit status
+   module Player      
+      
+      class Mod
+
+      end
+
+      def Player::create_mod mailer
+         puts "Creating Player mod with #{mailer}"
+         Mod.new
+      end
+
+      def Player::launch mod
+         puts "Launching mod: #{mod.class}"
+      end
+
+   end
+
+   module DM
+
+      class Mod
+      end
+
+      def DM::create_mod mailer
+         puts "Creating DM mod with #{mailer}"
+         Mod.new
+      end
+
+      def DM::launch mod
+         puts "Launching mod: #{mod.class}"
+      end
+
+   end
+
 end
 
-puts ARGV
-url = ""
-if ARGV[0] == "-p"
-   url = ARGV[1]
-elsif ARGV[0] == "-h"
-   url = ARGV[2]
-else
-   url = ARGV[0]
-end
+CARPS::Launcher.launch TestMod
 
-unless url
-   its_over 1
-end
-puts "Listening on " + url
-
-begin
-   mail = DRbObject.new nil, url
-   puts "mail.class: #{mail.class}"
-rescue StandardError => e
-   puts "ERROR:"
-   puts e
-   its_over 1
-end
-
-its_over
+CARPS::enter_quit

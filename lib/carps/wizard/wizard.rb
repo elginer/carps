@@ -40,7 +40,7 @@ module CARPS
 
       # Run the wizard
       def run
-         highlight "Welcome to the CARPS Configuration Wizard"
+         UI::highlight "Welcome to the CARPS Configuration Wizard"
          puts ""
          puts "This program will configure CARPS, under your instructions."
          puts "There are a number of steps:"
@@ -53,7 +53,7 @@ module CARPS
             step.run
             puts ""
          end
-         highlight "Tada!  Wizard complete."
+         UI::highlight "Tada!  Wizard complete."
       end
 
       # Would this be the first time the wizard has run?

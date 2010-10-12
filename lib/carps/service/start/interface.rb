@@ -55,7 +55,7 @@ module CARPS
 
       def help
          puts ""
-         highlight "Welcome to CARPS #{VERSION}"
+         UI::highlight "Welcome to CARPS #{VERSION}"
          super
       end
 
@@ -65,12 +65,12 @@ module CARPS
          fs.each do |f|
             name = File.basename(f, ".yaml")
             puts ""
-            highlight "Name: " + name
+            UI::highlight "Name: " + name
             g = nil
             begin
                g = @game_config.load "games/" + File.basename(f)
             rescue StandardError => e
-               put_error "#{e}"
+               UI::put_error "#{e}"
             end
             if g
                g.display
@@ -85,7 +85,7 @@ module CARPS
          begin
             config = @game_config.load filename
          rescue StandardError => e
-            put_error e.to_s
+            UI::put_error e.to_s
          end
          if config
             game = config.spawn

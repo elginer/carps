@@ -1,5 +1,5 @@
 # Copyright 2010 John Morrice
-
+ 
 # This file is part of CARPS.
 
 # CARPS is free software: you can redistribute it and/or modify
@@ -15,14 +15,8 @@
 # You should have received a copy of the GNU General Public License
 # along with CARPS.  If not, see <http://www.gnu.org/licenses/>.
 
-require "highline"
-
-module CARPS
-
-   # Highlight text
-   def highlight text
-      h = HighLine.new
-      puts h.color text, :magenta, :bold
-   end
-
-end
+require "carps/ui/enter_quit"
+require "carps/ui/error"
+require "carps/ui/warn"
+require "carps/ui/question"
+require "carps/ui/highlight"

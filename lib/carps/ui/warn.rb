@@ -20,16 +20,12 @@ require "carps/util/colour"
 module CARPS
 
    # Print a warning message to stderr
-   def warn reason, *msgs
+   def UI::warn reason, *msgs
       h = HighLine.new
       $stderr.write h.color("Warning:\n", :warning)
       $stderr.write h.color(reason + "\n", :warning)
       msgs.each do |msg|
          $stderr.write msg + "\n"
-      end
-      if $!
-         $stderr.write h.color("Error raised:\n", :warning)
-         $stderr.write $!.to_s
       end
       puts "\a" 
    end
