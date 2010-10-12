@@ -15,27 +15,32 @@
 # You should have received a copy of the GNU General Public License
 # along with CARPS.  If not, see <http://www.gnu.org/licenses/>.
 
-require "carps/service/start/mailer"
+require "drb"
 
 module CARPS
 
-   module DM
+   # ModMailer acts as a bridge between the Mod and CARPS
+   class ModMailer
 
-      # A bridge between the DM mod and CARPS 
-      class Mailer < ModMailer
+      include DRbUndumped
 
-         # Check for mail of a given type
-         def check type
-            @mailer.check type
-         end
+      # Initialize with a mailer and a configuration file
+      #
+      # FIXME: Doesn't use mailer (only subclasses use it)
+      def initialize mailer, config
+         @mailer = mailer
+         @config = config
+      end
 
-         # Send mail to the recipient
-         def relay to, message
-            @mailer.send to, message
-         end
+      # Save the mod
+      def save mod
+         @config.save_mod mod
+      end
 
+      # Load a previously saved state
+      def load
+         @config.load_mod
       end
 
    end
-
 end

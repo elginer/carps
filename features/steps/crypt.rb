@@ -152,13 +152,13 @@ Given /^two peers, Alice and Bob$/ do
    $bob_address = "bob"
 
    # Alice's stuff
-   CARPS::init "test/server"
+   CARPS::init 0, "test/server"
    delete_key "bob"
    $alice_box = Mailbox.new send_bob, receive_bob, MessageParser.new(default_messages), SessionManager.new
    $alice = TwistedMailer.new $alice_address, $alice_box
 
    # Bob's stuff
-   CARPS::init "test/client"
+   CARPS::init 0, "test/client"
    delete_key "alice"
    $bob_box = TwistedMailbox.new send_alice, receive_alice, MessageParser.new(default_messages.push EvilMessage), SessionManager.new
    $bob = TwistedMailer.new $bob_address, $bob_box

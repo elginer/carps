@@ -28,12 +28,17 @@ module CARPS
             super()
             @mod = mod
             add_command "act", "Take your turn."
+            add_command "save", "Save the game."
             add_command "done", "Send your stuff to the dungeon master and await the next turn."
             add_command "sheet", "Look at your character sheet."
             add_command "edit", "Edit your character sheet."
          end
 
          protected
+
+         def save
+            @mod.save
+         end
 
          def sheet
             @mod.show_sheet

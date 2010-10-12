@@ -22,9 +22,6 @@ require "carps"
 
 include CARPS
 
-# Safety first
-$SAFE = 1
-
 # Set up the email
 def setup_email parser, session
    config = EmailConfig.load

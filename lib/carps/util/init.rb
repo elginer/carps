@@ -20,6 +20,24 @@ require "carps/util/config"
 
 require "etc"
 
+require "erb"
+
+# Requiring this file cripples ERB 
+#
+# This is because it does not work with $SAFE = 1
+# and this is not checked by highline
+class ERB
+
+   def initialize str, *args
+      @res = str
+   end
+
+   def result *args
+      @res
+   end
+
+end
+
 module CARPS
 
    # Set up multi-threading
@@ -30,8 +48,11 @@ module CARPS
    end
 
    # The root config directory
+   #
+   # This performs an untaint operation
    def CARPS::root_config
-      Etc.getpwuid.dir + "/carps/"
+      loc = Etc.getpwuid.dir + "/carps/"
+      loc.untaint
    end
 
    # Set the configuration directory
@@ -45,8 +66,12 @@ module CARPS
    #
    # Initialize a CARPS::Process object into the global variable $process.
    #
+   # Sets $SAFE to safe, default 1
+   #
    # FIXME:  instead of setting a global variable, should use the singleton pattern
-   def CARPS::init dir=nil
+   def CARPS::init safe=1, dir=nil
+
+      $SAFE = safe
       if dir
          config_dir dir
       end

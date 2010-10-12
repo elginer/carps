@@ -14,6 +14,15 @@ Feature: mods
       Given a dm game config, for mod saver
       Then resume the mod
       Then load the DM mod
+      Then resume the mod
+
+   Scenario: save and load player mod
+      Given carps is initialized with test/client
+      Given a session manager
+      Given a player game config, for mod saver
+      Then resume the mod
+      Then load the Player mod
+      Then resume the mod
 
    Scenario: resume player mod
       Given carps is initialized with test/client

@@ -15,26 +15,29 @@
 # You should have received a copy of the GNU General Public License
 # along with CARPS.  If not, see <http://www.gnu.org/licenses/>.
 
-require "drb"
+require "carps/service/start/mailer"
 
 module CARPS
 
    module Player
 
-      # A mailer for the player
-      class Mailer < CARPS::Mailer
+      # A bridge between the Player mod and CARPS 
+      class Mailer < ModMailer
 
-         include DRbUndumped
-
-         def initialize dm, mailer
+         # Create from the email address of the dungeon master,
+         # a mailer,
+         # and a configuration file
+         def initialize dm, mailer, conf
             @dm = dm
-            @mailer = mailer
+            super mailer, conf
          end
 
+         # Check for mail from the dm
          def check type
             @mailer.check type, @dm
          end
 
+         # Send mail to the dm
          def relay message
             @mailer.send @dm, message
          end

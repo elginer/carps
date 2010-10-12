@@ -28,20 +28,19 @@ module CARPS
       class GameConfig < SessionConfig
 
          # Create a new GameConfig
-         def initialize mod, dm, about, session
-            super()
+         def initialize filename, mod, dm, about, session
+            super session, filename
             @mod = mod
             @dm = dm
             @about = about
-            @session = session
          end
 
          # Parse a game config file
          def parse_yaml conf
+            super
             @mod = read_conf conf, "mod"
             @about = read_conf conf, "about"
             @dm = read_conf conf, "dm"
-            @session = read_conf conf, "session"
          end
 
          # Display information on this configuration
@@ -52,24 +51,19 @@ module CARPS
             puts "DM: " + @dm
          end
 
-         # Save this game
-         def save filename
-            save_file "games/" + filename
-         end
-
          # Spawn a game object so we can resume the game
          def spawn
-            GameClient.new @dm, @mod
+            GameClient.new @dm, @mod, self
          end
 
          protected
 
          # Emit as hash 
          def emit
-            {"mod" => @mod, 
+             {"mod" => @mod, 
              "about" => @about, 
-             "dm" => @dm,
-             "session" => @session}
+             "dm" => @dm
+             }.merge super
          end
 
       end

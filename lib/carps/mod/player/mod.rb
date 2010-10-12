@@ -47,6 +47,11 @@ module CARPS
             @sheet.display
          end
 
+         # Save the game
+         def save
+            @mailer.save self
+         end
+
          # Take a turn
          def take_turn
             if @turn
@@ -65,6 +70,7 @@ module CARPS
                   UI::put_error "Turn not received."
                end
             end
+            save
          end
 
          # Send answers to dungeon master
@@ -82,6 +88,7 @@ module CARPS
             unless done
                UI::put_error "Nothing to send."
             end
+            save
          end
 
       end

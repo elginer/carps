@@ -31,9 +31,13 @@ module CARPS
       end
 
       # Ask a question.  Get a string for an answer
+      #
+      # Calls untaint on the answer
       def UI::question msg
          h = HighLine.new
-         h.ask h.color(msg, :green)
+         res = h.ask h.color(msg, :green)
+         # Trust the user
+         res.untaint
       end
       # Ask a question and don't echo what is typed.
       def UI::secret msg

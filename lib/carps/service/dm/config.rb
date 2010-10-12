@@ -28,31 +28,20 @@ module CARPS
 
          # Create a new GameConfig
          def initialize filename, mod, campaign, about, players, session
-            @filename = filename
+            super session, filename
             @campaign = campaign
             @mod = mod
             @about = about
             @players = players
-            @session = session
          end
 
          # Parse a game config file
          def parse_yaml conf
+            super
             @campaign = read_conf conf, "campaign"
             @mod = read_conf conf, "mod"
             @about = read_conf conf, "about"
             @players = read_conf conf, "players"
-            @session = read_conf conf, "session"
-            @filename = read_conf conf, "filename"
-            @save = conf["save"]
-         end
-
-         # Save the mod
-         #
-         # Also saves the file
-         def save_mod svstate
-            @save = svstate
-            save 
          end
 
          # Display information on this configuration
@@ -65,19 +54,9 @@ module CARPS
             puts @players
          end
 
-         # Save this game
-         def save 
-            save_file "/games/#{@filename}.yaml"
-         end
-
          # Return a GameServer object that can communicate with players 
          def spawn
             GameServer.new @mod, @campaign, @about, @players, @session, self
-         end
-
-         # Return the saved state of the mod
-         def load_mod
-            @save
          end
 
          protected
@@ -87,10 +66,8 @@ module CARPS
             {"mod" => @mod, 
              "campaign" => @campaign, 
              "about" => @about, 
-             "players" => @players,
-             "session" => @session,
-             "save" => @save,
-             "filename" => @filename}
+             "players" => @players
+            }.merge super
          end
 
       end

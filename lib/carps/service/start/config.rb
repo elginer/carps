@@ -1,5 +1,5 @@
 # Copyright 2010 John Morrice
- 
+
 # This file is part of CARPS.
 
 # CARPS is free software: you can redistribute it and/or modify
@@ -19,12 +19,51 @@ require "carps/util/config"
 
 module CARPS
 
-   # A configuration file which can set the session of session manager
+   # A configuration file for games which keeps track of sessions, 
+   # and the mod's saved state
    class SessionConfig < UserConfig
+
+      # Create from session ID and filename
+      def initialize session, filename
+         @session = session
+         @filename = filename
+      end
 
       # Set the session used by a session manager
       def register_session manager
          manager.session = @session
+      end
+
+      def parse_yaml conf
+         @filename = read_conf conf, "filename"
+         @session = read_conf conf, "session"
+         @save = conf["save"]
+      end
+
+      # Save the mod
+      #
+      # Also saves the file
+      def save_mod mod 
+         @save = mod
+         save 
+      end
+
+      # Load the mod
+      def load_mod
+         @save
+      end
+
+      # Save this game
+      def save
+         save_file "games/" + @filename + ".yaml"
+      end
+
+      protected
+
+      def emit
+         {"filename" => @filename,
+         "save" => @save,
+         "session" => @session}
       end
 
    end

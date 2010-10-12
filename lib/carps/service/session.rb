@@ -61,6 +61,11 @@ module CARPS
          end
       end
 
+      # Get the session key
+      def key
+         @session
+      end
+
       # Remove the current session
       def none
          @semaphore.synchronize do

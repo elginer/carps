@@ -120,10 +120,11 @@ module CARPS
 
       # The first parameter is the dungeon master's name
       # The second is the mod.
-      # The third is the description.
-      def initialize dm, mod
+      # The third is the configuration file
+      def initialize dm, mod, conf
          @dm = dm
          @mod = mod
+         @conf = conf
       end
 
       # Join this game as a client
@@ -134,7 +135,7 @@ module CARPS
       # Play the game
       def resume mailer
          mod = load_mods[@mod]
-         player_mailer = Player::Mailer.new @dm, mailer
+         player_mailer = Player::Mailer.new @dm, mailer, @conf
          thrd = $process.launch player_mailer, mod + " -p"
          thrd.join
       end
