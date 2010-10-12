@@ -15,13 +15,10 @@
 # You should have received a copy of the GNU General Public License
 # along with CARPS.  If not, see <http://www.gnu.org/licenses/>.
 
-require "carps/util/colour"
 require "carps/util/config"
 require "carps/util/editor"
-require "carps/util/error"
+require "carps/util/enter_quit"
 require "carps/util/files"
-require "carps/util/highlight"
 require "carps/util/init"
 require "carps/util/process"
-require "carps/util/question"
-require "carps/util/warn"
+require "carps/util/timeout"

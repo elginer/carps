@@ -17,7 +17,7 @@
 
 require "carps/protocol/message"
 
-require "carps/util/highlight"
+require "carps/ui"
 
 require "highline"
 

@@ -18,8 +18,9 @@
 
 require "carps/protocol/keyword"
 
-require "carps/util/warn"
-require "carps/util/question"
+require "carps/ui/warn"
+require "carps/ui/question"
+
 require "carps/util/process"
 require "carps/util/files"
 

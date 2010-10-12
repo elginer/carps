@@ -17,6 +17,8 @@
 
 require "highline"
 
+require "carps/ui/colour"
+
 module CARPS
 
    module UI

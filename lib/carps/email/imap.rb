@@ -17,7 +17,9 @@
 
 
 require "carps/protocol/message"
-require "carps/util/warn"
+
+require "carps/ui/warn"
+
 require "carps/email/string"
 
 require "carps/util/timeout"

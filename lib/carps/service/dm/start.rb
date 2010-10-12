@@ -20,7 +20,8 @@ require "carps/service/start/interface"
 require "carps/service/mod"
 
 require "carps/util/editor"
-require "carps/util/error"
+
+require "carps/ui/error"
 
 module CARPS
 

@@ -15,9 +15,11 @@
 # You should have received a copy of the GNU General Public License
 # along with CARPS.  If not, see <http://www.gnu.org/licenses/>.
 
-require "carps/util/warn"
-require "carps/util/error"
+require "carps/ui/warn"
+require "carps/ui/error"
+
 require "carps/email/string"
+
 require "carps/util/timeout"
 
 require "net/smtp"

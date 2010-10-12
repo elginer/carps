@@ -19,7 +19,7 @@ require "carps/service/interface"
 
 require "carps/mod/dice"
 
-require "carps/util/error"
+require "carps/ui/error"
 
 module CARPS
 

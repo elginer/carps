@@ -18,7 +18,8 @@
 require "carps/protocol/message"
 
 require "carps/mod/answers"
-require "carps/util/question"
+
+require "carps/ui/question"
 
 module CARPS
 

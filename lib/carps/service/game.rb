@@ -24,7 +24,7 @@ require "carps/service/dm/mailer"
 require "carps/protocol/keyword"
 require "carps/protocol/message"
 
-require "carps/util/question"
+require "carps/ui/question"
 
 require "carps/util/process"
 

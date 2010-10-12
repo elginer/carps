@@ -19,7 +19,7 @@ require "carps/service/interface"
 
 require "carps/util/error"
 
-require "carps/util/highlight"
+require "carps/ui"
 
 require "fileutils"
 

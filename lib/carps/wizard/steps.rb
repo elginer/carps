@@ -21,11 +21,8 @@ require "carps/service/interface"
 
 require "carps/util/process"
 require "carps/util/editor"
-require "carps/util/error"
-require "carps/util/highlight"
-require "carps/util/question"
 
-require "set"
+require "carps/ui"
 
 module CARPS
 

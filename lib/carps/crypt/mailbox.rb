@@ -17,7 +17,8 @@
 
 # This mailbox receives all messages that come in
 
-require "carps/util/warn"
+require "carps/ui/warn"
+
 require "carps/util/process"
 require "carps/util/files"
 

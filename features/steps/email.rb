@@ -2,7 +2,7 @@
 
 require "carps/email/config"
 
-require "carps/util/question"
+require "carps/ui/question"
 
 require "yaml"
 
@@ -25,7 +25,7 @@ class EmailConfig
 
    def smtp
       @smtp
-   end
+   nd
 
    def address
       @address

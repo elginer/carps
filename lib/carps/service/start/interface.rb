@@ -17,8 +17,8 @@
 
 require "carps/service/interface"
 
-require "carps/util/highlight"
-require "carps/util/error"
+require "carps/ui/highlight"
+require "carps/ui/error"
 
 require "continuation"
 

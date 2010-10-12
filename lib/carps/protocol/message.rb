@@ -17,7 +17,7 @@
 
 require "carps/protocol/keyword"
 
-require "carps/util/warn"
+require "carps/ui/warn"
 
 require "drb"
 

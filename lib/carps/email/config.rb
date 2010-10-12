@@ -19,9 +19,9 @@
 require "carps/email/imap"
 require "carps/email/smtp"
 
-require "carps/util/error"
 require "carps/util/config"
-require "carps/util/question"
+
+require "carps/ui/question"
 
 require "carps/crypt/mailer"
 require "carps/crypt/mailbox"

@@ -17,7 +17,9 @@
 
 require "drb"
 
-require "carps/util/error"
+require "carps/util/enter_quit"
+
+require "carps/ui"
 
 module CARPS
 
@@ -99,5 +101,3 @@ module CARPS
    end
 
 end
-
-

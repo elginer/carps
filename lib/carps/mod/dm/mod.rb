@@ -24,8 +24,7 @@ require "carps/mod/mod"
 require "carps/mod/dm/reporter"
 require "carps/mod/dm/character"
 
-require "carps/util/warn"
-require "carps/util/highlight"
+require "carps/ui"
 
 module CARPS
 

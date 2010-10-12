@@ -20,8 +20,7 @@ require "carps/mod/character_sheet"
 require "carps/mod/sheet_editor"
 require "carps/mod/client_turn"
 
-require "carps/util/error"
-require "carps/util/highlight"
+require "carps/ui"
 
 module CARPS
 

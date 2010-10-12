@@ -19,7 +19,7 @@ require "carps/service/start/interface"
 
 require "carps/service/game"
 
-require "carps/util/question"
+require "carps/ui/question"
 
 module CARPS
 

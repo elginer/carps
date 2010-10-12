@@ -16,7 +16,8 @@
 # along with CARPS.  If not, see <http://www.gnu.org/licenses/>.
 
 require "carps/util/config"
-require "carps/util/error"
+
+require "carps/ui/error"
 
 require "tempfile"
 

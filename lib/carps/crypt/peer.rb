@@ -15,7 +15,8 @@
 # You should have received a copy of the GNU General Public License
 # along with CARPS.  If not, see <http://www.gnu.org/licenses/>.
 
-require "carps/util/warn"
+require "carps/ui/warn"
+
 require "carps/protocol/keyword"
 
 require "openssl"
