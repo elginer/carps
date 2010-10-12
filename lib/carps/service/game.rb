@@ -174,7 +174,7 @@ module CARPS
          if load_mods.member? @mod
             @game = game_config_class.new @mod, @dm, @about, @session 
             @game.display
-            if confirm("Do you want to join?")
+            if UI::confirm("Do you want to join?")
                return @game
             else
                return nil

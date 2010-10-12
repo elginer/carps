@@ -19,10 +19,14 @@ require "highline"
 
 module CARPS
 
-   # Highlight text
-   def UI::highlight text
-      h = HighLine.new
-      puts h.color text, :magenta, :bold
+   module UI
+
+      # Highlight text
+      def UI::highlight text
+         h = HighLine.new
+         puts h.color text, :magenta, :bold
+      end
+
    end
 
 end

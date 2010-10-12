@@ -71,10 +71,10 @@ module CARPS
          smtp_password = ""
          imap_password = ""
          if same_pass
-            imap_password = smtp_password = secret("Enter password for #{address}:")
+            imap_password = smtp_password = UI::secret("Enter password for #{address}:")
          else
-            imap_password = secret "Enter password for IMAP account at #{address}:"
-            smtp_password = secret "Enter password for SMTP account at #{address}:"
+            imap_password = UI::secret "Enter password for IMAP account at #{address}:"
+            smtp_password = UI::secret "Enter password for SMTP account at #{address}:"
          end
          @imap = IMAP.new imap_settings, imap_password
          @smtp = SMTP.new smtp_settings, smtp_password

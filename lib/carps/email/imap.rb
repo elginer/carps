@@ -89,7 +89,7 @@ module CARPS
             rescue Net::IMAP::NoResponseError => e
                if e.message == "Authentication failed."
                   UI::put_error e.to_s
-                  @password = secret "Enter IMAP password for #{@username}"
+                  @password = UI::secret "Enter IMAP password for #{@username}"
                else
                   warn_delay
                end

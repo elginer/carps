@@ -19,22 +19,26 @@ require "highline"
 
 module CARPS
 
-   # Ask a question, return a boolean
-   def confirm question
-      h = HighLine.new
-      resp = h.ask h.color("#{question}\n(Type anything beginning with y to accept)", :green)
-      resp[0] == "y"
-   end
+   module UI
 
-   # Ask a question.  Get a string for an answer
-   def question msg
-      h = HighLine.new
-      h.ask h.color(msg, :green)
-   end
-   # Ask a question and don't echo what is typed.
-   def secret msg
-      h = HighLine.new
-      h.ask(h.color(msg, :green)) {|q| q.echo = "*"}
+      # Ask a question, return a boolean
+      def UI::confirm question
+         h = HighLine.new
+         resp = h.ask h.color("#{question}\n(Type anything beginning with y to accept)", :green)
+         resp[0] == "y"
+      end
+
+      # Ask a question.  Get a string for an answer
+      def UI::question msg
+         h = HighLine.new
+         h.ask h.color(msg, :green)
+      end
+      # Ask a question and don't echo what is typed.
+      def UI::secret msg
+         h = HighLine.new
+         h.ask(h.color(msg, :green)) {|q| q.echo = "*"}
+      end
+
    end
 
 end

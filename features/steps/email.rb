@@ -57,7 +57,7 @@ Given /^default SMTP settings$/ do
 end
 
 Then /^attempt connections with various SMTP security settings$/ do
-   pass = secret "Enter SMTP password for #{$smtp_options["user"]}"
+   pass = UI::secret "Enter SMTP password for #{$smtp_options["user"]}"
    log = ["login", true]
    cram = ["cram_md5", true]
    tls = ["tls", true]
@@ -72,7 +72,7 @@ Then /^attempt connections with various SMTP security settings$/ do
 end
 
 Then /^attempt connections with various IMAP security settings$/ do
-   pass = secret "Enter IMAP password for #{$imap_options["user"]}"
+   pass = UI::secret "Enter IMAP password for #{$imap_options["user"]}"
    log = ["login", true]
    cram = ["cram_md5", true]
    notls = ["tls", false]

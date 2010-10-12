@@ -282,7 +282,7 @@ module CARPS
                }
                config = EmailConfig.new @address, @same_pass, imap_options, smtp_options
                puts config.emit.to_yaml
-               good = confirm "Are the above settings correct?"
+               good = UI::confirm "Are the above settings correct?"
                if good
                   if config.imap.ok? and config.smtp.ok?
                      config.save
@@ -391,7 +391,7 @@ module CARPS
                test_ipc @shell, mut
                if mut.working?
                   UI::highlight mut.works?
-                  good = confirm "Did it say 'It works!' in the new window?"
+                  good = UI::confirm "Did it say 'It works!' in the new window?"
                   if good
                      @shell.save
                      test_passed
@@ -454,9 +454,9 @@ module CARPS
                   if after == before
                      multi_fail "Your editor is detaching itself into the background.", "You did not edit the paragraph.  Do so!", "The editor did not save the file correctly.", "The editor did not load the file correctly."
                   else
-                     before_good = confirm "Before you starting editing, did the editor display this text?\n#{before}"
+                     before_good = UI::confirm "Before you starting editing, did the editor display this text?\n#{before}"
                      if before_good
-                        after_good = confirm "Did you change that to this?\n#{after}"
+                        after_good = UI::confirm "Did you change that to this?\n#{after}"
                         if after_good
                            @editor.save
                            test_passed

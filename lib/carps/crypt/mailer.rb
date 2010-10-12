@@ -145,7 +145,7 @@ module CARPS
       #
       # Refactored out for tinkering and automated testing.
       def accept_handshake? from
-         confirm "Accept handshake from #{from}?"
+         UI::confirm "Accept handshake from #{from}?"
       end
 
 

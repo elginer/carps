@@ -23,7 +23,7 @@ module CARPS
    class UserVerifier
       def verify sheet
          sheet.display
-         confirm "Is the above character sheet correct?"
+         UI::confirm "Is the above character sheet correct?"
       end
    end
 

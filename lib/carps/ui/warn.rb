@@ -19,15 +19,19 @@ require "carps/util/colour"
 
 module CARPS
 
-   # Print a warning message to stderr
-   def UI::warn reason, *msgs
-      h = HighLine.new
-      $stderr.write h.color("Warning:\n", :warning)
-      $stderr.write h.color(reason + "\n", :warning)
-      msgs.each do |msg|
-         $stderr.write msg + "\n"
+   module UI
+
+      # Print a warning message to stderr
+      def UI::warn reason, *msgs
+         h = HighLine.new
+         $stderr.write h.color("Warning:\n", :warning)
+         $stderr.write h.color(reason + "\n", :warning)
+         msgs.each do |msg|
+            $stderr.write msg + "\n"
+         end
+         puts "\a" 
       end
-      puts "\a" 
+
    end
 
 end
