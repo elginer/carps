@@ -17,33 +17,15 @@
 # along with CARPS.  If not, see <http://www.gnu.org/licenses/>.
 
 # Test that a mod running in another process can save its state via CARPS. 
-require "drb"
 
-require "highline"
-
-def its_over status=0
-   h = HighLine.new
-   h.ask "Press enter to exit"
-   exit status
-end
-
-puts "CARPS mod saver test"
-puts ARGV
-url = ""
-if ARGV[0] == "-p"
-   url = ARGV[1]
-elsif ARGV[0] == "-h"
-   url = ARGV[2]
-else
-   url = ARGV[0]
-end
-
-unless url
-   its_over 1
-end
-puts "Listening on " + url
+require "carps/mod/launch"
+require "carps/util/error"
 
 class Saver
+
+   def mailer= mailer
+      @mailer = mailer
+   end
 
    def initialize
       @state = 99
@@ -51,27 +33,39 @@ class Saver
 
    def inc
       @state += 1
-      puts "state now #{@state}"
+      puts "Saver: state now #{@state}"
    end
 
 end
 
-begin
-   mail = DRbObject.new nil, url
-   old = mail.load
-   if old
-      puts "Loading old mod"
-      old.inc
-   else
-      puts "Creating new mod"
-      me = me = Saver.new
-      me.inc
-      mail.save me
+module SaverMod
+
+   module Player      
+      
+      def Player::create_mod mailer
+         Saver.new
+      end
+
+      def Player::launch mod
+         mod.inc
+      end
+
    end
-rescue StandardError => e
-   puts "ERROR:"
-   puts e
-   its_over 1
+
+   module DM
+
+      def DM::create_mod campaign, mailer
+         Saver.new
+      end
+
+      def DM::launch mod
+         mod.inc
+      end
+
+   end
+
 end
 
-its_over
+CARPS::Launcher.launch SaverMod
+
+CARPS::enter_quit
