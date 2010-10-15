@@ -58,34 +58,9 @@ module CARPS
          V.character_sheet @sheet.to_yaml
       end
 
-      # Display the sheet 
-      def display
-         puts @sheet.to_yaml
-      end
-
-      # Verify the sheet's syntax.
-      def syntax_error schema
-         schema.each do |field, type|
-            valid, coerced = verify_type @sheet[field], type
-            if valid
-               @sheet[field] = coerced
-            else
-               return field + " was not " + type
-            end
-         end
-         return nil
-      end
-
       # Dump the sheet!
       def dump
          @sheet
-      end
-
-      private
-
-      def verify_type val, type_str
-         type = TypeParser.parse type_str
-         type.verify val
       end
 
    end
