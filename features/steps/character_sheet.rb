@@ -1,15 +1,14 @@
-require "carps/mod/sheet_editor"
-require "carps/mod/sheet_verifier"
-
-require "yaml"
+require "carps/mod"
 
 include CARPS
+include Sheet
 
 Given /^a character sheet schema$/ do
-$schema = 
-   {"name" => "text",
-    "fruit" => "text",
-    "days old" => "integer"}
+   $schema =Schema.new(
+      {"name" => "text",
+       "fruit" => "text",
+       "days old" => "integer"
+      })
 end
 
 Given /^a sheet editor$/ do
@@ -21,15 +20,15 @@ Then /^fill in the character sheet$/ do
 end
 
 Then /^edit the character sheet again$/ do
-   $editor.fill $sheet.dump
+   $editor.fill $sheet
 end
 
 When /^a valid sheet is provided$/ do
-   $sheet = CharacterSheet.new({"name" => "billy", "fruit" => "apple", "days old" => 11})
+   $sheet = Character.new({"name" => "billy", "fruit" => "apple", "days old" => 11})
 end
 
 When /^an invalid sheet is provided$/ do
-   $sheet = CharacterSheet.new({"name" => "billy", "fruit" => "apple", "days old" => "many"})
+   $sheet = Character.new({"name" => "billy", "fruit" => "apple", "days old" => "many"})
 end
 
 
@@ -66,7 +65,7 @@ END
 end
 
 Then /^parse the sheet$/ do
-   sheet, blob = CharacterSheet.parse $input
+   sheet, blob = NewSheet.parse $input
    puts "Parsed:"
    sheet.display
 end
@@ -77,10 +76,10 @@ end
 
 Then /^do not parse the sheet$/ do
    begin
-      CharacterSheet.parse $input
+      NewSheet.parse $input
       raise Exception, "Parsed the sheet!"
    rescue Expected => e
-      puts e.to_s
+      puts e.message
    end
 end
 

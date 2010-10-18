@@ -34,15 +34,9 @@ module CARPS
 
          # Fill in the sheet
          def fill current=Character.new
-            sheet = create_sheet current
-            filled = nil 
-            until filled
-               sheet = edit sheet
-               if valid?(character_sheet)
-                  filled = character_sheet
-               end
-            end
-            filled
+            sheet = create_sheet_text current
+            validate sheet
+            sheet
          end
 
          # Edit the sheet until it is valid
@@ -58,38 +52,46 @@ module CARPS
                   failures.each do |f|
                      puts f
                   end
-                  edit sheet
+                  sheet = edit sheet
                end
             end
+            sheet
          end
 
          private
 
          # Edit the sheet
          def edit sheet
-            sheet_text =
-               begin
-                  sheet_map = YAML.load sheet_text
-               rescue ArgumentError => e
-                  put_error e.message
-                  next
-               end
+            sheet_text = create_sheet_text sheet
+            sheet_map = nil
+            begin
+               editor = CARPS::Editor.load
+               sheet_text = editor.edit sheet_text
+               sheet_map = YAML.load sheet_text
+            rescue ArgumentError => e
+               put_error e.message
+            end
+            if sheet_map
+               Character.new sheet_map
+            end
          end
 
          # Create sheet text 
-         def create_sheet current
-            if current.empty?
-               @schema.each_key do |field|
-                  current[field] = nil
+         def create_sheet_text user_sheet
+            user_sheet.visit do |current|
+               if current.empty?
+                     @schema.each_key do |field|
+                     current[field] = nil
+                  end
                end
+               sheet = "# Character sheet\n"
+               current.each do |field, value|
+                  type = @schema[field]
+                  sheet += "# #{field} is #{type}\n"
+                  sheet += "#{field}: #{value}\n"
+               end
+               return sheet
             end
-            sheet = "# Character sheet\n"
-            current.each do |field, value|
-               type = @schema[field]
-               sheet += "# #{field} is #{type}\n"
-               sheet += "#{field}: #{value}\n"
-            end
-            sheet
          end
 
       end

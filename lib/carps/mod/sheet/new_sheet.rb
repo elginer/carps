@@ -27,40 +27,43 @@ require "drb"
 
 module CARPS
 
-   # A character sheet filled in by a player.
-   class CharacterSheet < Message
+   module Sheet 
+      # A character sheet filled in by a player.
+      class NewSheet < Message
 
-      # Extend the protocol
-      protoval :character_sheet
+         # Extend the protocol
+         protoval :character_sheet
 
-      # Write the sheet 
-      def initialize sheet
-         @sheet = sheet
-      end
-
-      # Parse from the void
-      def CharacterSheet.parse blob
-         sheet, blob = find K.character_sheet, blob
-         y = nil
-         begin
-            y = YAML.load sheet
-         rescue ArgumentError => e
+         # Write the sheet 
+         def initialize sheet
+            @sheet = sheet
          end
-         if y
-            [CharacterSheet.new(y), blob]
-         else
-            raise Expected, "Expected valid YAML segment."
+
+         # Parse from the void
+         def NewSheet.parse blob
+            sheet, blob = find K.character_sheet, blob
+            y = nil
+            begin
+               y = YAML.load sheet
+            rescue ArgumentError => e
+            end
+            if y
+               [NewSheet.new(y), blob]
+            else
+               raise Expected, "Expected valid YAML segment."
+            end
          end
-      end
 
-      # Emit
-      def emit
-         V.character_sheet @sheet.to_yaml
-      end
+         # Emit
+         def emit
+            V.character_sheet @sheet.to_yaml
+         end
 
-      # Dump the sheet!
-      def dump
-         @sheet
+         # Dump the sheet!
+         def dump
+            @sheet
+         end
+
       end
 
    end

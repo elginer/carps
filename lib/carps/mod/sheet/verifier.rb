@@ -19,12 +19,16 @@ require "carps/ui/question"
 
 module CARPS
 
-   # Character sheet semantic verifier that asks the user if the sheet is true
-   class UserVerifier
-      def verify sheet
-         sheet.display
-         UI::confirm "Is the above character sheet correct?"
+   module Sheet
+
+      # Character sheet semantic verifier that asks the user if the sheet is true
+      class UserVerifier
+         def verify sheet
+            sheet.display
+            UI::confirm "Is the above character sheet correct?"
+         end
       end
+
    end
 
 end
