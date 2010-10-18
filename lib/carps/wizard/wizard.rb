@@ -17,7 +17,7 @@
 
 require "carps/service/interface"
 
-require "carps/util/error"
+require "carps/util"
 
 require "carps/ui"
 
@@ -113,7 +113,7 @@ module CARPS
             real_dir = $CONFIG + "/" + dir
             if File.exists? real_dir
                unless File.ftype(real_dir) == type
-                  fatal "#{real_dir} was not a #{type}.  CARPS needs this space:  move it elsewhere!"
+                  CARPS::fatal "#{real_dir} was not a #{type}.  CARPS needs this space:  move it elsewhere!"
                end
             else
                yield real_dir

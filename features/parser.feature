@@ -4,6 +4,6 @@ Feature: message parsing
 
    Scenario: parse invitation
       When an invitation is sent
-      Given a client parser
+      Given a parser
       Then emit the message
       Then parse the message

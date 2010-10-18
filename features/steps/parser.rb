@@ -1,7 +1,6 @@
-require "carps/protocol/message"
+require "carps/protocol"
 
-require "carps/service/game"
-require "carps/service/client_parser"
+require "carps/service"
 
 include CARPS
 
@@ -10,7 +9,7 @@ When /^an invitation is sent$/ do
 end
 
 Given /^a parser$/ do
-   $parser = client_parser 
+   $parser = Player::parser 
 end
 
 Then /^emit the message$/ do

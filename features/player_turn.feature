@@ -13,7 +13,7 @@ Feature: client turns
 
    Scenario: take turn
       Given a status report and a number of questions
-      Then all the questions should be asked#
+      Then all the questions should be asked
 
    Scenario: parse answers
       Given answers from a player's turn

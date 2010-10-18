@@ -1,9 +1,6 @@
-require "carps/mod/status_report"
-require "carps/mod/answers"
-require "carps/mod/client_turn"
-require "carps/mod/question"
+require "carps/mod"
 
-require "carps/protocol/message"
+require "carps/protocol"
 
 include CARPS
 
@@ -34,7 +31,7 @@ Given /^a status report and a number of questions$/ do
    s = StatusReport.new "Halt, mortal!"
    q1 = Question.new "Who are you?"
    q2 = Question.new "What are you doing here?"
-   $turn = ClientTurn.new CharacterSheet.new({}), s, [q1, q2]
+   $turn = ClientTurn.new Sheet::NewSheet.new({}), s, [q1, q2]
 end
 
 When /^a turn is sent$/ do

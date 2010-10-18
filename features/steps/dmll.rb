@@ -1,7 +1,4 @@
-require "carps/mod/dm/room"
-require "carps/mod/dm/reporter"
-require "carps/mod/dm/resource"
-require "carps/mod/dm/character"
+require "carps/mod"
 
 include CARPS
 

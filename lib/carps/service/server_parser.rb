@@ -15,11 +15,9 @@
 # You should have received a copy of the GNU General Public License
 # along with CARPS.  If not, see <http://www.gnu.org/licenses/>.
 
-require "carps/crypt/default_messages"
+require "carps/crypt"
 
-require "carps/mod/character_sheet"
-
-require "carps/mod/answers"
+require "carps/mod"
 
 module CARPS
 
@@ -27,7 +25,7 @@ module CARPS
 
       # Create a parser which parses messages for the server 
       def DM::parser
-         MessageParser.new default_messages + [CharacterSheet, Answers]
+         MessageParser.new default_messages + [Sheet::NewSheet, Answers]
       end
 
    end

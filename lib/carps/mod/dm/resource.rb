@@ -35,7 +35,7 @@ module CARPS
       def new_npc type
          sheet_loc = @dir + "/npcs/" + type + ".yaml"
          begin
-            return YAML::load File.read sheet_loc
+            Sheet::Character.new YAML::load File.read sheet_loc
          rescue
             UI::warn "Could not create NPC: " + sheet_loc
             return nil

@@ -17,12 +17,9 @@
 
 # A status report, followed by a list of questions
 
-require "carps/protocol/message"
+require "carps/protocol"
 
-require "carps/mod/answers"
-require "carps/mod/question"
-require "carps/mod/status_report"
-require "carps/mod/character_sheet"
+require "carps/mod"
 
 module CARPS
 
@@ -46,7 +43,7 @@ module CARPS
       # Parse
       def ClientTurn.parse blob
          forget, blob = find K.client_turn, blob
-         sheet, blob = CharacterSheet.parse blob
+         sheet, blob = Sheet::NewSheet.parse blob
          status, blob = StatusReport.parse blob
          more = true
          questions = []

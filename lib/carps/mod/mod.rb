@@ -15,8 +15,7 @@
 # You should have received a copy of the GNU General Public License
 # along with CARPS.  If not, see <http://www.gnu.org/licenses/>.
 
-require "carps/mod/sheet_verifier"
-require "carps/mod/sheet_editor"
+require "carps/mod"
 
 module CARPS
 
@@ -30,17 +29,17 @@ module CARPS
 
       # The semantic verifier
       def semantic_verifier
-         UserVerifier.new
+         Sheet::UserVerifier.new
       end
 
       # The schema
       def schema
-         {}
+         Sheet::Schema.new({})
       end
 
       # Sheet editor
       def editor
-         SheetEditor.new schema, semantic_verifier
+         Sheet::Editor.new schema, semantic_verifier
       end
 
    end

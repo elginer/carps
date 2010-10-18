@@ -17,6 +17,8 @@
 
 require "carps/ui"
 
+require "carps/mod"
+
 module CARPS
 
 
@@ -33,25 +35,34 @@ module CARPS
          end
 
          # Fill in the sheet
-         def fill current=Character.new
-            sheet = create_sheet_text current
+         def fill sheet=Character.new
+            sheet = edit sheet
             validate sheet
-            sheet
+         end
+
+         # Is the sheet valid?
+         def valid? sheet
+            failures = sheet.visit {|stats| @schema.produce_errors stats}
+            unless failures
+               failures = sheet.visit {|stats| @semantics.produce_errors stats}
+            end
+            if failures
+               UI::put_error "Character sheet was incorrect:"
+               failures.each do |f|
+                  puts f
+               end
+               return false
+            else
+               return true
+            end
          end
 
          # Edit the sheet until it is valid
          def validate sheet
-            vaild = false
+            valid = false
             until valid
-               failure = sheet.visit {|stats| @schema.produce_errors stats}
-               unless failure
-                  failure = sheet.visit {|stats| @semantics.produce_errors stats}
-               end
-               if failures
-                  UI::put_error "Character sheet was incorrect:"
-                  failures.each do |f|
-                     puts f
-                  end
+               valid = valid? sheet
+               unless valid
                   sheet = edit sheet
                end
             end
@@ -62,7 +73,7 @@ module CARPS
 
          # Edit the sheet
          def edit sheet
-            sheet_text = create_sheet_text sheet
+            sheet_text = @schema.create_sheet_text sheet
             sheet_map = nil
             begin
                editor = CARPS::Editor.load
@@ -73,24 +84,6 @@ module CARPS
             end
             if sheet_map
                Character.new sheet_map
-            end
-         end
-
-         # Create sheet text 
-         def create_sheet_text user_sheet
-            user_sheet.visit do |current|
-               if current.empty?
-                     @schema.each_key do |field|
-                     current[field] = nil
-                  end
-               end
-               sheet = "# Character sheet\n"
-               current.each do |field, value|
-                  type = @schema[field]
-                  sheet += "# #{field} is #{type}\n"
-                  sheet += "#{field}: #{value}\n"
-               end
-               return sheet
             end
          end
 

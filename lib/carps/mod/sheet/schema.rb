@@ -23,17 +23,48 @@ module CARPS
       # and uses it to perform syntactic validations on character sheets
       class Schema
 
+         # Create a new schema
+         def initialize schema
+            @schema = schema
+         end
+
+
          # Verify the sheet's syntax.
-         def syntax_error schema
-            schema.each do |field, type|
-               valid, coerced = verify_type @sheet[field], type
+         #
+         # Produce errors if it's invalid, nil if it's valid
+         def produce_errors sheet
+            errs = []
+            @schema.each do |field, type|
+               valid, coerced = verify_type sheet[field], type
                if valid
-                  @sheet[field] = coerced
+                  sheet[field] = coerced
                else
-                  return field + " was not " + type
+                  errs.push field + " was not " + type
                end
             end
-            return nil
+            if errs.empty?
+               nil
+            else
+               errs
+            end
+         end
+
+         # Create sheet text for the user to edit 
+         def create_sheet_text user_sheet
+            user_sheet.visit do |current|
+               if current.empty?
+                     @schema.each_key do |field|
+                     current[field] = nil
+                  end
+               end
+               sheet = "# Character sheet\n"
+               current.each do |field, value|
+                  type = @schema[field]
+                  sheet += "# #{field} is #{type}\n"
+                  sheet += "#{field}: #{value}\n"
+               end
+               return sheet
+            end
          end
 
          protected

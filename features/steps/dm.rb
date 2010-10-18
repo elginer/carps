@@ -1,10 +1,4 @@
-require "carps/mod/dm/mod"
-require "carps/mod/dm/resource"
-
-require "carps/mod/dm/interface"
-
-require "carps/mod/sheet_verifier"
-require "carps/mod/sheet_editor"
+require "carps/mod"
 
 require "yaml"
 
@@ -33,11 +27,8 @@ class TestMailer
    end
 
    def barry
-      editor = SheetEditor.new $schema, UserVerifier.new
-      filled = {"name" => "bob", "fruit" => "kumquat", "days old" => 12}
-      sheet = editor.fill filled
-      sheet.from = $email
-      @sheet = sheet
+      @sheet = Sheet::NewSheet.new({"name" => "bob", "fruit" => "kumquat", "days old" => 12})
+      @sheet.from = "barry"
    end
 
    def read klass, from=nil
@@ -81,7 +72,7 @@ end
 
 Then /^set (.+)'s status conditionally$/ do |name|
    player = $mod.player_stats(name)
-   $mod.update_barry "You are a #{player["fruit"]}"
+   $mod.update_barry "You are a #{player.visit{|sheet| sheet["fruit"]}}"
 end
 
 Then /^preview player turns$/ do
@@ -151,5 +142,5 @@ end
 
 Then /^report the strength of the NPC (.+) to (.+)$/ do |npc_name, name|
    npc = $mod.npc_stats npc_name
-   $mod.update_player name, "#{npc_name}'s strength is #{npc["strength"]}"
+   $mod.update_player name, "#{npc_name}'s strength is #{npc.visit{|sheet| sheet["strength"]}}"
 end

@@ -15,7 +15,7 @@
 # You should have received a copy of the GNU General Public License
 # along with CARPS.  If not, see <http://www.gnu.org/licenses/>.
 
-require "carps/mod/dm/character"
+require "carps/mod/mod"
 require "carps/mod/dm/interface"
 require "carps/mod/dm/mod"
 require "carps/mod/dm/reporter"
@@ -27,7 +27,6 @@ require "carps/mod/answers"
 require "carps/mod/client_turn"
 require "carps/mod/dice"
 require "carps/mod/interface"
-require "carps/mod/mod"
 require "carps/mod/question"
 require "carps/mod/sheet/editor"
 require "carps/mod/sheet/type"

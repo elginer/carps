@@ -17,15 +17,22 @@
 
 require "carps/ui/question"
 
+require "yaml"
+
 module CARPS
 
    module Sheet
 
       # Character sheet semantic verifier that asks the user if the sheet is true
       class UserVerifier
-         def verify sheet
-            sheet.display
-            UI::confirm "Is the above character sheet correct?"
+
+         # Produce errors if the sheet is incorrect
+         def produce_errors sheet
+            text = sheet.to_yaml
+            puts text
+            unless UI::confirm("Is the above character sheet correct?")
+               ["User refused to accept sheet."]
+            end
          end
       end
 

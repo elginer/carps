@@ -15,11 +15,11 @@
 # You should have received a copy of the GNU General Public License
 # along with CARPS.  If not, see <http://www.gnu.org/licenses/>.
 
-require "carps/protocol/message"
+require "carps/protocol"
 
-require "carps/mod/answers"
+require "carps/mod"
 
-require "carps/ui/question"
+require "carps/ui"
 
 module CARPS
 
@@ -49,7 +49,7 @@ module CARPS
 
       # Ask the question, store the answer in the answers object
       def ask answers
-         response = question @text
+         response = UI::question @text
          answers.answer @text, response
       end
 

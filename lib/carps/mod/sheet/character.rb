@@ -30,21 +30,21 @@ module CARPS
             @sheet = sheet
          end
 
-         # Display the sheet 
-         def display
-            puts @sheet.to_yaml
-         end
-
          # Visit the sheet
          #
          # Takes a block
-         def visit_sheet
+         def visit
             yield @sheet
          end
 
          # The sheet has no entries - it is uninitialized!
          def empty?
             @sheet.empty?
+         end
+
+         # Emit
+         def emit
+            @sheet.to_yaml
          end
 
       end

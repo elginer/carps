@@ -10,6 +10,7 @@ class PlayerTestMod < Player::Mod
    def schema
       $schema
    end
+
 end
 
 class PlayerModTestMailer
@@ -26,6 +27,11 @@ class PlayerModTestMailer
 
    def turn t
       @mail = t
+   end
+
+   def save mod
+      puts "Saving"
+      puts mod.to_s
    end
 
 end
@@ -50,7 +56,7 @@ end
 When /^the player receives turn information$/ do
    status = StatusReport.new "You are a player don't you know!"
    questions = [Question.new("Who are you, you strange man?")]
-   t = ClientTurn.new CharacterSheet.new({}), status, questions
+   t = ClientTurn.new Sheet::NewSheet.new({}), status, questions
    $mailer.turn t 
 end
 

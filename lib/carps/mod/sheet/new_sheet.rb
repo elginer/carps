@@ -15,11 +15,11 @@
 # You should have received a copy of the GNU General Public License
 # along with CARPS.  If not, see <http://www.gnu.org/licenses/>.
 
-require "carps/protocol/message"
+require "carps/protocol"
 
-require "carps/util/editor"
+require "carps/util"
 
-require "carps/mod/sheet_type"
+require "carps/mod"
 
 require "yaml"
 
@@ -28,7 +28,7 @@ require "drb"
 module CARPS
 
    module Sheet 
-      # A character sheet filled in by a player.
+      # A character sheet filled in by a user, sent across the net
       class NewSheet < Message
 
          # Extend the protocol

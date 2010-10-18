@@ -33,11 +33,11 @@ class MockConfig < DM::GameConfig
 end
 
 Then /^host a new game called (.+) with resource (.+) and mod (.+)$/ do |game_name, campaign, mod_name|
-   $game = DM::GameConfig.new mod_name, campaign, "A game about things", ["joe@bloggs.com"], "session12345" 
+   $game = DM::GameConfig.new game_name, mod_name, campaign, "A game about things", ["joe@bloggs.com"], "session12345" 
 end
 
 Then /^save the game as (.+)$/ do |filename|
-   $game.save filename
+   $game.save
 end
 
 Then /^the dm resumes a previous game called (.+)$/ do |filename|

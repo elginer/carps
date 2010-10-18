@@ -1,15 +1,13 @@
-require "carps/mod/sheet_type"
+require "carps/mod"
 
 require "yaml"
-
-include CARPS
 
 Given /^an integer$/ do
    $val = 123
 end
 
 Then /^verify: (.+) as a (.+)$/ do |opt, type_name|
-   type = TypeParser.parse type_name
+   type = Sheet::TypeParser.parse type_name
    accepted, coerced = type.verify $val
    pass = opt == "accept"
    unless (pass and accepted) or (not pass and not accepted)

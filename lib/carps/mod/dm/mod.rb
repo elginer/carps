@@ -15,14 +15,7 @@
 # You should have received a copy of the GNU General Public License
 # along with CARPS.  If not, see <http://www.gnu.org/licenses/>.
 
-require "carps/mod/answers"
-require "carps/mod/character_sheet"
-require "carps/mod/sheet_editor"
-require "carps/mod/question"
-require "carps/mod/mod"
-
-require "carps/mod/dm/reporter"
-require "carps/mod/dm/character"
+require "carps/mod"
 
 require "carps/ui"
 
@@ -58,8 +51,7 @@ module CARPS
          def edit_player_sheet name
             with_player name do
                sheet = @players[name]
-               editor = SheetEditor.new schema, semantic_verifier
-               sheet = editor.fill sheet.dump
+               sheet = editor.fill sheet
                @players[name] = sheet
                @reporter.sheet name, sheet
             end
@@ -69,8 +61,7 @@ module CARPS
          def edit_npc_sheet name
             with_npc name do
                sheet = @npcs[name]
-               editor = SheetEditor.new schema, semantic_verifier
-               @npcs[name] = editor.fill sheet.dump
+               @npcs[name] = editor.fill sheet
             end
          end
 
@@ -150,10 +141,8 @@ module CARPS
          # Create a new npc
          def new_npc type, name
             if char = @resource.new_npc(type)
-               validator = SheetEditor.new schema, semantic_verifier
-               if validator.valid? CharacterSheet.new(char)
-                  @npcs[name] = npc.new char
-               end
+               char = editor.validate char 
+               @npcs[name] = char
             end
          end
 
@@ -274,13 +263,12 @@ module CARPS
 
          # Check for mail 
          def check_mail
-
-            if mail = @mailer.check(CharacterSheet)
+            if mail = @mailer.check(Sheet::NewSheet)
                unless @mails.member? mail.from 
                   add_player mail.from
                end
                with_valid_mail mail do |moniker|
-                  new_character_sheet moniker, mail
+                  new_character_sheet moniker, Sheet::Character.new(mail.dump)
                end
             elsif mail = @mailer.check(Answers)
                with_valid_mail mail do |moniker|
@@ -288,8 +276,11 @@ module CARPS
                end
             end
 
-            unless mail
+            if mail
+               true
+            else
                puts "No new mail."
+               false
             end
 
          end
@@ -297,22 +288,12 @@ module CARPS
          # Register a new character sheet
          def new_character_sheet moniker, sheet
             UI::highlight "New character sheet for #{moniker}"
-            unless editor.valid?(sheet)
-               sheet = editor.fill sheet.dump
-            end
-            @players[moniker] = player.new sheet.dump
+            sheet = editor.validate sheet
+            @players[moniker] = sheet
             @reporter.sheet moniker, sheet
          end
 
          protected
-
-         def player
-            Character
-         end
-
-         def npc
-            Character
-         end
 
          # Send the reports
          def send_reports

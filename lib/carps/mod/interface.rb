@@ -15,11 +15,11 @@
 # You should have received a copy of the GNU General Public License
 # along with CARPS.  If not, see <http://www.gnu.org/licenses/>.
 
-require "carps/service/interface"
+require "carps/service"
 
-require "carps/mod/dice"
+require "carps/mod"
 
-require "carps/ui/error"
+require "carps/ui"
 
 module CARPS
 

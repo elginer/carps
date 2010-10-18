@@ -15,10 +15,7 @@
 # You should have received a copy of the GNU General Public License
 # along with CARPS.  If not, see <http://www.gnu.org/licenses/>.
 
-require "carps/mod/mod"
-require "carps/mod/character_sheet"
-require "carps/mod/sheet_editor"
-require "carps/mod/client_turn"
+require "carps/mod"
 
 require "carps/ui"
 
@@ -31,20 +28,19 @@ module CARPS
 
          def initialize pmailer
             @mailer = pmailer
-            @sheet = CharacterSheet.new({})
+            @sheet = Sheet::Character.new({})
             edit_sheet
          end
 
          # Edit the character sheet
          def edit_sheet
-            edit = SheetEditor.new schema, semantic_verifier
-            @sheet = edit.fill @sheet.dump
+            @sheet = editor.fill @sheet
             @edited = true
          end
 
          # Show the character sheet
          def show_sheet
-            @sheet.display
+            puts @sheet.emit
          end
 
          # Save the game

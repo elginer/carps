@@ -15,12 +15,9 @@
 # You should have received a copy of the GNU General Public License
 # along with CARPS.  If not, see <http://www.gnu.org/licenses/>.
 
-require "carps/mod/question"
-require "carps/mod/client_turn"
-require "carps/mod/status_report"
-require "carps/mod/character_sheet"
+require "carps/mod"
 
-require "carps/util/editor"
+require "carps/util"
 
 module CARPS
 
@@ -49,9 +46,12 @@ module CARPS
          questions = qtext.map {|q| que = Question.new q}
          sheet = @sheets[moniker]
          unless sheet
-            sheet = CharacterSheet.new({})
+            sheet = Sheet::Character.new({})
          end
-         ClientTurn.new sheet, status, questions 
+         # Hmmmm this looks silly
+         stats = sheet.visit{|stats| stats}
+         new_sheet = Sheet::NewSheet.new stats
+         ClientTurn.new new_sheet, status, questions 
       end
 
       # Produce a hash of email address to ClientTurn objects

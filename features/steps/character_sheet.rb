@@ -1,10 +1,9 @@
 require "carps/mod"
 
 include CARPS
-include Sheet
 
 Given /^a character sheet schema$/ do
-   $schema =Schema.new(
+   $schema =Sheet::Schema.new(
       {"name" => "text",
        "fruit" => "text",
        "days old" => "integer"
@@ -12,7 +11,7 @@ Given /^a character sheet schema$/ do
 end
 
 Given /^a sheet editor$/ do
-   $editor = SheetEditor.new $schema, UserVerifier.new 
+   $editor = Sheet::Editor.new $schema, Sheet::UserVerifier.new 
 end
 
 Then /^fill in the character sheet$/ do
@@ -24,11 +23,11 @@ Then /^edit the character sheet again$/ do
 end
 
 When /^a valid sheet is provided$/ do
-   $sheet = Character.new({"name" => "billy", "fruit" => "apple", "days old" => 11})
+   $sheet = Sheet::Character.new({"name" => "billy", "fruit" => "apple", "days old" => 11})
 end
 
 When /^an invalid sheet is provided$/ do
-   $sheet = Character.new({"name" => "billy", "fruit" => "apple", "days old" => "many"})
+   $sheet = Sheet::Character.new({"name" => "billy", "fruit" => "apple", "days old" => "many"})
 end
 
 
@@ -65,7 +64,7 @@ END
 end
 
 Then /^parse the sheet$/ do
-   sheet, blob = NewSheet.parse $input
+   sheet, blob = Sheet::NewSheet.parse $input
    puts "Parsed:"
    sheet.display
 end
@@ -76,7 +75,7 @@ end
 
 Then /^do not parse the sheet$/ do
    begin
-      NewSheet.parse $input
+      Sheet::NewSheet.parse $input
       raise Exception, "Parsed the sheet!"
    rescue Expected => e
       puts e.message
@@ -84,7 +83,7 @@ Then /^do not parse the sheet$/ do
 end
 
 Then /^accept the valid sheet$/ do
-   valid = $editor.valid? $sheet
+   valid = $editor.validate $sheet
    unless valid
       raise StandardError, "Failed valid sheet."
    end

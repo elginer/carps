@@ -35,17 +35,19 @@ module CARPS
          end
 
          def verify val
+            if val == nil
+               if @optional
+                  return [true, nil]
+               end
+            end
             ok = false
             if coercion
                ok = valid(val) && val.respond_to?(coercion)
             else
                ok = valid(val)
             end
-            if val == nil
-               if @optional
-                  return [true, nil]
-               end
-            elsif ok
+
+            if ok
                if empty(val) and @optional
                   return [true, nil]
                else
@@ -78,10 +80,6 @@ module CARPS
 
          def valid val
             val.class == Fixnum
-         end
-
-         def coercion
-            :to_i
          end
 
       end
