@@ -27,6 +27,8 @@ module CARPS
       # Functions as a facade to the resource, mailer and reporter classes.
       #
       # Subclasses should override schema and semantic_verifier
+      #
+      # FIXME: This class is WAY too big
       class Mod < CARPS::Mod
 
          # Initialize with a resource manager, and a mailer 
@@ -40,6 +42,11 @@ module CARPS
             @monikers = {}
             @mails = {}
             @semaphore = Mutex.new
+         end
+
+         # Invite a new player
+         def invite addr
+            @mailer.invite addr
          end
 
          # Save the game

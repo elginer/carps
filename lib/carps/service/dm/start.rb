@@ -15,13 +15,11 @@
 # You should have received a copy of the GNU General Public License
 # along with CARPS.  If not, see <http://www.gnu.org/licenses/>.
 
-require "carps/service/start/interface"
+require "carps/service"
 
-require "carps/service/mod"
+require "carps/util"
 
-require "carps/util/editor"
-
-require "carps/ui/error"
+require "carps/ui"
 
 module CARPS
 
@@ -32,43 +30,16 @@ module CARPS
 
          def initialize continuation, mailer, game_config, manager 
             super
-            add_command "new", "Start a new game.", "NAME", "MOD", "CAMPAIGN"
+            add_command :new, "Start a new game."
          end
 
          protected
 
-         def new name, mod, campaign
-            mods = load_mods
-            if mods.member? mod
-               editor = Editor.load
-               about = editor.edit "<Replace with description of game>"
-               players = get_players
-               session_id = @manager.generate name + mod + campaign
-               config = @game_config.new name, mod, campaign, about, players, session_id
-               game = config.spawn
-               game.dm = @mailer.address
-               @continuation.call lambda {
-                  game.start @mailer
-               }
-            else
-               UI::put_error "No such mod."
-            end
+         # Start new game
+         def new
+            new_game_interface = NewGameInterface.new @continuation
+            new_game_interface.run
          end
-
-         def get_players
-            pl = []
-            done = false
-            until done
-               e = UI::question "Enter email address of player to invite.  Leave blank for no more players."
-               if e.empty?
-                  done = true
-               else
-                  pl.push e
-               end
-            end
-            pl
-         end
-
       end
 
    end

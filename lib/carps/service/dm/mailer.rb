@@ -15,7 +15,7 @@
 # You should have received a copy of the GNU General Public License
 # along with CARPS.  If not, see <http://www.gnu.org/licenses/>.
 
-require "carps/service/start/mailer"
+require "carps/service"
 
 module CARPS
 
@@ -23,6 +23,34 @@ module CARPS
 
       # A bridge between the DM mod and CARPS 
       class Mailer < ModMailer
+
+         # Create the mailer from
+         #
+         # a Mailer,
+         #
+         # a GameConfig,
+         # 
+         # a session id,
+         #
+         # the email address of the dm,
+         #
+         # the name of the mod,
+         #
+         # and the description of the game
+         def initialize mailer, conf, session, dm, mod, desc
+            super mailer, conf
+            @session = session
+            @dm = dm
+            @mod = mod
+            @about = desc
+         end
+
+         # Invite a new player
+         def invite addr
+            inv = Invite.new @dm, @mod, @about, @session
+            relay inv, message
+         end
+
 
          # Check for mail of a given type
          def check type

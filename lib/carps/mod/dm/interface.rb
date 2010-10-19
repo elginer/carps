@@ -31,29 +31,35 @@ module CARPS
          def initialize mod
             super()
             @mod = mod
-            add_command "mail", "Check for new emails."
-            add_command "save", "Saves the state of the world."
-            add_command "done", "Send all reports and start the next turn."
-            add_command "players", "Describe all players."
-            add_command "player", "Describe one player.", "PLAYER"
-            add_command "npcs", "Describe all NPCs."
-            add_command "npc", "Describe one NPC.", "NPC"
-            add_command "pcstats", "Edit a player's character sheet.", "PLAYER"
-            add_command "npcstats", "Edit an NPC's character sheet.", "NPC"
-            add_command "warp", "Put all player in this room.", "ROOM"
-            add_command "room", "Put one player in this room.", "PLAYER", "ROOM"
-            add_command "spawn", "Create a new npc", "TYPE", "NAME"
-            add_command "decree", "Create a report for all players to see."
-            add_command "edit", "Edit a player's report.", "PLAYER"
-            add_command "census", "Ask a question of every player."
-            add_command "ask", "Ask a question of one player.", "PLAYER"
-            add_command "survey", "Preview the reports and questions to be sent to every player."
-            add_command "inspect", "Preview the report and questions to be sent to one player.", "PLAYER"
-            add_command "nuke", "Clear all reports and questions for all players."
-            add_command "silence", "Clear all reports for all players."
-            add_command "futile", "Clear all questions for all players."
-            add_command "remit", "Clear the report for one player", "PLAYER"
-            add_command "supress", "Clear the questions for one player", "PLAYER"
+            add_command :mail, "Check for new emails."
+            add_command :save, "Saves the state of the world."
+            add_command :done, "Send all reports and start the next turn."
+            add_command :invite, "Invite a new player", "EMAIL"
+            add_command :players, "Describe all players."
+            add_command :player, "Describe one player.", "PLAYER"
+            add_command :npcs, "Describe all NPCs."
+            add_command :npc, "Describe one NPC.", "NPC"
+            add_command :pcstats, "Edit a player's character sheet.", "PLAYER"
+            add_command :npcstats, "Edit an NPC's character sheet.", "NPC"
+            add_command :warp, "Put all player in this room.", "ROOM"
+            add_command :room, "Put one player in this room.", "PLAYER", "ROOM"
+            add_command :spawn, "Create a new npc", "TYPE", "NAME"
+            add_command :decree, "Create a report for all players to see."
+            add_command :edit, "Edit a player's report.", "PLAYER"
+            add_command :census, "Ask a question of every player."
+            add_command :ask, "Ask a question of one player.", "PLAYER"
+            add_command :survey, "Preview the reports and questions to be sent to every player."
+            add_command :inspect, "Preview the report and questions to be sent to one player.", "PLAYER"
+            add_command :nuke, "Clear all reports and questions for all players."
+            add_command :silence, "Clear all reports for all players."
+            add_command :futile, "Clear all questions for all players."
+            add_command :remit, "Clear the report for one player", "PLAYER"
+            add_command :supress, "Clear the questions for one player", "PLAYER"
+         end
+
+         # Invite a new player
+         def invite addr
+            @mod.invite addr
          end
 
          # Quit, but save first
