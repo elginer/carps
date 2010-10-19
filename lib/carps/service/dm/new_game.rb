@@ -39,7 +39,11 @@ module CARPS
 
          # Set the mod
          def mod user_mod
-            @mod  = mod
+            if load_mods.include?(user_mod)
+               @mod = user_mod
+            else
+               UI::put_error "No such mod is installed."
+            end
          end
 
          # Describe the game
