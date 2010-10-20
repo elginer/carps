@@ -90,7 +90,7 @@ module CARPS
          def ask_player player
             with_player player do
                edit = Editor.load
-               question = edit.edit "<Replace with question for #{player}>"
+               question = edit.edit "# Enter question for #{player}"
                @reporter.ask_player player, question
             end
          end
@@ -98,7 +98,7 @@ module CARPS
          # Ask a question of everyone
          def ask_everyone
             edit = Editor.load
-            question = edit.edit "<Replace with question for everyone>"
+            question = edit.edit "# Enter question for everyone"
             @players.each_key do |player|
                @reporter.ask_player player, question
             end

@@ -169,6 +169,12 @@ module CARPS
             @imap_verify = false
          end
 
+         def description
+            "Configure your email account settings."
+         end
+
+         protected
+
          # Provide a string of options
          def options defa, *opts
             out = "Options are:\n\t"
@@ -176,12 +182,6 @@ module CARPS
             out += "\nDefault: #{defa}"
             out
          end
-
-         def description
-            "Configure your email account settings."
-         end
-
-         protected
 
          # Run the block if the string matches a valid authentication mechanism
          def with_valid_auth mech

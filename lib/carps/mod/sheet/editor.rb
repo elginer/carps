@@ -80,7 +80,7 @@ module CARPS
                sheet_text = editor.edit sheet_text
                sheet_map = YAML.load sheet_text
             rescue ArgumentError => e
-               put_error e.message
+               UI::put_error e.message
             end
             if sheet_map
                Character.new sheet_map

@@ -41,16 +41,20 @@ module CARPS
       # Edit a string
       #
       # Not re-entrant
-      def edit string
+      def edit msg
          begin
             file = Tempfile.new "carp_edit"
             path = file.path
-            file.write string
+            file.write "# Lines starting with # will be ignored.\n" + msg 
             file.close
-            string = edit_file path
+            contents = edit_file path
             file = Tempfile.new "carp_edit"
             file.close!
-            string
+            lines = contents.split /\n/
+            lines.reject! do |line|
+               line[0] == '#'
+            end
+            lines.join "\n"
          rescue StandardError => e
             UI::put_error e.to_s
             nil

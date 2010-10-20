@@ -74,7 +74,7 @@ module CARPS
    end
 
    # Client games
-   class GameClient < Game
+   class GameClient
 
       # The first parameter is the dungeon master's name
       # The second is the mod.

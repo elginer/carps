@@ -15,6 +15,10 @@
 # You should have received a copy of the GNU General Public License
 # along with CARPS.  If not, see <http://www.gnu.org/licenses/>.
 
+require "carps/service/start/config"
+require "carps/service/start/interface"
+require "carps/service/start/mailer"
+require "carps/service/dm/new_game"
 require "carps/service/dm/config"
 require "carps/service/dm/mailer"
 require "carps/service/dm/start"

@@ -30,7 +30,21 @@ module CARPS
 
       def initialize 
          @commands = {}
-         add_command "help", "Displays this help message."
+         add_command :help, "Displays this help message."
+      end
+
+      def run
+         consistent!
+         help
+         repl
+      end
+
+      protected
+
+      # Provide a string of options
+      def options *opts
+         out = "Options are:\n\t"
+         out + opts.join("\n\t\tor\n\t")
       end
 
       # Ensure consistency 
@@ -51,6 +65,7 @@ module CARPS
       # You must also create a method 
       # called name which takes each of args as parameters
       def add_command name, help, *args
+         name = name.to_s
          @commands[name] = {"help" => help, "args" => args}
          eval <<-END
          def exec_#{name} args
@@ -63,21 +78,14 @@ module CARPS
 
       # Add a command which receives the text after it, as one, argument: a possibly empty string
       def add_raw_command name, help, *args
+         name = name.to_s
          @commands[name] = {"help" => help, "args" => args}
          eval <<-END
          def exec_#{name} args
-            #{name} args.join " "
+         #{name} args.join " "
          end
          END
       end
-
-      def run
-         consistent!
-         help
-         repl
-      end
-
-      protected
 
       # Check the args are of the correct length
       def check args, length
@@ -115,16 +123,18 @@ module CARPS
          puts ""
       end
 
+      # Read eval print loop
       def repl
          loop do
             rep
          end
       end
 
+      # Read eval print
       def rep 
-        line = UI::question "Enter command:"
-        cmd = line.split /\s+/
-        execute cmd
+         line = UI::question "Enter command:"
+         cmd = line.split /\s+/
+         execute cmd
       end
 
    end
@@ -133,7 +143,7 @@ module CARPS
 
       def initialize
          super
-         add_command "quit", "Quit the program"
+         add_command :quit, "Quit the program"
       end
 
       protected

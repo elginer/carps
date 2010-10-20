@@ -27,15 +27,25 @@ module CARPS
       class NewGameInterface < Interface
 
          # Create a new NewGameInterface from a continuation
-         def initialize cont
+         def initialize cont, manager, config, mailer
+            super()
+            @manager = manager
+            @game_config = config
             @continuation = cont
+            @mailer = mailer
             add_command :go, "Start the game."
             add_command :describe, "Describe the game."
             add_command :name, "Give the game a name.", "NAME"
-            add_command :mod, "Choose the mod.", "MOD"
+            add_command :mod, "Choose the mod.\n#{options load_mods.keys}", "MOD"
+            add_command :campaign, "Choose the campaign.", "CAMPAIGN"
          end
 
          protected
+
+         # Set the campaign
+         def campaign adventure
+            @campaign = adventure
+         end
 
          # Set the mod
          def mod user_mod
@@ -49,7 +59,7 @@ module CARPS
          # Describe the game
          def describe
             editor = Editor.load
-            @description = editor.edit "<Replace with description of game>"
+            @description = editor.edit "# Enter description of game."
          end
 
          # Give the game a name
@@ -66,12 +76,12 @@ module CARPS
                puts "Campaign: #{@campaign}"
                puts "Description: #{@description}"
 
-               happy = confirm "Are these details correct?"
+               happy = UI::confirm "Are these details correct?"
 
                if happy
                   mods = load_mods
                   session_id = @manager.generate @name + @mod + @campaign
-                  config = @game_config.new name, @mod, @campaign, @description, session_id
+                  config = @game_config.new @name, @mod, @campaign, @description, session_id
                   game = config.spawn
                   game.dm = @mailer.address
                   @continuation.call lambda {

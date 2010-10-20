@@ -75,6 +75,7 @@ module CARPS
          unless stat
             stat = ""
          end
+         stat = "# Enter report for #{player}\n" + stat
          @status[player] = editor.edit stat
       end
 

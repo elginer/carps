@@ -37,7 +37,7 @@ module CARPS
 
          # Start new game
          def new
-            new_game_interface = NewGameInterface.new @continuation
+            new_game_interface = NewGameInterface.new @continuation, @manager, @game_config, @mailer
             new_game_interface.run
          end
       end
