@@ -58,6 +58,8 @@ module CARPS
       end
 
       # Output the odds
+      #
+      # That is, a hash of results to the probabalistic weights of these results.
       def odds
          od = {}
          @weights.each do |roll, weight|
