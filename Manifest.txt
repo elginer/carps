@@ -11,6 +11,7 @@ bin/carps_mod_saver_test
 bin/carps_mod_test
 features/character_sheet.feature
 features/crypt.feature
+features/dice.feature
 features/dm.feature
 features/dmll.feature
 features/email.feature
@@ -23,12 +24,14 @@ features/persistent_protocol.feature
 features/player.feature
 features/player_turn.feature
 features/random.feature
+features/safety.feature
 features/sessions.feature
 features/start_dm.feature
 features/start_player.feature
 features/step_definitions/common_steps.rb
 features/steps/character_sheet.rb
 features/steps/crypt.rb
+features/steps/dice.rb
 features/steps/dm.rb
 features/steps/dmll.rb
 features/steps/email.rb
@@ -42,6 +45,7 @@ features/steps/persistent_protocol.rb
 features/steps/player.rb
 features/steps/player_turn.rb
 features/steps/random.rb
+features/steps/safety.rb
 features/steps/sessions.rb
 features/steps/start_dm.rb
 features/steps/start_player.rb
@@ -70,10 +74,8 @@ lib/carps/email/smtp.rb
 lib/carps/email/string.rb
 lib/carps/mod.rb
 lib/carps/mod/answers.rb
-lib/carps/mod/character_sheet.rb
 lib/carps/mod/client_turn.rb
 lib/carps/mod/dice.rb
-lib/carps/mod/dm/character.rb
 lib/carps/mod/dm/interface.rb
 lib/carps/mod/dm/mod.rb
 lib/carps/mod/dm/reporter.rb
@@ -85,9 +87,12 @@ lib/carps/mod/mod.rb
 lib/carps/mod/player/interface.rb
 lib/carps/mod/player/mod.rb
 lib/carps/mod/question.rb
-lib/carps/mod/sheet_editor.rb
-lib/carps/mod/sheet_type.rb
-lib/carps/mod/sheet_verifier.rb
+lib/carps/mod/sheet/character.rb
+lib/carps/mod/sheet/editor.rb
+lib/carps/mod/sheet/new_sheet.rb
+lib/carps/mod/sheet/schema.rb
+lib/carps/mod/sheet/type.rb
+lib/carps/mod/sheet/verifier.rb
 lib/carps/mod/status_report.rb
 lib/carps/protocol.rb
 lib/carps/protocol/keyword.rb
@@ -96,9 +101,11 @@ lib/carps/service.rb
 lib/carps/service/client_parser.rb
 lib/carps/service/dm/config.rb
 lib/carps/service/dm/mailer.rb
+lib/carps/service/dm/new_game.rb
 lib/carps/service/dm/start.rb
 lib/carps/service/game.rb
 lib/carps/service/interface.rb
+lib/carps/service/invite.rb
 lib/carps/service/mod.rb
 lib/carps/service/player/config.rb
 lib/carps/service/player/mailer.rb
@@ -107,6 +114,7 @@ lib/carps/service/server_parser.rb
 lib/carps/service/session.rb
 lib/carps/service/start/config.rb
 lib/carps/service/start/interface.rb
+lib/carps/service/start/mailer.rb
 lib/carps/ui.rb
 lib/carps/ui/colour.rb
 lib/carps/ui/error.rb
