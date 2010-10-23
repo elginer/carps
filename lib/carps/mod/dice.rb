@@ -133,25 +133,21 @@ module CARPS
          new_rolls = {}
          new_weights = {}
          # Compute the new weights
-         @weights.each do |roll, weight|
-            other.weights.each do |oroll, oweight|
+         @weights.keys.sort.reverse.each do |roll|
+            other.weights.keys.each do |oroll|
+               weight = @weights[roll]
+               oweight = other.weights[oroll]
+               result = @rolls[roll]
+               oresult = other.rolls[oroll]
                chance = weight * oweight
                added_roll = roll + oroll
-               if new_weights.include? added_roll
-                  new_weights[added_roll] = new_weights[added_roll] + chance
-               else
-                  new_weights[added_roll] = chance
-               end
-            end
-         end
-         # Compute the new values
-         @rolls.each do |roll, result|
-            other.rolls.each do |oroll, oresult|
                new_result = yield result, oresult
-               added_roll = roll + oroll
-               unless new_rolls.include? added_roll
-                  new_rolls[added_roll] = new_result
+               new_side = roll + oroll
+               if new_rolls.include? new_side
+                  new_side = new_weights.keys.max + 1
                end
+               new_weights[new_side] = chance
+               new_rolls[new_side] = new_result
             end
          end
          @rolls = new_rolls
@@ -186,8 +182,8 @@ module CARPS
 
       # Update every result in this range
       def in_range_int range, output
-         @rolls.each_key do |roll|
-            if range.include? roll
+         @rolls.to_a.each do |roll, result|
+            if range.include? result
                @rolls[roll] = output
             end
          end
@@ -195,16 +191,34 @@ module CARPS
 
       # Update every result in this range to be the result of a dice roll
       def in_range_dice range, other
-         new_rolls = {}
+         new_rolls = other.rolls
          new_weights = {}
-         range.to_a.each do |roll|
+         affected_rolls = @rolls.reject {|roll, result| not range.include? result}
+         affected_rolls.each_key do |roll|
+            # Add roll to new_weights and new_rolls
             roll_again roll, other, new_rolls, new_weights
+            @weights.delete roll
+            @rolls.delete roll
          end
-         @weights.merge new_weights
-         @rolls.merge new_rolls
+         # Invent new dice sides to cope with multiple roll values
+         other.rolls.keys.each do |roll|
+            if @weights.include? roll
+               weight = new_weights[roll]
+               result = new_rolls[roll]
+               new_weights.delete roll
+               new_rolls.delete roll
+               new_max = new_weights.keys.max
+               old_max = @weights.keys.max
+               new_side = [new_max, old_max].max + 1
+               new_weights[new_side] = weight
+               new_rolls[new_side] = result
+            end
+         end
+         @weights.merge! new_weights
+         @rolls.merge! new_rolls
       end
 
-      # If this number is rolled, the result shall be given by the other dice
+      # If this result is rolled, the result shall be given by the other dice
       def roll_again roll, other, new_rolls, new_weights
          weight = @weights[roll]
          other.weights.each do |onum, oweight|
@@ -212,9 +226,10 @@ module CARPS
             if new_weights.include? onum
                new_weights[onum] = new_weights[onum] + this_weight
             else
-               new_weights[onum] = oweight + this_weight
+               new_weights[onum] = this_weight
             end
          end
+
       end
 
       # Add an integer to the results
