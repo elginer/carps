@@ -18,3 +18,4 @@
 require "carps/email/config"
 require "carps/email/imap"
 require "carps/email/smtp"
+require "carps/email/string"

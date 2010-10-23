@@ -60,36 +60,65 @@ module CARPS
          good
       end
 
-      # Attempt a connection
-      def attempt_connection
-         puts "Making IMAP connection for " + @username
-         puts "Server: #{@server}, Port: #{@port}"
-         CARPS::timeout 30, "IMAP connection attempt" do
-            if not @tls or @password.empty?
-               UI::warn "IMAP connection is insecure."
-            end
-            @imap = Net::IMAP.new @server, @port, @tls, @certs, @verify
-            if @cram_md5
-               @imap.authenticate "CRAM-MD5", @username, @password
-            elsif @login
-               @imap.authenticate "LOGIN", @username, @password
-            else
-               @imap.login @username, @password
+      # Return the a list of email message bodies
+      #
+      # If the inbox is empty, wait delay seconds before polling it again
+      def read 
+         mails = []
+         # Block 'till we get one
+         while mails.empty?
+            with_connection do |imap|
+               imap.select("inbox")
+               # Get all mails
+               messages = imap.search(["ALL"])
+               if messages.empty?
+                  sleep delay
+               else
+                  mails = imap.fetch messages, "BODY[TEXT]"
+                  mails = mails.map do |mail|
+                     from_mail mail.attr["BODY[TEXT]"]
+                  end
+                  # Delete all mails
+                  messages.each do |message_id|
+                     imap.store(message_id, "+FLAGS", [:Deleted])
+                  end
+                  imap.expunge
+               end
             end
          end
-         unless @imap
-            raise StandardError, "No IMAP connection."
+         mails
          end
       end
 
+      private
+
+      # Attempt a connection
+      def with_attempt_connection
+         imap = nil
+         CARPS::timeout 30, "IMAP connection attempt" do
+            if not @tls or or @password.empty?
+               UI::warn "IMAP connection is insecure."
+            end
+            imap = Net::IMAP.new @server, @port, @tls, @certs, @verify
+            if @cram_md5
+               imap.authenticate "CRAM-MD5", @username, @password
+            elsif @login
+               imap.authenticate "LOGIN", @username, @password
+            else
+               imap.login @username, @password
+            end
+         end
+         imap
+      end
+
       # Connect to imap server
-      def connect
-         until false
+      def with_connection
+            imap = nil
             begin
-               attempt_connection
-               return
+               imap = attempt_connection
+               yield imap
             rescue Net::IMAP::NoResponseError => e
-               if e.message == "Authentication failed."
+               if e.message == "IMAP authentication failed."
                   UI::put_error e.to_s
                   @password = UI::secret "Enter IMAP password for #{@username}"
                else
@@ -97,6 +126,10 @@ module CARPS
                end
             rescue
                warn_delay
+            ensure
+               if imap
+                  imap.disconnect
+               end
             end 
          end
       end
@@ -104,50 +137,6 @@ module CARPS
       def delay
          30
       end
-
-      # Return the a list of email message bodies
-      #
-      # If the inbox is empty, wait delay seconds before polling it again
-      def read 
-         # A reader
-         reader = lambda do
-            mails = []
-            # Block 'till we get one
-            while mails.empty?
-               @imap.select("inbox")
-               # Get all mails
-               messages = @imap.search(["ALL"])
-               if messages.empty?
-                  sleep delay
-               else
-                  mails = @imap.fetch messages, "BODY[TEXT]"
-                  mails = mails.map do |mail|
-                     from_mail mail.attr["BODY[TEXT]"]
-                  end
-                  # Delete all mails
-                  messages.each do |message_id|
-                     @imap.store(message_id, "+FLAGS", [:Deleted])
-                  end
-                  @imap.expunge
-               end
-            end
-            mails
-         end
-         mails = []
-         until 
-            begin
-               mails = reader.call
-            rescue
-               UI::warn "Error receiving messages"
-               if mails.empty?
-                  connect
-               end
-            end
-         end
-         mails
-      end
-
-      protected
 
       # Warn that we're going to delay before trying again
       def warn_delay

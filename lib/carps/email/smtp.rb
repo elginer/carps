@@ -15,12 +15,11 @@
 # You should have received a copy of the GNU General Public License
 # along with CARPS.  If not, see <http://www.gnu.org/licenses/>.
 
-require "carps/ui/warn"
-require "carps/ui/error"
+require "carps/ui"
 
-require "carps/email/string"
+require "carps/email"
 
-require "carps/util/timeout"
+require "carps/util"
 
 require "net/smtp"
 
@@ -42,6 +41,14 @@ module CARPS
          @cram_md5 = settings["cram_md5"]
       end
 
+      # Send an email message
+      def send to, message
+         with_connection do |smtp|
+            message = to_mail "Content-Type: application/octet-stream\r\n" + message
+            smtp.send_message message, @username, [to]
+         end
+      end
+
       # Are the settings okay?
       def ok?
          good = false
@@ -54,29 +61,31 @@ module CARPS
          good
       end
 
+      private
+
       def with_attempt_connection &todo
-         puts "Making SMTP connection for " + @username
-         puts "Server: #{@server}, Port: #{@port}"
-         # Create smtp object
-         smtp = Net::SMTP.new @server, @port
-         # Security measures
-         if @starttls
-            smtp.enable_starttls
-         elsif @tls
-            smtp.enable_tls
-         end
+         CARPS::timeout 30, "SMTP connection attempt" do
+            # Create smtp object
+            smtp = Net::SMTP.new @server, @port
+            # Security measures
+            if @starttls
+               smtp.enable_starttls
+            elsif @tls
+               smtp.enable_tls
+            end
 
-         auth = :plain
-         if @login
-            auth = :login
-         elsif @cram_md5
-            auth = :cram_md5
-         end
+            auth = :plain
+            if @login
+               auth = :login
+            elsif @cram_md5
+               auth = :cram_md5
+            end
 
-         if not (@starttls or @tls) or @password.empty?
-            UI::warn "SMTP connection is insecure."
+            if not (@starttls or @tls) or @password.empty?
+               UI::warn "SMTP connection is insecure."
+            end
+            smtp.start Socket.gethostname, @username, @password, auth, &todo
          end
-         smtp.start Socket.gethostname, @username, @password, auth, &todo
       end
 
       def with_connection &todo
@@ -85,20 +94,12 @@ module CARPS
                with_attempt_connection &todo
                return
             rescue Net::SMTPAuthenticationError => e
-               UI::put_error e.to_s
+               UI::put_error e.message
                @password = UI::secret "Enter SMTP password for #{@username}:"
             rescue
                UI::warn "Could not connect to SMTP server", "Attempting to reconnect in 10 seconds."
                sleep 10
             end
-         end
-      end
-
-      # Send an email message
-      def send to, message
-         with_connection do |smtp|
-            message = to_mail "Content-Type: application/octet-stream\r\n" + message
-            smtp.send_message message, @username, [to]
          end
       end
 
