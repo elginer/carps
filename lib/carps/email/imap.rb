@@ -62,7 +62,7 @@ module CARPS
 
       # Return the a list of email message bodies
       #
-      # If the inbox is empty, wait delay seconds before polling it again
+      # Blocks until messages become available 
       def read 
          mails = []
          # Block 'till we get one
@@ -87,7 +87,6 @@ module CARPS
             end
          end
          mails
-         end
       end
 
       private
@@ -96,7 +95,7 @@ module CARPS
       def with_attempt_connection
          imap = nil
          CARPS::timeout 30, "IMAP connection attempt" do
-            if not @tls or or @password.empty?
+            if not @tls or @password.empty?
                UI::warn "IMAP connection is insecure."
             end
             imap = Net::IMAP.new @server, @port, @tls, @certs, @verify
@@ -113,25 +112,24 @@ module CARPS
 
       # Connect to imap server
       def with_connection
-            imap = nil
-            begin
-               imap = attempt_connection
-               yield imap
-            rescue Net::IMAP::NoResponseError => e
-               if e.message == "IMAP authentication failed."
-                  UI::put_error e.to_s
-                  @password = UI::secret "Enter IMAP password for #{@username}"
-               else
-                  warn_delay
-               end
-            rescue
+         imap = nil
+         begin
+            imap = attempt_connection
+            yield imap
+         rescue Net::IMAP::NoResponseError => e
+            if e.message == "IMAP authentication failed."
+               UI::put_error e.to_s
+               @password = UI::secret "Enter IMAP password for #{@username}"
+            else
                warn_delay
-            ensure
-               if imap
-                  imap.disconnect
-               end
-            end 
-         end
+            end
+         rescue
+            warn_delay
+         ensure
+            if imap
+               imap.disconnect
+            end
+         end 
       end
 
       def delay
