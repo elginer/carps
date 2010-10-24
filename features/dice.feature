@@ -127,3 +127,7 @@ Feature: rules
       Then odd 3 must be 5 / 16
       Then odd 4 must be 1 / 4
       Then odd 5 must be 1 / 4
+
+   Scenario: roll dice
+      Given a d4
+      Then roll the dice

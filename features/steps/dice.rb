@@ -64,3 +64,7 @@ Then /^odd (\d+) must be (\d+) \/ (\d+)$/ do |index, num, den|
       raise StandardError,  "Unexpected odd"
    end
 end
+
+Then /^roll the dice$/ do
+   puts "The dice roll reads: #{$dice.roll}"
+end

@@ -57,9 +57,40 @@ module CARPS
          end
       end
 
+      # Roll the dice
+      def roll
+         od = []
+         results = odds.to_a
+         current = 0
+         # Build up range arrays corresponding to probabalistic weights
+         until results.empty?
+            # Manually insert a 1 at the end to make this numerically stable
+            last = false
+            if results.length == 1
+               last = true
+            end
+            result, weight = results.shift
+            if last
+               od.push [current..1, result]
+            else
+               new_top = current + weight
+               od.push [current..new_top, result]
+               current = new_top
+            end
+         end
+         # Find the appropriate action
+         r = rand
+         od.each do |range, result|
+            if range.include? r
+               return result
+            end
+         end
+         raise StandardError, "Dice has no result BUG!"
+      end
+
       # Output the odds
       #
-      # That is, a hash of results to the probabalistic weights of these results.
+      # That is, a hash of results to the probabalistic weights of the possible results.
       def odds
          od = {}
          @weights.each do |roll, weight|
