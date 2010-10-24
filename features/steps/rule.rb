@@ -2,10 +2,6 @@ require "carps/mod"
 
 class OneTenAction < CARPS::Action
 
-   def name
-      "one to ten"
-   end
-
    def summary
       "The result was between one and ten."
    end
@@ -17,10 +13,6 @@ class OneTenAction < CARPS::Action
 end
 
 class ElevenThirtyAction < CARPS::Action
-
-   def name
-      "eleven to thirty"
-   end
 
    def summary
       "The result was between eleven and thirty."

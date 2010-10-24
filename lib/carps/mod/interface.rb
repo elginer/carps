@@ -38,7 +38,7 @@ module CARPS
          if i <= 1
             UI::put_error "A dice must have more than 1 side."
          else
-            puts rint(1, i)
+            puts Dice::rint(1, i)
          end
       end
 
@@ -48,7 +48,7 @@ module CARPS
          if min >= max
             bounds_err
          else
-            puts rint(min, max)
+            puts Dice::rint(min, max)
          end
       end
 
@@ -58,7 +58,7 @@ module CARPS
          if min >= max
             bounds_err
          else
-            puts rfloat(min, max)
+            puts Dice::rfloat(min, max)
          end
       end
 
