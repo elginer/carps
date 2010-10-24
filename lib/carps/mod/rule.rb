@@ -25,7 +25,7 @@ module CARPS
    #
    # * 'dice' method which takes needed parameters (ie from apply and show_odds) and returns a Dice
    #
-   # * actions which returns an array of pairs of integer ranges to Actions.  The actions should have an apply method which takes the needed parameters.  The idea is to associate the result of a dice roll with an action.
+   # * actions which returns an array of pairs of integer ranges to Action classes.  That is, initialized objects of these classes should be Objects which have Action as their class's superclass.  The idea is to associate the result of a dice roll with an action.
    class Rule
 
       # Apply the rule to the arguments
