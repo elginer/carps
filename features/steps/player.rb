@@ -4,8 +4,6 @@ require "carps/mod/player/interface"
 require "carps/mod/client_turn"
 require "carps/mod/status_report"
 
-include CARPS
-
 class PlayerTestMod < Player::Mod
    def schema
       $schema
@@ -14,7 +12,7 @@ class PlayerTestMod < Player::Mod
 end
 
 class PlayerModTestMailer
-   def send message
+   def relay message
       puts "Sending:"
       puts message.emit
    end

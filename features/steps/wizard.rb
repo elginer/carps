@@ -2,8 +2,6 @@ require "carps/wizard/wizard"
 
 require "fileutils"
 
-include CARPS
-
 $sweet_files = ["roses", "kittens"]
 $salty_files = ["robots", "miniguns"]
 $salty_dirs = ["strength", "power"]

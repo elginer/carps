@@ -2,8 +2,6 @@ require "carps/mod/dice"
 
 require "carps/mod/interface"
 
-include CARPS
-
 def fill_randoms n
    $randoms = []
    n.times do
@@ -16,7 +14,7 @@ Given /^(\d+) random integers between (\d+) and (\d+)$/ do |n, min, max|
    min = min.to_i
    max = max.to_i
    fill_randoms n do
-      rint min, max
+      Dice::rint min, max
    end
 end
 
@@ -25,7 +23,7 @@ Given /^(\d+) random floats between (\d+) and (\d+)$/ do |n, min, max|
    min = min.to_f
    max = max.to_f
    fill_randoms n do
-      rfloat min, max
+      Dice::rfloat min, max
    end
 end
 

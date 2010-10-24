@@ -2,8 +2,6 @@ require "carps/mod"
 
 require "carps/protocol"
 
-include CARPS
-
 Given /^a status report$/ do
    $status = StatusReport.new "This is some might important information here!"
 end

@@ -6,8 +6,6 @@ require "carps/ui/question"
 
 require "yaml"
 
-include CARPS
-
 # Clone the original settings and apply the changes to create an array of new settings
 def make_settings settings, changes
    changes.map do |field, val|

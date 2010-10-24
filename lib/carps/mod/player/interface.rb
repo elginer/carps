@@ -22,7 +22,7 @@ module CARPS
    module Player
 
       # Player interface
-      class Interface < RolePlayInterface
+      class Interface < CARPS::RolePlayInterface
 
          def initialize mod
             super()

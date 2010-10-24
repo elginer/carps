@@ -2,8 +2,6 @@ require "carps/protocol"
 
 require "carps/service"
 
-include CARPS
-
 When /^an invitation is sent$/ do
    $message = Invite.new "the dm", "the mod", "the description", "The session" 
 end

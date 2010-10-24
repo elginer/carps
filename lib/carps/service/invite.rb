@@ -53,10 +53,13 @@ module CARPS
       def ask
          puts "You have been invited to a game!"
          if load_mods.member? @mod
-            @game = GameClient.new @mod, @dm, @about, @session 
-            @game.display
+            game = Player::GameConfig.new "", @mod, @dm, @about, @session 
+            game.display
             if UI::confirm("Do you want to join?")
-               return @game
+               filename = UI::question "Enter a file name for the game:"
+               game.filename = filename
+               game.save
+               return game
             else
                return nil
             end

@@ -15,7 +15,7 @@
 # You should have received a copy of the GNU General Public License
 # along with CARPS.  If not, see <http://www.gnu.org/licenses/>.
 
-require "carps/mod/interface"
+require "carps/mod"
 
 require "carps/util/editor"
 
@@ -26,7 +26,7 @@ module CARPS
       # A basic user interface for the dm
       #
       # Subclass this interface to provide commands
-      class Interface < RolePlayInterface
+      class Interface < CARPS::RolePlayInterface
 
          def initialize mod
             super()

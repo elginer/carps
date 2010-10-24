@@ -2,8 +2,6 @@ require "carps/mod"
 
 require "yaml"
 
-include CARPS
-
 class TestMod < DM::Mod
    def schema
       $schema

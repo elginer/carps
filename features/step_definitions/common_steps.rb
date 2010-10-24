@@ -1,3 +1,5 @@
+include CARPS
+
 Given /^this project is active project folder/ do
   @active_project_folder = File.expand_path(File.dirname(__FILE__) + "/../..")
 end

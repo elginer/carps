@@ -1,7 +1,5 @@
 require "carps/mod"
 
-include CARPS
-
 Given /^a character sheet schema$/ do
    $schema =Sheet::Schema.new(
       {"name" => "text",

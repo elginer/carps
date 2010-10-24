@@ -1,7 +1,5 @@
 require "carps/mod"
 
-include CARPS
-
 Then /^the reporter is registered with the resource manager$/ do
    $resource.reporter = $reporter
 end

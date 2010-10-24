@@ -2,7 +2,6 @@ require "carps/util/process"
 
 require "drb"
 
-include CARPS
 include Test
 
 Given /an object to be mutated/ do

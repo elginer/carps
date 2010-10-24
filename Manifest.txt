@@ -24,6 +24,7 @@ features/persistent_protocol.feature
 features/player.feature
 features/player_turn.feature
 features/random.feature
+features/rule.feature
 features/safety.feature
 features/sessions.feature
 features/start_dm.feature
@@ -45,6 +46,7 @@ features/steps/persistent_protocol.rb
 features/steps/player.rb
 features/steps/player_turn.rb
 features/steps/random.rb
+features/steps/rule.rb
 features/steps/safety.rb
 features/steps/sessions.rb
 features/steps/start_dm.rb
@@ -73,6 +75,7 @@ lib/carps/email/imap.rb
 lib/carps/email/smtp.rb
 lib/carps/email/string.rb
 lib/carps/mod.rb
+lib/carps/mod/action.rb
 lib/carps/mod/answers.rb
 lib/carps/mod/client_turn.rb
 lib/carps/mod/dice.rb
@@ -87,6 +90,7 @@ lib/carps/mod/mod.rb
 lib/carps/mod/player/interface.rb
 lib/carps/mod/player/mod.rb
 lib/carps/mod/question.rb
+lib/carps/mod/rule.rb
 lib/carps/mod/sheet/character.rb
 lib/carps/mod/sheet/editor.rb
 lib/carps/mod/sheet/new_sheet.rb

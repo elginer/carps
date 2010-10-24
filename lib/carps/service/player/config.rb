@@ -35,6 +35,11 @@ module CARPS
             @about = about
          end
 
+         # Set the file name
+         def filename= fn
+            @filename = fn
+         end
+
          # Parse a game config file
          def parse_yaml conf
             super

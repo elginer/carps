@@ -41,7 +41,6 @@ module CARPS
             @npcs = {}
             @monikers = {}
             @mails = {}
-            @semaphore = Mutex.new
          end
 
          # Invite a new player
@@ -314,12 +313,10 @@ module CARPS
          # Search for mail
          def search mail
             found = nil
-            @semaphore.synchronize do
-               mail.each do |moniker, inbox|
-                  unless inbox.empty?
-                     found = [moniker, inbox.shift]
-                     break
-                  end
+            mail.each do |moniker, inbox|
+               unless inbox.empty?
+                  found = [moniker, inbox.shift]
+                  break
                end
             end
             return found

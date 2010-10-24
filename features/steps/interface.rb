@@ -1,7 +1,5 @@
 require "carps/service/interface"
 
-include CARPS
-
 class Cheesey < QuitInterface
 
    include ControlInterface

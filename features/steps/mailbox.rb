@@ -9,8 +9,6 @@ require "fileutils"
 
 require "highline"
 
-include CARPS
-
 class SessionManager
    def session
       @session

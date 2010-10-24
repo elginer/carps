@@ -1,7 +1,5 @@
 require "carps/protocol/message"
 
-include CARPS
-
 class TestMessage < Message
 end
 

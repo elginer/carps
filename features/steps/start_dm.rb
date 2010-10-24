@@ -3,8 +3,6 @@ require "carps/service/dm/start"
 
 require "carps/service/session"
 
-include CARPS
-
 class MockDmStartMailer
    def address
       "howdy"

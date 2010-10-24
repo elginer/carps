@@ -1,7 +1,5 @@
 require "carps/service/session"
 
-include CARPS
-
 class ValidSessionMessage
 
    def session

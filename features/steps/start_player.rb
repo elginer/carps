@@ -1,9 +1,6 @@
-require "carps/service/player/start"
-require "carps/service/player/config"
+require "carps/service"
 
-require "carps/protocol/message"
-
-include CARPS
+require "carps/protocol"
 
 class MockPlayerGame
    def join_game mailer
@@ -48,7 +45,7 @@ class PlayerStartMailer
    end
 
    def invite
-      @mail = Invite.new "the dm", "test", "the description", "the session" 
+      @mail = CARPS::Invite.new "the dm", "test", "the description", "the session" 
    end
 end
 

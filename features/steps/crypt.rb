@@ -14,8 +14,6 @@ require "fileutils"
 
 require "thread"
 
-include CARPS
-
 class EvilMessage < Message
 
    def emit
