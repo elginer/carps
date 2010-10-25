@@ -34,7 +34,7 @@ module CARPS
    end
 
    # Create a new dice
-   def Dice::d i
+   def d i
       D.new i
    end
 
@@ -159,7 +159,44 @@ module CARPS
          end
       end
 
+      # If the result matches a binary comparison, then return this result
+      #
+      # compare is one of :<, :<=, :==, :>, :>=
+      #
+      # other is an integer to compare with
+      def is compare, other, output
+         cmp = nil
+         case compare
+            when :<
+               cmp = lambda {|a| a < other}
+            when :<=
+               cmp = lambda  {|a| a <= other}
+            when :==
+               cmp = lambda {|a| a == other}
+            when :>=
+               cmp = lambda {|a| a >= other}
+            when :>
+               cmp = lambda {|a| a > other}
+         end
+         rng = find_range cmp
+         if rng
+            in_range rng, output
+         end
+      end
+
       protected
+
+      # Find the Range of values which when applied to op give true
+      #
+      # If no results match the operator, return nil instead
+      def find_range op
+         results = @rolls.values.reject {|result| not op.call result}
+         if results.empty?
+            nil
+         else
+            results.min..results.max
+         end
+      end
 
       # Do an arithmetic operation with the results of another dice roll
       def with_dice_arithmetic other

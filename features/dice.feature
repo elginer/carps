@@ -128,6 +128,19 @@ Feature: rules
       Then odd 4 must be 1 / 4
       Then odd 5 must be 1 / 4
 
+   Scenario: binary comparison
+      Given a d5
+      Then if it's greater than 3, the result is 4
+      Then show the odds
+      Then result 0 must be 1
+      Then result 1 must be 2
+      Then result 2 must be 3
+      Then result 3 must be 4
+      Then odd 0 must be 1 / 5
+      Then odd 1 must be 1 / 5
+      Then odd 2 must be 1 / 5
+      Then odd 3 must be 2 / 5
+
    Scenario: roll dice
       Given a d4
       Then roll the dice

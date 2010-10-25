@@ -29,6 +29,10 @@ Then /^if it's greater or equal to (\d+), and less than or equal to (\d+), the r
    $dice.in_range gte.to_i..lte.to_i, out.to_i
 end
 
+Then /^if it's greater than (\d+), the result is (\d+)$/ do |compare, result|
+   $dice.is :>, compare.to_i, result.to_i
+end
+
 Then /^multiply by a d(\d+)$/ do |sides|
    $dice * CARPS::Dice::d(sides.to_i)
 end
