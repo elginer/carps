@@ -1,4 +1,4 @@
-require "carps/mod/dice"
+require "carps/mod"
 
 Then /^show the odds$/ do
    $odds = $dice.odds
