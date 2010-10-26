@@ -26,6 +26,11 @@ module CARPS
    # * 'dice' method which takes needed parameters (ie from apply and show_odds) and returns a Dice
    class Rule
 
+      # Create the rule
+      def initialize
+         @actions = {}
+      end
+
       # Apply the rule to the arguments
       def apply *args
          d = dice *args
@@ -63,14 +68,31 @@ module CARPS
       # Subclasses should use this method to add new actions
       # 
       # Compare may be:
-      # a range of valid values
-      # one of :<, :<=, :==, :>, :>=
+      # 
+      # * a range of valid values
+      #
+      # * one of :<, :<=, :==, :>, :>= and then an integer
+      def add_action *compare, action
+         cmp = nil
+         if compare.length > 1
+            cmp = Dice::comparison_to_proc *compare
+         else
+            cmp = compare[0]
+         end
+         @actions[cmp] = action
+      end
 
       # Choose the action
       def choose_action_class result
-         actions.each do |range, action|
-            if range.include? result
-               return action
+         @actions.each do |compare, action|
+            if compare.class == Range
+               if compare.include? result
+                  return action
+               end
+            else
+               if compare.call result
+                  return action
+               end
             end
          end
          raise StandardError, "No action chosen BUG!"

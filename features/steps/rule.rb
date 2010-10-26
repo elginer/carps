@@ -26,15 +26,16 @@ end
 
 class TestRule < CARPS::Rule
 
-   def dice sheet
-      CARPS::Dice::d 30
+   def initialize
+      super
+      add_action 1..10, OneTenAction
+      add_action :>=, 11, ElevenThirtyAction
    end
 
-   def actions
-      [
-         [1..10, OneTenAction],
-         [11..30, ElevenThirtyAction]
-      ]
+   protected
+
+   def dice sheet
+      CARPS::Dice::d 30
    end
 
 end
