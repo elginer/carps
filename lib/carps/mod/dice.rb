@@ -199,6 +199,7 @@ module CARPS
                   chance = weight * oweight
                   added_roll = roll + oroll
                   new_result = yield result, oresult
+                  new_result = new_result.to_i
                   new_side = roll + oroll
                   if new_rolls.include? new_side
                      new_side = new_weights.keys.max + 1
