@@ -126,7 +126,7 @@ module CARPS
             if is_int other
                add_int (other * -1)
             else
-               add_dice other
+               subtract_dice other
             end
          end
 
@@ -209,6 +209,13 @@ module CARPS
             end
             @rolls = new_rolls
             @weights = new_weights
+         end
+
+         # Subtract a dice
+         def subtract_dice other
+            with_dice_arithmetic other do |my, their|
+               my - their
+            end
          end
 
          # Add a dice

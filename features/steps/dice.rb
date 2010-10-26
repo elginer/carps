@@ -23,6 +23,10 @@ Then /^add a d(\d+)$/ do |sides|
    $dice + CARPS::Dice::d(sides.to_i)
 end
 
+Then /^subtract a d(\d+)$/ do |sides|
+   $dice - CARPS::Dice::d(sides.to_i)
+end
+
 Then /^divide by (\d+)$/ do |n|
    $dice / n.to_i
 end
@@ -68,6 +72,13 @@ Then /^odd (\d+) must be (\d+) \/ (\d+)$/ do |index, num, den|
    odds = results.map {|result| $odds[result]}
    unless odds[index.to_i] == num.to_f / den.to_f
       raise StandardError,  "Unexpected odd"
+   end
+end
+
+Then /^result (\d+) must be \-(\d+)$/ do |index, expect|
+   results = $odds.keys.sort
+   unless results[index.to_i] == - expect.to_i
+      raise StandardError, "Unexpected result!"
    end
 end
 

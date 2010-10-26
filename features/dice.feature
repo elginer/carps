@@ -69,6 +69,20 @@ Feature: rules
       Then result 2 must be 4
       Then result 3 must be 5
 
+   Scenario: two dice and subtraction
+      Given a d2
+      Then subtract a d3
+      Then show the odds
+      Then result 0 must be -2
+      Then result 1 must be -1
+      Then result 2 must be 0
+      Then result 3 must be 1
+      Then odd 0 must be 1 / 6
+      Then odd 1 must be 1 / 3
+      Then odd 2 must be 1 / 3
+      Then odd 3 must be 1 / 6
+
+
    Scenario: two dice and multiplication
       Given a d3
       Then multiply by a d2
