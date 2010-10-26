@@ -114,8 +114,8 @@ module CARPS
 
          # Add a number or another dice
          def + other
-            if is_int other
-               add_int other
+            if is_num other
+               add_num other
             else
                add_dice other
             end
@@ -123,8 +123,8 @@ module CARPS
 
          # Subtract a number or another dice
          def - other
-            if is_int other
-               add_int (other * -1)
+            if is_num other
+               add_num (other * -1)
             else
                subtract_dice other
             end
@@ -132,8 +132,8 @@ module CARPS
 
          # Multiply by a number or another dice
          def * other
-            if is_int other
-               mul_int other
+            if is_num other
+               mul_num other
             else
                mul_dice other
             end
@@ -141,8 +141,8 @@ module CARPS
 
          # Divide by a number or another dice
          def / other
-            if is_int other
-               div_int other
+            if is_num other
+               div_num other
             else
                div_dice other
             end
@@ -150,7 +150,7 @@ module CARPS
 
          # Directly inspect the range and supply a number or a dice as output, if the result is in that range
          def in_range range, output
-            if is_int output
+            if is_num output
                in_range_int range, output
             else
                in_range_dice range, output
@@ -240,9 +240,9 @@ module CARPS
             end
          end
 
-         # Is this an integer?
-         def is_int i
-            i.class == Fixnum
+         # Is this an integer or float?
+         def is_num i
+            i.class == Fixnum or i.class == Float
          end
 
          # Update every result in this range
@@ -298,21 +298,21 @@ module CARPS
          end
 
          # Add an integer to the results
-         def add_int n
+         def add_num n
             on_results do |odd|
                n + odd
             end
          end
 
          # Multiply results by the integer
-         def mul_int n
+         def mul_num n
             on_results do |odd|
                n * odd
             end
          end
 
          # Divide results by the integer
-         def div_int n
+         def div_num n
             on_results do |odd|
                odd / n
             end
@@ -321,7 +321,8 @@ module CARPS
          # Perform an operation on the results
          def on_results
             @rolls.each do |roll, result|
-               @rolls[roll] = yield result
+               result = yield result
+               @rolls[roll] = result.to_i
             end
          end
 

@@ -15,6 +15,10 @@ Then /^multiply by (\d+)$/ do |n|
    $dice * n.to_i
 end
 
+Then /^multiply by (\d+) \/ (\d+)$/ do |num, den|
+   $dice * (num.to_f / den.to_f)
+end
+
 Then /^add (\d+)$/ do |n|
    $dice + n.to_i
 end
