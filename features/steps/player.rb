@@ -9,6 +9,16 @@ class PlayerTestMod < Player::Mod
       $schema
    end
 
+   def description
+      <<-END
+You are testing the CARPS player mod system and interface.
+This text was returned by the description method of the test mod.
+
+You are about to fill in a character sheet for the 'fruit' game used
+throughout the CARPS testing utility.
+END
+   end
+
 end
 
 class PlayerModTestMailer

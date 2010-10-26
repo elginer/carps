@@ -15,7 +15,9 @@
 # You should have received a copy of the GNU General Public License
 # along with CARPS.  If not, see <http://www.gnu.org/licenses/>.
 
-require "carps/mod/interface"
+require "carps/mod"
+
+require "carps/ui"
 
 module CARPS
 
@@ -32,6 +34,14 @@ module CARPS
             add_command "done", "Send your stuff to the dungeon master and await the next turn."
             add_command "sheet", "Look at your character sheet."
             add_command "edit", "Edit your character sheet."
+         end
+
+         # Output information about the game, then run.
+         def run
+            puts @mod.description
+            UI::question "Press enter when you are ready to fill in your character sheet."
+            edit
+            super
          end
 
          protected

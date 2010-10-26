@@ -24,12 +24,17 @@ module CARPS
    module Player
 
       # Player mod
+      #
+      # subclasses should provide a method called description
+      #
+      # description should return a string, a summary of the game.
+      # Who wrote it, owns the copyright and where to find the rules 
+      # are appropriate facts.
       class Mod < CARPS::Mod
 
          def initialize pmailer
             @mailer = pmailer
             @sheet = Sheet::Character.new({})
-            edit_sheet
          end
 
          # Edit the character sheet
