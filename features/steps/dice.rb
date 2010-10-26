@@ -1,12 +1,14 @@
 require "carps/mod"
 
+include CARPS::Dice
+
 Then /^show the odds$/ do
    $odds = $dice.odds
    puts $odds
 end
 
 Given /^a d(\d+)$/ do |sides|
-   $dice = CARPS::Dice::d sides.to_i
+   $dice = d sides.to_i
 end
 
 Then /^multiply by (\d+)$/ do |n|

@@ -24,8 +24,6 @@ module CARPS
    # Subclasses should provide the following methods
    #
    # * 'dice' method which takes needed parameters (ie from apply and show_odds) and returns a Dice
-   #
-   # * actions which returns an array of pairs of integer ranges to Action classes.  That is, initialized objects of these classes should be Objects which have Action as their class's superclass.  The idea is to associate the result of a dice roll with an action.
    class Rule
 
       # Apply the rule to the arguments
@@ -59,6 +57,14 @@ module CARPS
       end
 
       protected
+
+      # Add an action
+      #
+      # Subclasses should use this method to add new actions
+      # 
+      # Compare may be:
+      # a range of valid values
+      # one of :<, :<=, :==, :>, :>=
 
       # Choose the action
       def choose_action_class result
