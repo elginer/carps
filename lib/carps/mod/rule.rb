@@ -71,7 +71,10 @@ module CARPS
       # 
       # * a range of valid values
       #
-      # * one of :<, :<=, :==, :>, :>= and then an integer
+      # * one of :<, :<=, :==, :>, :>= and then an integer with which to compare
+      #
+      # * :all which indicates this is action which always applies
+      #
       def add_action *compare, action
          cmp = nil
          if compare.length > 1
@@ -89,13 +92,18 @@ module CARPS
                if compare.include? result
                   return action
                end
-            else
+            elsif compare.class == Proc
                if compare.call result
                   return action
                end
+            elsif compare == :all
+               return action
+            else
+               UI::warn "BUG: Removing #{action} from #{self.class} because its result selector was invalid: #{compare}."
+               @actions.delete compare
             end
          end
-         raise StandardError, "No action chosen BUG!"
+         raise StandardError, "BUG: No action chosen in #{self.class}."
       end
 
 

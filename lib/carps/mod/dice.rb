@@ -83,7 +83,7 @@ module CARPS
                   return result
                end
             end
-            raise StandardError, "Dice has no result BUG!"
+            raise StandardError, "BUG: Dice has no result."
          end
 
          # Output the odds
