@@ -61,7 +61,9 @@ module CARPS
          def validate sheet
             valid = false
             until valid
-               valid = valid? sheet
+               if sheet
+                  valid = valid? sheet
+               end
                unless valid
                   sheet = edit sheet
                end

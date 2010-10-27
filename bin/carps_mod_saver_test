@@ -18,8 +18,8 @@
 
 # Test that a mod running in another process can save its state via CARPS. 
 
-require "carps/mod/launch"
-require "carps/util/error"
+require "carps/mod"
+require "carps/util"
 
 class Saver
 

@@ -18,7 +18,7 @@
 module CARPS
 
    module Sheet
-      
+
       # This isn't really the schema, but an object that wraps it
       # and uses it to perform syntactic validations on character sheets
       class Schema
@@ -51,20 +51,25 @@ module CARPS
 
          # Create sheet text for the user to edit 
          def create_sheet_text user_sheet
-            user_sheet.visit do |current|
-               if current.empty?
-                     @schema.each_key do |field|
-                     current[field] = nil
-                  end
+            current = {}
+            if user_sheet
+               user_sheet.visit do |inner|
+                  current = inner
                end
-               sheet = "# Character sheet\n"
-               current.each do |field, value|
-                  type = @schema[field]
-                  sheet += "# #{field} is #{type}\n"
-                  sheet += "#{field}: #{value}\n"
-               end
-               return sheet
             end
+
+            if current.empty?
+               @schema.each_key do |field|
+                  current[field] = nil
+               end
+            end
+            sheet = "# Character sheet\n"
+            current.each do |field, value|
+               type = @schema[field]
+               sheet += "# #{field} is #{type}\n"
+               sheet += "#{field}: #{value}\n"
+            end
+            return sheet
          end
 
          protected
@@ -73,7 +78,6 @@ module CARPS
             type = TypeParser.parse type_str
             type.verify val
          end
-
 
       end
 

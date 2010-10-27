@@ -61,6 +61,25 @@ module CARPS
          good
       end
 
+      # Perform an action with a connection
+      def with_connection &todo
+         until false 
+            begin
+               with_attempt_connection &todo
+               return
+            rescue Net::SMTPAuthenticationError => e
+               UI::put_error e.message
+               @password = UI::secret "Enter SMTP password for #{@username}:"
+            rescue StandardError => e
+               UI::warn "Could not connect to SMTP server", "Attempting to reconnect in 10 seconds."
+               UI::put_error e.message
+               sleep 10
+            end
+         end
+      end
+
+
+
       private
 
       def with_attempt_connection &todo
@@ -85,21 +104,6 @@ module CARPS
                UI::warn "SMTP connection is insecure."
             end
             smtp.start Socket.gethostname, @username, @password, auth, &todo
-         end
-      end
-
-      def with_connection &todo
-         until false 
-            begin
-               with_attempt_connection &todo
-               return
-            rescue Net::SMTPAuthenticationError => e
-               UI::put_error e.message
-               @password = UI::secret "Enter SMTP password for #{@username}:"
-            rescue
-               UI::warn "Could not connect to SMTP server", "Attempting to reconnect in 10 seconds."
-               sleep 10
-            end
          end
       end
 

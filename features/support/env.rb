@@ -2,8 +2,6 @@ require File.dirname(__FILE__) + "/../../lib/carps"
 
 gem 'cucumber'
 require 'cucumber'
-gem 'rspec'
-require 'spec'
 
 Before do
   @tmp_root = File.dirname(__FILE__) + "/../../tmp"

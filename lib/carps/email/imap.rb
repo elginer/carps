@@ -52,7 +52,6 @@ module CARPS
          good = false
          begin
             attempt_connection
-            @imap.logout
             good = true
          rescue StandardError => e
             UI::put_error e.to_s
@@ -89,10 +88,35 @@ module CARPS
          mails
       end
 
+      # Perform an action with an IMAP connection 
+      def with_connection
+         imap = nil
+         begin
+            imap = attempt_connection
+            yield imap
+         rescue Net::IMAP::NoResponseError => e
+            if e.message == "IMAP authentication failed."
+               @password = UI::secret "Enter IMAP password for #{@username}"
+            else
+               warn_delay
+            end
+            UI::put_error e.message
+         rescue StandardError => e
+            warn_delay
+            UI::put_error e.message
+         ensure
+            if imap
+               imap.logout
+               imap.disconnect
+            end
+         end 
+      end
+
+
       private
 
       # Attempt a connection
-      def with_attempt_connection
+      def attempt_connection
          imap = nil
          CARPS::timeout 30, "IMAP connection attempt" do
             if not @tls or @password.empty?
@@ -110,27 +134,6 @@ module CARPS
          imap
       end
 
-      # Connect to imap server
-      def with_connection
-         imap = nil
-         begin
-            imap = attempt_connection
-            yield imap
-         rescue Net::IMAP::NoResponseError => e
-            if e.message == "IMAP authentication failed."
-               UI::put_error e.to_s
-               @password = UI::secret "Enter IMAP password for #{@username}"
-            else
-               warn_delay
-            end
-         rescue
-            warn_delay
-         ensure
-            if imap
-               imap.disconnect
-            end
-         end 
-      end
 
       def delay
          30

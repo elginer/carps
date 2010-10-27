@@ -17,8 +17,9 @@
 # along with CARPS.  If not, see <http://www.gnu.org/licenses/>.
 
 # Test CARPS mod launching.  Used for unit testing and as part of the wizard. 
-require "carps/mod/launch"
-require "carps/util/error"
+
+require "carps/mod"
+require "carps/util"
 
 module TestMod
 

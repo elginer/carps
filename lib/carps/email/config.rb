@@ -83,7 +83,7 @@ module CARPS
       # Relentlessly continue until we can connect to IMAP and SMTP
       def connect!
          @smtp.with_connection {|smtp|}
-         @imap.connect
+         @imap.with_connection {|imap|}
       end
 
       # Emit options as hash
