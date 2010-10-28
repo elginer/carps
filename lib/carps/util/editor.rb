@@ -19,6 +19,8 @@ require "carps/util/config"
 
 require "carps/ui/error"
 
+require "carps/test"
+
 require "tempfile"
 
 module CARPS
@@ -37,7 +39,7 @@ module CARPS
 
       def parse_yaml config
          @editor = read_conf config, "launch_editor"
-         @wait_confirm = read_conf config, "wait_for_confirm"
+         @wait_confirm = read_conf config, "wait"
       end
 
       # Edit a string
@@ -50,13 +52,10 @@ module CARPS
             file.write "# Lines starting with # will be ignored.\n" + msg 
             file.close
             contents = edit_file path
-            if @wait_conirm
-               UI::question "Press enter when you are done editing."
-            end
             lines = contents.split /\n/
-            lines.reject! do |line|
+               lines.reject! do |line|
                line[0] == '#'
-            end
+               end
             lines.join "\n"
          rescue StandardError => e
             UI::put_error e.to_s
@@ -72,6 +71,10 @@ module CARPS
          end
          Object::Process.wait child
 
+         if @wait_confirm
+            UI::question "Press enter when you are done editing."
+         end
+
          if File.exists? filepath
             return File.read filepath
          else
@@ -82,15 +85,56 @@ module CARPS
 
       # Emit as hash
       def emit
-         {"launch_editor" => @editor}
+         {
+            "launch_editor" => @editor,
+            "wait" => @wait_confirm
+         }
       end
 
    end
 
    module Test
+
+
+      # Testing for editor
+      module Editor
+
+         def load_fail
+            test_failed "The editor did not load the file correctly."
+         end
+
+         def save_fail
+            test_failed "The editor did not save the file correctly."
+         end
+
+      end
+
       # Test the editor
-      def Test::editor edit
-      
+      def Test::editor editor
+         puts "The editor should launch, then you should edit this paragraph:"
+         before = "What ho Jeeves!"
+         puts before
+         puts "Once you are done editing, save the file and close the editor."
+         if after = editor.edit(before)
+            if after == before
+               Test::multi_fail "Your editor is detaching itself into the background.", "You did not edit the paragraph.  Do so!", "The editor did not save the file correctly.", "The editor did not load the file correctly."
+            else
+               before_good = UI::confirm "Before you starting editing, did the editor display this text?\n#{before}"
+               if before_good
+                  after_good = UI::confirm "Did you change that to this?\n#{after}"
+                  if after_good
+                     return true
+                  else
+                     Editor::save_fail
+                  end
+               else
+                  Editor::load_fail
+               end
+            end
+         else
+            Editor::save_fail
+         end
+
       end
    end
 

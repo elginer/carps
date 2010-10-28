@@ -5,5 +5,6 @@ Feature: editor
    I want to use a text editor.
 
    Scenario: edit text
+      Given carps is initialized with test/client
       Given a text editor
       Then edit some text

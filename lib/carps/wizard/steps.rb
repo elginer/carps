@@ -113,8 +113,10 @@ module CARPS
          end
 
          # There can sometimes be more than one reason why the test has failed.
+         #
+         # DEPRICATED use Test::multi_fail
          def multi_fail *reasons
-            test_failed "Either:\n\t" + reasons.join("\nor\t")
+            Test::multi_fail reasons
          end
 
          def repl
@@ -376,7 +378,7 @@ module CARPS
             super
             add_raw_command :terminal, "Specify a command used to launch interactive CARPS sub-programs, typically in another window.\n\tIE., a command which would run a program in a new X-windows terminal editor, or Screen session.\n\tUse %cmd in place of the sub-program to be executed\n\tExamples:\n\t\turxvt -e %cmd", "TERMINAL"
             add_command :port, "Specify a TCP port which will be used for local inter-process communication.\n\tDefault: 51000", "PORT"
-            add_command :confirm, "The user states when the process is complete.\n\tUse this if you use screen, or if your terminal emulator forks into the background, as gnome-terminal does.\n\tDefault: no", "yes/no"
+            add_command :wait, "The user states when the process is complete.\n\tUse this if you use screen, or if your terminal emulator forks into the background, as gnome-terminal does.\n\tDefault: no", "yes/no"
             @confirm = false
             @port = 51000
             @term = "%cmd"
@@ -388,7 +390,7 @@ module CARPS
 
          protected
 
-         def confirm onoff
+         def wait onoff
             yes_no onoff,
                lambda {@confirm = true},
                lambda {@confirm = false}
@@ -439,7 +441,7 @@ module CARPS
          def initialize
             super
             add_raw_command :editor, "Specify a text editor.\n\tUse %f in place of the filepath.\n\t\tExample:\n\t\tvim %f", "COMMAND"
-            add_command :confirm, "Wait until the user says the editor is finished.  This may be useful if your editor forks into the background.\nDefault: no", "yes/no"
+            add_command :wait, "Wait until the user says the editor is finished.  This may be useful if your editor forks into the background.\nDefault: no", "yes/no"
             @confirm = false
          end
 
@@ -449,7 +451,7 @@ module CARPS
 
          protected
 
-         def confirm onoff
+         def wait onoff
             yes_no onoff,
                lambda {@confirm = true},
                lambda {@confirm = false}
@@ -464,43 +466,16 @@ module CARPS
          end
 
          def test
-            if mandatory 
-               puts "The editor should launch, then you should edit this paragraph:"
-               before = "What ho Jeeves!"
-               puts before
-               puts "Once you are done editing, save the file and close the editor."
-               if after = @editor.edit(before)
-                  if after == before
-                     multi_fail "Your editor is detaching itself into the background.  Try: confirm yes.", "You did not edit the paragraph.  Do so!", "The editor did not save the file correctly.", "The editor did not load the file correctly."
-                  else
-                     before_good = UI::confirm "Before you starting editing, did the editor display this text?\n#{before}"
-                     if before_good
-                        after_good = UI::confirm "Did you change that to this?\n#{after}"
-                        if after_good
-                           @editor.save
-                           test_passed
-                        else
-                           save_fail
-                        end
-                     else
-                        load_fail
-                     end
-                  end
-               else
-                  save_fail
+            if mandatory
+               pass = CARPS::Test::editor @editor
+               if pass
+                  editor.save
+                  test_passed
                end
             end
          end
 
          private
-
-         def load_fail
-            test_failed "The editor did not load the file correctly."
-         end
-
-         def save_fail
-            test_failed "The editor did not save the file correctly."
-         end
 
       end
 

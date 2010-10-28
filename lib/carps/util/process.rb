@@ -40,7 +40,7 @@ module CARPS
       def parse_yaml conf
          term = read_conf conf, "launch_terminal"
          port = read_conf(conf, "port").to_i
-         confirm = read_conf conf, "confirm"
+         confirm = read_conf conf, "wait"
          [term, port, confirm]
       end
 
@@ -100,7 +100,7 @@ module CARPS
 
       # Emit as hash
       def emit
-         {"launch_terminal" => @term, "port" => @port}
+         {"launch_terminal" => @term, "port" => @port, "wait" => @confirm}
       end
 
       # The command which would open a new window running the given command
