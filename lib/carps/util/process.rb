@@ -83,11 +83,11 @@ module CARPS
                         UI::put_error "Problem starting inter-process communication in the sub-program: #{e}"
                      end
                      yield uri
-                     if @confirm
-                        UI::question "Press enter when the sub-program has completed."
-                     end
                   end
                   Object::Process.wait child
+                  if @confirm
+                     UI::question "Press enter when the sub-program has completed."
+                  end
                   DRb.stop_service
                rescue StandardError => e
                   UI::put_error "Malfunction in inter-process communication: #{e}"

@@ -27,4 +27,5 @@ end
 
 When /^the \$process.launch method is called with the name of a ruby subprogram, which I should see in another window$/ do
    test_ipc $process, $mut
+   puts "DONE!"
 end

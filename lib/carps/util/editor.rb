@@ -87,4 +87,11 @@ module CARPS
 
    end
 
+   module Test
+      # Test the editor
+      def Test::editor edit
+      
+      end
+   end
+
 end
