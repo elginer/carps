@@ -30,12 +30,14 @@ module CARPS
          "editor.yaml"
       end
 
-      def initialize editor
+      def initialize editor, wait_for_confirm = false
          @editor = editor
+         @wait_confirm = wait_for_confirm
       end
 
       def parse_yaml config
          @editor = read_conf config, "launch_editor"
+         @wait_confirm = read_conf config, "wait_for_confirm"
       end
 
       # Edit a string
@@ -48,8 +50,9 @@ module CARPS
             file.write "# Lines starting with # will be ignored.\n" + msg 
             file.close
             contents = edit_file path
-            file = Tempfile.new "carp_edit"
-            file.close!
+            if @wait_conirm
+               UI::question "Press enter when you are done editing."
+            end
             lines = contents.split /\n/
             lines.reject! do |line|
                line[0] == '#'

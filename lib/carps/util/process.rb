@@ -33,20 +33,22 @@ module CARPS
          "process.yaml"
       end
 
-      def initialize term, port
-         load_resources term, port
+      def initialize term, port, confirm = false
+         load_resources term, port, confirm
       end
 
       def parse_yaml conf
          term = read_conf conf, "launch_terminal"
          port = read_conf(conf, "port").to_i
-         [term, port]
+         confirm = read_conf conf, "confirm"
+         [term, port, confirm]
       end
 
-      def load_resources term, port
+      def load_resources term, port, confirm
          @port = port
          @term = term
          @semaphore = Mutex.new
+         @confirm = confirm
       end
 
       # Launch a ruby program in another terminal window, which can access the resource over drb
@@ -81,6 +83,9 @@ module CARPS
                         UI::put_error "Problem starting inter-process communication in the sub-program: #{e}"
                      end
                      yield uri
+                     if @confirm
+                        UI::question "Press enter when the sub-program has completed."
+                     end
                   end
                   Object::Process.wait child
                   DRb.stop_service

@@ -37,15 +37,23 @@ module CARPS
       # * define a 'required' method which returns an array of 2 cell arrays pairing instance variables 
       # with the name of a command which would instantiate that variable.  This is so the mandatory command
       # can detect which options the user still needs to fill in.
-      class Interface < CARPS::Interface
+      class Interface < CARPS::QuitInterface
+
+         include ControlInterface
 
          def initialize
             super
-            add_command "test", "Test that your settings are correct."
-            add_command "done", "Proceed to the next step."
+            add_command :skip, "Skip this step."
+            add_command :test, "Test that your settings are correct."
+            add_command :done, "Proceed to the next step."
          end
 
          protected
+
+         # Skip this step
+         def skip
+            @run = false
+         end
 
          # An array of pairs of instance variables with the command required to fill that variable
          def required
@@ -366,9 +374,12 @@ module CARPS
 
          def initialize
             super
-            add_raw_command "terminal", "Specify a command used to launch interactive CARPS sub-programs, typically in another window.\n\tIE., a command which would run a program in a new X-windows terminal editor, or Screen session.\n\tUse %cmd in place of the sub-program to be executed\n\tEnsure that it does not detach itself from the foreground.\n\tExample:\n\t\turxvt -e %cmd", "TERMINAL"
-            add_command "port", "Specify a TCP port which will be used for local inter-process communication.\n\tDefault: 51000", "PORT"
+            add_raw_command :terminal, "Specify a command used to launch interactive CARPS sub-programs, typically in another window.\n\tIE., a command which would run a program in a new X-windows terminal editor, or Screen session.\n\tUse %cmd in place of the sub-program to be executed\n\tExamples:\n\t\turxvt -e %cmd", "TERMINAL"
+            add_command :port, "Specify a TCP port which will be used for local inter-process communication.\n\tDefault: 51000", "PORT"
+            add_command :confirm, "The user states when the process is complete.\n\tUse this if you use screen, or if your terminal emulator forks into the background, as gnome-terminal does.\n\tDefault: no", "yes/no"
+            @confirm = false
             @port = 51000
+            @term = "%cmd"
          end
 
          def description
@@ -377,20 +388,23 @@ module CARPS
 
          protected
 
-         def required
-            [[@shell, "terminal"]]
+         def confirm onoff
+            yes_no onoff,
+               lambda {@confirm = true},
+               lambda {@confirm = false}
          end
 
          def test
-            if mandatory 
+            if mandatory
+               shell = CARPS::Process.new @term, @port, @confirm
                puts "You should see 'It works!' in the new window."
                mut = Test::Mutate.new
-               test_ipc @shell, mut
+               test_ipc shell, mut
                if mut.working?
                   UI::highlight mut.works?
                   good = UI::confirm "Did it say 'It works!' in the new window?"
                   if good
-                     @shell.save
+                     shell.save
                      test_passed
                   else
                      general_fail
@@ -408,7 +422,7 @@ module CARPS
          end
 
          def terminal term
-            @shell = CARPS::Process.new term, @port
+            @term = term
          end
 
          private
@@ -424,7 +438,9 @@ module CARPS
 
          def initialize
             super
-            add_raw_command "editor", "Specify a command used to edit a file.\n\tUse %f in place of the filepath.\n\tEnsure that the editor does not detach itself from the foreground.\n\tExample:\n\t\t gvim --nofork %f", "COMMAND"
+            add_raw_command :editor, "Specify a text editor.\n\tUse %f in place of the filepath.\n\t\tExample:\n\t\tvim %f", "COMMAND"
+            add_command :confirm, "Wait until the user says the editor is finished.  This may be useful if your editor forks into the background.\nDefault: no", "yes/no"
+            @confirm = false
          end
 
          def description
@@ -433,8 +449,14 @@ module CARPS
 
          protected
 
+         def confirm onoff
+            yes_no onoff,
+               lambda {@confirm = true},
+               lambda {@confirm = false}
+         end
+
          def editor command
-            @editor = CARPS::Editor.new command
+            @editor = CARPS::Editor.new command, @confirm
          end
 
          def required
@@ -449,7 +471,7 @@ module CARPS
                puts "Once you are done editing, save the file and close the editor."
                if after = @editor.edit(before)
                   if after == before
-                     multi_fail "Your editor is detaching itself into the background.", "You did not edit the paragraph.  Do so!", "The editor did not save the file correctly.", "The editor did not load the file correctly."
+                     multi_fail "Your editor is detaching itself into the background.  Try: confirm yes.", "You did not edit the paragraph.  Do so!", "The editor did not save the file correctly.", "The editor did not load the file correctly."
                   else
                      before_good = UI::confirm "Before you starting editing, did the editor display this text?\n#{before}"
                      if before_good
