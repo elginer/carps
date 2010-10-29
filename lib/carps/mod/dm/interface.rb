@@ -35,17 +35,15 @@ module CARPS
             add_command :save, "Saves the state of the world."
             add_command :done, "Send all reports and start the next turn."
             add_command :invite, "Invite a new player", "EMAIL"
+            add_command :describe, "Describe a player or an NPC.", "PLAYER/NPC"
             add_command :players, "Describe all players."
-            add_command :player, "Describe one player.", "PLAYER"
             add_command :npcs, "Describe all NPCs."
-            add_command :npc, "Describe one NPC.", "NPC"
-            add_command :pcstats, "Edit a player's character sheet.", "PLAYER"
-            add_command :npcstats, "Edit an NPC's character sheet.", "NPC"
+            add_command :edit, "Edit a character sheet belonging to a player or NPC.", "PLAYER/NPC"
             add_command :warp, "Put all player in this room.", "ROOM"
             add_command :room, "Put one player in this room.", "PLAYER", "ROOM"
             add_command :spawn, "Create a new npc", "TYPE", "NAME"
             add_command :decree, "Create a report for all players to see."
-            add_command :edit, "Edit a player's report.", "PLAYER"
+            add_command :tell, "Tell a player something.", "PLAYER"
             add_command :census, "Ask a question of every player."
             add_command :ask, "Ask a question of one player.", "PLAYER"
             add_command :survey, "Preview the reports and questions to be sent to every player."
@@ -56,6 +54,8 @@ module CARPS
             add_command :remit, "Clear the report for one player", "PLAYER"
             add_command :supress, "Clear the questions for one player", "PLAYER"
          end
+
+         protected
 
          # Invite a new player
          def invite addr
@@ -76,16 +76,8 @@ module CARPS
             @mod.next_turn
          end
 
-         def npcstats name
-            @mod.edit_npc_sheet name
-         end
-
-         def pcstats name
-            @mod.edit_player_sheet name
-         end
-
-         def npc name
-            @mod.describe_npc name
+         def edit name
+            @mod.edit_sheet name
          end
 
          def npcs
@@ -96,8 +88,8 @@ module CARPS
             @mod.list_players
          end
 
-         def player name
-            @mod.describe_player name 
+         def describe name
+            @mod.describe name 
          end
 
          def mail
@@ -157,8 +149,8 @@ module CARPS
             @mod.new_npc type, name
          end
 
-         def edit player
-            @mod.edit player
+         def tell player
+            @mod.tell player
          end
 
       end

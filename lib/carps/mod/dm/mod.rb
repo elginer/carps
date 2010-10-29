@@ -39,6 +39,7 @@ module CARPS
             @resource.reporter = @reporter
             @players = {}
             @npcs = {}
+            @entities = {}
             @monikers = {}
             @mails = {}
          end
@@ -53,36 +54,11 @@ module CARPS
             @mailer.save self
          end
 
-         # Edit a player's character sheet
-         def edit_player_sheet name
-            with_player name do
-               sheet = @players[name]
-               sheet = editor.fill sheet
-               @players[name] = sheet
-               @reporter.sheet name, sheet
-            end
-         end
-
-         # Edit an npc's character sheet
-         def edit_npc_sheet name
-            with_npc name do
-               sheet = @npcs[name]
-               @npcs[name] = editor.fill sheet
-            end
-         end
-
-         # If the player exists, continue
-         def with_player player
-            if player? player
-               yield
-            else
-               UI::put_error "Unknown player."
-            end
-         end
-
-         # Does a player exist?
-         def player? player
-            @players.member? player
+         # Edit a sheet
+         def edit_sheet name
+            with_entity name,
+               lambda {edit_player_sheet name},
+               lambda {edit_npc_sheet name}
          end
 
          # Ask a question of the player
@@ -146,9 +122,12 @@ module CARPS
 
          # Create a new npc
          def new_npc type, name
-            if char = @resource.new_npc(type)
-               char = editor.validate char 
-               @npcs[name] = char
+            if moniker_available? name
+               if char = @resource.new_npc(type)
+                  char = editor.validate char 
+                  @npcs[name] = char
+                  @entities[name] = :npc
+               end
             end
          end
 
@@ -180,7 +159,7 @@ module CARPS
          # Create a report that all players will see
          def create_global_report
             e = Editor.load
-            global = e.edit ""
+            global = e.edit "# Enter report for all players."
             @players.each_key do |player|
                puts "global: " + global
                @reporter.update_player player, global
@@ -188,7 +167,7 @@ module CARPS
          end
 
          # Edit the report for a player 
-         def edit player
+         def tell player
             with_player player do
                @reporter.edit player
             end
@@ -196,7 +175,11 @@ module CARPS
 
          # Add a player
          def add_player email
-            moniker = UI::question "Enter moniker for " + email
+            valid = false
+            until valid
+               moniker = UI::question "Enter moniker for " + email
+               valid = moniker_available? moniker
+            end
             add_known_player moniker, email
          end
 
@@ -204,26 +187,14 @@ module CARPS
          def add_known_player moniker, email
             @monikers[moniker] = email
             @mails[email] = moniker
+            @entities[moniker] = :player
          end
 
-         # Only execute the block if the npc exists
-         def with_npc name
-            if @npcs.member? name
-               yield
-            else
-               UI::put_error "Unknown NPC."
-            end
-         end
-
-         # Describe npc
-         def describe_npc npc
-            with_npc npc do
-               unsafe_describe_npc npc
-            end
-         end
-
-         def unsafe_describe_npc npc
-            puts @npcs[npc].emit
+         # Describe an entity
+         def describe name
+            with_entity name,
+               lambda {unsafe_describe_player name},
+               lambda {unsafe_describe_npc name}
          end
 
          # Describe all npcs
@@ -235,7 +206,6 @@ module CARPS
             end
          end
 
-
          # Return player stats
          def player_stats player
             @players[player]
@@ -244,19 +214,6 @@ module CARPS
          # Return npc stats
          def npc_stats npc
             @npcs[npc]
-         end
-
-         # Describe a player
-         def describe_player player
-            with_player player do
-               unsafe_describe_player player
-            end
-         end
-
-         def unsafe_describe_player player
-            mail = @monikers[player]
-            puts mail + " aka " + player + " aka: "
-            puts @players[player].emit
          end
 
          # List all the players
@@ -291,6 +248,24 @@ module CARPS
 
          end
 
+         protected
+
+         # Perform an action with an entity.
+         #
+         # The first Proc is called if it's a Player
+         #
+         # The second is called if it's an NPC
+         def with_entity name, player_proc, npc_proc
+            case @entities[name]
+            when :player
+               player_proc.call   
+            when :npc
+               npc_proc.call
+            when nil
+               UI::put_error "Unknown entity: #{name}"
+            end
+         end
+
          # Register a new character sheet
          def new_character_sheet moniker, sheet
             UI::highlight "New character sheet for #{moniker}"
@@ -299,7 +274,20 @@ module CARPS
             @reporter.sheet moniker, sheet
          end
 
-         protected
+         def unsafe_describe_npc npc
+            puts @npcs[npc].emit
+         end
+
+         def unsafe_describe_player player
+            mail = @monikers[player]
+            puts mail + " aka " + player + " aka: "
+            puts @players[player].emit
+         end
+
+         # Moniker is available?
+         def moniker_available? mon
+            not @entities.member? mon
+         end
 
          # Send the reports
          def send_reports
@@ -334,6 +322,43 @@ module CARPS
                yield moniker
             else
                warn "BUG",  "Mod received mail from unregistered player #{mail.from}"
+            end
+         end
+
+         # Edit a player's character sheet
+         def edit_player_sheet name
+            sheet = @players[name]
+            sheet = editor.fill sheet
+            @players[name] = sheet
+            @reporter.sheet name, sheet
+         end
+
+         # Edit an npc's character sheet
+         def edit_npc_sheet name
+            sheet = @npcs[name]
+            @npcs[name] = editor.fill sheet
+         end
+
+         # If the player exists, continue
+         def with_player player
+            if player? player
+               yield
+            else
+               UI::put_error "Unknown player."
+            end
+         end
+
+         # Does a player exist?
+         def player? player
+            @players.member? player
+         end
+
+         # Only execute the block if the npc exists
+         def with_npc name
+            if @npcs.member? name
+               yield
+            else
+               UI::put_error "Unknown NPC."
             end
          end
 

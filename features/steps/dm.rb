@@ -64,7 +64,6 @@ end
 $email = "barry@doodah.xxx"
 
 When /^(.+) joins the mod$/ do |name|
-   $mod.add_known_player name, $email 
    $mailer.barry
 end
 
@@ -95,24 +94,24 @@ Then /^test all inputs to interface$/ do
    commands.push [:done]
    commands.push [:players]
    commands.push [:npcs]
-   commands.push [:player, "bob"]
-   commands.push [:player, "barry"]
+   commands.push [:describe, "bob"]
+   commands.push [:describe, "barry"]
    commands.push [:spawn, "orange", "dick"]
-   commands.push [:npc, "dick"]
-   commands.push [:npc, "bob"]
+   commands.push [:describe, "dick"]
+   commands.push [:describe, "bob"]
    commands.push [:npcs]
    commands.push [:players]
    commands.push [:done]
    commands.push [:warp, "cave"]
    commands.push [:warp, "hello"]
    commands.push [:decree]
-   commands.push [:edit, "barry"]
-   commands.push [:edit, "bob"]
+   commands.push [:tell, "barry"]
+   commands.push [:tell, "bob"]
    commands.push [:census]
-   commands.push [:pcstats, "bob"]
-   commands.push [:npcstats, "bob"]
-   commands.push [:pcstats, "barry"]
-   commands.push [:npcstats, "dick"]
+   commands.push [:edit, "bob"]
+   commands.push [:edit, "bob"]
+   commands.push [:edit, "barry"]
+   commands.push [:edit, "dick"]
    commands.push [:survey]
    commands.push [:ask, "bob"]
    commands.push [:ask, "barry"]
