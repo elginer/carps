@@ -250,6 +250,9 @@ module CARPS
 
          protected
 
+         # Perform an action with an entity,
+         # where it does not matter if the entity is a player or an NPC.
+
          # Perform an action with an entity.
          #
          # The first Proc is called if it's a Player
@@ -266,12 +269,19 @@ module CARPS
             end
          end
 
+         # Perform an action with an NPC's sheet.  Pass a block
+         def with_npc_sheet name
+            sheet = @npcs[name]
+            sheet = yield sheet
+            @npcs[name] = sheet
+         end
+
          # Register a new character sheet
          def new_character_sheet moniker, sheet
-            UI::highlight "New character sheet for #{moniker}"
-            sheet = editor.validate sheet
-            @players[moniker] = sheet
-            @reporter.sheet moniker, sheet
+            with_player_sheet moniker do |old_sheet|
+               UI::highlight "New character sheet for #{moniker}"
+               editor.validate sheet
+            end
          end
 
          def unsafe_describe_npc npc
@@ -325,18 +335,26 @@ module CARPS
             end
          end
 
-         # Edit a player's character sheet
-         def edit_player_sheet name
+         # Perform an action that takes a players sheet and returns a new one.  Pass a block.
+         def with_player_sheet name
             sheet = @players[name]
-            sheet = editor.fill sheet
+            sheet = yield sheet
             @players[name] = sheet
             @reporter.sheet name, sheet
          end
 
+         # Edit a player's character sheet
+         def edit_player_sheet name
+            with_player_sheet name do |sheet|
+               editor.fill sheet
+            end
+         end
+
          # Edit an npc's character sheet
          def edit_npc_sheet name
-            sheet = @npcs[name]
-            @npcs[name] = editor.fill sheet
+            with_npc_sheet name do |sheet|
+               editor.fill sheet
+            end
          end
 
          # If the player exists, continue
