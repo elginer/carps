@@ -14,6 +14,7 @@ features/crypt.feature
 features/dice.feature
 features/dm.feature
 features/dmll.feature
+features/edit.feature
 features/email.feature
 features/interface.feature
 features/ipc.feature
@@ -35,6 +36,7 @@ features/steps/crypt.rb
 features/steps/dice.rb
 features/steps/dm.rb
 features/steps/dmll.rb
+features/steps/edit.rb
 features/steps/email.rb
 features/steps/general.rb
 features/steps/interface.rb
@@ -119,6 +121,7 @@ lib/carps/service/session.rb
 lib/carps/service/start/config.rb
 lib/carps/service/start/interface.rb
 lib/carps/service/start/mailer.rb
+lib/carps/test.rb
 lib/carps/ui.rb
 lib/carps/ui/colour.rb
 lib/carps/ui/error.rb
