@@ -95,11 +95,10 @@ module CARPS
 
       # Attempt to find field within the conf hash
       def read_conf conf, field
-         val = conf[field]
-         unless val 
+         unless conf.include? field
             raise "Could not find field: #{field}"
          end
-         val
+         conf[field] 
       end
 
       # Raise error

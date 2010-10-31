@@ -48,7 +48,7 @@ module CARPS
          # Invite a new player
          def invite addr
             inv = Invite.new @dm, @mod, @about, @session
-            relay inv, message
+            relay addr, inv
          end
 
 

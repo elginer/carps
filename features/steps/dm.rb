@@ -1,5 +1,7 @@
 require "carps/mod"
 
+require "carps/service"
+
 require "yaml"
 
 class TestMod < DM::Mod
@@ -13,7 +15,14 @@ class TestMod < DM::Mod
 
 end
 
-class TestMailer
+class TestMailer < DM::Mailer
+
+   def initialize
+      @dm = "johnny"
+      @about = "game description"
+      @session = "123"
+      @mod = "cool"
+   end
 
    def relay addr, mail
       puts "Sending to #{addr}:"
@@ -46,13 +55,6 @@ class TestMailer
       end
    end
 
-end
-
-# Test an interface by calling the commands
-def test_interface interface, commands
-   commands.each do |cmd|
-      interface.send *cmd
-   end
 end
 
 Given /^a DM mod$/ do

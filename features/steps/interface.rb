@@ -45,6 +45,13 @@ Then /^present the cheesey interface to the user$/ do
    Process.wait child 
 end
 
+# Test an interface by calling the commands
+def test_interface interface, commands
+   commands.each do |cmd|
+      interface.send *cmd
+   end
+end
+
 Given /^a broken interface created by a drunk$/ do
    $interface = Broken.new
 end

@@ -250,6 +250,13 @@ module CARPS
 
          protected
 
+         # Find an entity
+         def find_entity name
+            with_entity name,
+               lambda {@players[name]},
+               lambda {@npcs[name]}
+         end
+
          # Perform an action with an entity,
          # where it does not matter if the entity is a player or an NPC.
 
