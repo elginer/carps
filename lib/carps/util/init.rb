@@ -49,7 +49,8 @@ module CARPS
    #
    # This performs an untaint operation
    def CARPS::root_config
-      loc = File.expand_path "~/carps/"
+      loc = File.expand_path "~/carps"
+      loc += "/"
       loc.untaint
    end
 
