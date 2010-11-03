@@ -55,15 +55,8 @@ module CARPS
 
          # Edit a sheet
          def edit_sheet name
-            with_entity name,
-               lambda {|player| 
-                  player = editor.fill player
-                  @players[name] = player
-               },
-               lambda {|npc| 
-                  npc = editor.fill npc
-                  @npcs[name] = npc
-               }
+            char = find_entity name
+            editor.fill char
          end
 
          # Ask a question of the player
@@ -129,7 +122,7 @@ module CARPS
          def new_npc type, name
             if moniker_available? name
                if char = @resource.new_npc(type)
-                  char = editor.validate char 
+                  editor.validate char 
                   @npcs[name] = char
                   @entities[name] = :npc
                end
@@ -299,7 +292,7 @@ module CARPS
          # Register a new character sheet
          def new_character_sheet moniker, sheet
             UI::highlight "New character sheet for #{moniker}"
-            sheet = editor.validate sheet
+            editor.validate sheet
             @players[moniker] = sheet
          end
 

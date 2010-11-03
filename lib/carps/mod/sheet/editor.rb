@@ -65,10 +65,9 @@ module CARPS
                   valid = valid? sheet
                end
                unless valid
-                  sheet = edit sheet
+                  edit sheet
                end
             end
-            sheet
          end
 
          private

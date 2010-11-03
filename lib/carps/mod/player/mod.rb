@@ -39,7 +39,7 @@ module CARPS
 
          # Edit the character sheet
          def edit_sheet
-            @sheet = editor.fill @sheet
+            editor.fill @sheet
             @edited = true
          end
 
