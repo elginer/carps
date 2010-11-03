@@ -49,9 +49,20 @@ module CARPS
    #
    # This performs an untaint operation
    def CARPS::root_config
-      loc = File.expand_path "~/carps"
-      loc += "/"
-      loc.untaint
+      loc = nil
+      # If it's windows
+      if RUBY_PLATFORM.match(/(win|w)32/)
+         loc = ENV["USERPROFILE"]
+      else
+         # Otherwise assume it's a unix-like system
+         loc = ENV["HOME"]
+      end
+      if loc
+         loc += "/"
+         loc.untaint
+      else
+         CARPS::fatal "Could not find home directory."
+      end
    end
 
    # Set the configuration directory
