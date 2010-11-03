@@ -58,7 +58,7 @@ module CARPS
          loc = ENV["HOME"]
       end
       if loc
-         loc += "/"
+         loc += "/carps/"
          loc.untaint
       else
          CARPS::fatal "Could not find home directory."
