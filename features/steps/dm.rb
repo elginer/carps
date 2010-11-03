@@ -71,7 +71,7 @@ end
 
 Then /^set (.+)'s status conditionally$/ do |name|
    player = $mod.player_stats(name)
-   $mod.update_barry "You are a #{player.visit{|sheet| sheet["fruit"]}}"
+   $mod.update_barry "You are a #{player["fruit"]}"
 end
 
 Then /^preview player turns$/ do
@@ -141,5 +141,5 @@ end
 
 Then /^report the strength of the NPC (.+) to (.+)$/ do |npc_name, name|
    npc = $mod.npc_stats npc_name
-   $mod.update_player name, "#{npc_name}'s strength is #{npc.visit{|sheet| sheet["strength"]}}"
+   $mod.update_player name, "#{npc_name}'s strength is #{npc["strength"]}"
 end

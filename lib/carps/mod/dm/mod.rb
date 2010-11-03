@@ -35,8 +35,7 @@ module CARPS
          def initialize resource, mailer
             @mailer = mailer
             @resource = resource
-            @reporter = Reporter.new
-            @resource.reporter = @reporter
+            new_reporter
             @players = {}
             @npcs = {}
             @entities = {}
@@ -57,8 +56,14 @@ module CARPS
          # Edit a sheet
          def edit_sheet name
             with_entity name,
-               lambda {edit_player_sheet name},
-               lambda {edit_npc_sheet name}
+               lambda {|player| 
+                  player = editor.fill player
+                  @players[name] = player
+               },
+               lambda {|npc| 
+                  npc = editor.fill npc
+                  @npcs[name] = npc
+               }
          end
 
          # Ask a question of the player
@@ -151,9 +156,9 @@ module CARPS
          # Next turn 
          def next_turn
             # Save the game
-            save
             send_reports
-            @reporter = Reporter.new
+            new_reporter
+            save
          end
 
          # Create a report that all players will see
@@ -161,7 +166,6 @@ module CARPS
             e = Editor.load
             global = e.edit "# Enter report for all players."
             @players.each_key do |player|
-               puts "global: " + global
                @reporter.update_player player, global
             end
          end
@@ -231,7 +235,7 @@ module CARPS
                   add_player mail.from
                end
                with_valid_mail mail do |moniker|
-                  new_character_sheet moniker, Sheet::Character.new(mail.dump)
+                  new_character_sheet moniker, Sheet::Player.new(self, moniker, mail.dump)
                end
             elsif mail = @mailer.check(Answers)
                with_valid_mail mail do |moniker|
@@ -246,6 +250,11 @@ module CARPS
                false
             end
 
+         end
+
+         # A sheet has been updated so inform the player
+         def sheet_updated moniker
+            @reporter.sheet moniker, @players[moniker]
          end
 
          protected
@@ -268,27 +277,30 @@ module CARPS
          def with_entity name, player_proc, npc_proc
             case @entities[name]
             when :player
-               player_proc.call   
+               execute_sheet_proc player_proc, @players[name]
             when :npc
-               npc_proc.call
+               execute_sheet_proc npc_proc, @npcs[name]
             when nil
                UI::put_error "Unknown entity: #{name}"
             end
          end
 
-         # Perform an action with an NPC's sheet.  Pass a block
-         def with_npc_sheet name
-            sheet = @npcs[name]
-            sheet = yield sheet
-            @npcs[name] = sheet
+         # Execute a proc, passing a sheet if the arity is 1
+         def execute_sheet_proc func, sheet
+            if func.arity == 0
+               func.call
+            elsif func.arity == 1
+               func.call sheet
+            else
+               raise ArgumentError, "'func' must have arity of 0 or 1"
+            end
          end
 
          # Register a new character sheet
          def new_character_sheet moniker, sheet
-            with_player_sheet moniker do |old_sheet|
-               UI::highlight "New character sheet for #{moniker}"
-               editor.validate sheet
-            end
+            UI::highlight "New character sheet for #{moniker}"
+            sheet = editor.validate sheet
+            @players[moniker] = sheet
          end
 
          def unsafe_describe_npc npc
@@ -342,28 +354,6 @@ module CARPS
             end
          end
 
-         # Perform an action that takes a players sheet and returns a new one.  Pass a block.
-         def with_player_sheet name
-            sheet = @players[name]
-            sheet = yield sheet
-            @players[name] = sheet
-            @reporter.sheet name, sheet
-         end
-
-         # Edit a player's character sheet
-         def edit_player_sheet name
-            with_player_sheet name do |sheet|
-               editor.fill sheet
-            end
-         end
-
-         # Edit an npc's character sheet
-         def edit_npc_sheet name
-            with_npc_sheet name do |sheet|
-               editor.fill sheet
-            end
-         end
-
          # If the player exists, continue
          def with_player player
             if player? player
@@ -385,6 +375,12 @@ module CARPS
             else
                UI::put_error "Unknown NPC."
             end
+         end
+
+         # Create a new reporter
+         def new_reporter
+            @reporter = Reporter.new
+            @resource.reporter = @reporter
          end
 
       end

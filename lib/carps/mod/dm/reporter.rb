@@ -49,7 +49,7 @@ module CARPS
             sheet = Sheet::Character.new({})
          end
          # Hmmmm this looks silly
-         stats = sheet.visit{|stats| stats}
+         stats = sheet.attributes
          new_sheet = Sheet::NewSheet.new stats
          ClientTurn.new new_sheet, status, questions 
       end

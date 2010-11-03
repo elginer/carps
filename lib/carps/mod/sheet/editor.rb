@@ -36,15 +36,15 @@ module CARPS
 
          # Fill in the sheet
          def fill sheet=Character.new
-            sheet = edit sheet
+            edit sheet
             validate sheet
          end
 
          # Is the sheet valid?
          def valid? sheet
-            failures = sheet.visit {|stats| @schema.produce_errors stats}
+            failures = @schema.produce_errors sheet
             unless failures
-               failures = sheet.visit {|stats| @semantics.produce_errors stats}
+               failures = @semantics.produce_errors sheet
             end
             if failures
                UI::put_error "Character sheet was incorrect:"
@@ -85,7 +85,9 @@ module CARPS
                UI::put_error e.message
             end
             if sheet_map
-               Character.new sheet_map
+               sheet_map.each do |attr, val|
+                  sheet[attr] = val
+               end
             end
          end
 

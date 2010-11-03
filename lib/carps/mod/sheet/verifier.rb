@@ -28,7 +28,7 @@ module CARPS
 
          # Produce errors if the sheet is incorrect
          def produce_errors sheet
-            text = sheet.to_yaml
+            text = sheet.emit
             puts text
             unless UI::confirm("Is the above character sheet correct?")
                ["User refused to accept sheet."]

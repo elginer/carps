@@ -30,11 +30,19 @@ module CARPS
             @sheet = sheet
          end
 
-         # Visit the sheet
-         #
-         # Takes a block
-         def visit
-            yield @sheet
+         # Access a value in the sheet
+         def [] attr
+            @sheet[attr]
+         end
+
+         # Set a value in the sheet
+         def []= attr, val
+            @sheet[attr] = val
+         end
+
+         # Dump the attributes
+         def attributes
+            @sheet
          end
 
          # The sheet has no entries - it is uninitialized!
@@ -45,6 +53,26 @@ module CARPS
          # Emit
          def emit
             @sheet.to_yaml
+         end
+
+      end
+
+      # Player
+      #
+      # The mod is an observer on the player.  Hence when the player is updated, the mod can send the new character sheet via email
+      class Player < Character
+
+         # Pass a sheet, the moniker used to refer to this sheet, and a reference to the mod
+         def initialize mod, moniker, sheet = {}
+            super sheet
+            @mod = mod
+            @moniker = moniker
+         end
+
+         # Update the sheet and notify the mod
+         def []= attr, val
+            super
+            @mod.sheet_updated @moniker
          end
 
       end

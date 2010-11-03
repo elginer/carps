@@ -53,13 +53,11 @@ module CARPS
          def create_sheet_text user_sheet
             current = {}
             if user_sheet
-               user_sheet.visit do |inner|
-                  current = inner
-               end
+               current = user_sheet.attributes
             end
 
-            if current.empty?
-               @schema.each_key do |field|
+            @schema.each_key do |field|
+               unless current.include? field
                   current[field] = nil
                end
             end

@@ -52,17 +52,6 @@ module CARPS
          end
       end
 
-      # Load a room
-      def load_room room
-         room_loc = @dir + "/rooms/" + room + ".room"
-         begin
-            return Room.new room_loc
-         rescue Exception => e
-            UI::warn "Could not load room: " + room_loc
-            return nil
-         end
-      end
-
       # This player is in this room
       def player_in player, room_name
          room = load_room room_name
@@ -77,6 +66,17 @@ module CARPS
       end
 
       private
+      
+      # Load a room
+      def load_room room
+         room_loc = @dir + "/rooms/" + room + ".room"
+         begin
+            return Room.new room_loc
+         rescue Exception => e
+            UI::warn "Could not load room: " + room_loc
+            return nil
+         end
+      end
 
       # Update the reporter
       def update_reporter player, room
