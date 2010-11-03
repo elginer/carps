@@ -18,8 +18,6 @@
 require "carps/util/process"
 require "carps/util/config"
 
-require "etc"
-
 require "erb"
 
 # Requiring this file cripples ERB 
@@ -51,7 +49,7 @@ module CARPS
    #
    # This performs an untaint operation
    def CARPS::root_config
-      loc = Etc.getpwuid.dir + "/carps/"
+      loc = File.expand_path "~/carps/"
       loc.untaint
    end
 
