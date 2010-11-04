@@ -15,7 +15,8 @@
 # You should have received a copy of the GNU General Public License
 # along with CARPS.  If not, see <http://www.gnu.org/licenses/>.
 
-require "carps/ui/colour"
+require "carps/ui"
+require "carps/util"
 
 module CARPS
 
@@ -25,7 +26,21 @@ module CARPS
       $stderr.write h.color("\nFATAL ERROR\n#{msg}\n", :error)
       puts "\a"
       exit 1
-    end
+   end
+
+   # Catch errors and print out a stack trace if they occur.
+   #
+   # Pass a block.
+   #
+   # Intented to be run at the top level (Eg by the binaries)
+   def CARPS::with_crash_report
+      begin
+         yield
+      rescue StandardError => e
+         UI::put_error e.message + "\n" + e.backtrace.join("\n")
+         CARPS::enter_quit         
+      end
+   end
 
 end
 

@@ -33,14 +33,8 @@ module CARPS
       end
 
       def Launcher::get_mailer uri
-         mailer = nil
-         begin
-            DRb.start_service
-            mailer = DRbObject.new_with_uri uri
-         rescue StandardError => e
-            UI::put_error "Error beginning IPC: #{e.message}"
-            CARPS::enter_quit 1
-         end
+         DRb.start_service
+         mailer = DRbObject.new_with_uri uri
       end
 
       # Either get the mod from the mailer or create a new one
@@ -81,7 +75,7 @@ module CARPS
       # this method should take one parameter: the mod
       def Launcher::launch mod
 
-         begin
+         CARPS::with_crash_report do
             # Should use optparse?
             if ARGV.empty?
                usage
@@ -106,9 +100,6 @@ module CARPS
                   Launcher::usage
                end
             end
-         rescue StandardError => e
-            UI::put_error e.message + "\n" + e.backtrace.join("\n")
-            CARPS::enter_quit
          end
       end
 
