@@ -28,6 +28,19 @@ module CARPS
       exit 1
    end
 
+
+   # Kill all threads and exit with status
+   def CARPS::shutdown_properly status
+      # Stop all threads
+      Thread.list.each do |thr|
+         unless thr == Thread.main
+            Thread.kill thr
+            thr.join
+         end
+      end
+      exit status
+   end
+
    # Catch errors and print out a stack trace if they occur.
    #
    # Pass a block.
@@ -37,9 +50,9 @@ module CARPS
       begin
          yield
       rescue SystemExit => e
-         raise e
+         CARPS::shutdown_properly e.status
       rescue Interrupt => e
-         raise e
+         CARPS::shutdown_properly 1
       rescue Exception => e
          UI::put_error "CRASHED!\n#{e.class} reports:\n   #{e.message}\n\nStack trace:\n#{e.backtrace.join("\n")}", false
          CARPS::enter_quit         
