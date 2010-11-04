@@ -23,6 +23,14 @@ module CARPS
 
    module UI
 
+      # Because we mess with the modes, and we're meant to run in a safe environment, need to hack highline.
+      HighLine::SystemExtensions.module_eval do
+         def restore_mode
+            @state.untaint
+            system "stty #{@state}"
+         end
+      end
+
       # Ask a question, return a boolean
       def UI::confirm question
          h = HighLine.new
@@ -39,13 +47,15 @@ module CARPS
          # Trust the user
          res.untaint
       end
+
       # Ask a question and don't echo what is typed.
       #
       # Calls untaint on the password
       def UI::secret msg
          h = HighLine.new
-         h.ask(h.color(msg, :green)) {|q| q.echo = "*"}
+         ooh = h.ask(h.color(msg, :green)) {|q| q.echo = "*"}
          h.untaint
+         ooh
       end
 
    end

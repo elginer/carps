@@ -20,6 +20,7 @@ module CARPS
    # Get the file names from inside a directory
    def files dir
       file_names = Dir.open(dir).entries.reject do |file|
+         file.untaint
          file[0] == "." or File.ftype(dir + "/" + file) != "file" 
       end
       file_names.map do |fn|

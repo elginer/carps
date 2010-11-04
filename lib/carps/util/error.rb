@@ -36,7 +36,11 @@ module CARPS
    def CARPS::with_crash_report
       begin
          yield
-      rescue StandardError => e
+      rescue SystemExit => e
+         raise e
+      rescue Interrupt => e
+         raise e
+      rescue Exception => e
          UI::put_error "CRASHED!\n#{e.class} reports:\n   #{e.message}\n\nStack trace:\n#{e.backtrace.join("\n")}", false
          CARPS::enter_quit         
       end

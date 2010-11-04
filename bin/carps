@@ -29,8 +29,8 @@ def setup_email parser, session
    config.mailer parser, session
 end
 
-# Launch CARPS
-def carps config, role
+# Launch a CARPS session for a given role
+def play_role config, role
    wizard = role::Wizard.new
    if wizard.first_time?
       wizard.create_files
@@ -100,11 +100,11 @@ def carps
 
    if player and not dm
       CARPS::config_dir "player"
-      carps config, Player
+      play_role config, Player
 
    elsif dm and not player
       CARPS::config_dir "dm"
-      carps config, DM
+      play_role config, DM
    else
       puts opts
       exit 1

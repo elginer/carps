@@ -61,6 +61,9 @@ module CARPS
          unless smtp.members?(["user", "server", "port", "tls", "starttls", "login", "cram_md5"])
             raise Expected, "Expected SMTP section to be valid."
          end
+         # Untaint the imap and smtp data
+         untaint_all imap
+         untaint_all smtp
          [address, same_pass, imap, smtp]        
       end
 
@@ -105,6 +108,13 @@ module CARPS
       def mailer message_parser, session_manager
          mailbox = Mailbox.new @smtp, @imap, message_parser, session_manager
          Mailer.new @address, mailbox
+      end
+
+      # Untaint every value in a hash
+      def untaint_all hsh
+         hsh.each_value do |val|
+            val.untaint
+         end
       end
 
    end

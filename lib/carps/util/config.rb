@@ -94,11 +94,13 @@ module CARPS
       end
 
       # Attempt to find field within the conf hash
+      #
+      # Untaints the field. 
       def read_conf conf, field
          unless conf.include? field
             raise "Could not find field: #{field}"
          end
-         conf[field] 
+         conf[field].untaint
       end
 
       # Raise error
