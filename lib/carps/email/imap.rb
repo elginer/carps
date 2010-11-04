@@ -97,15 +97,16 @@ module CARPS
             imap = attempt_connection
             yield imap
          rescue Net::IMAP::NoResponseError => e
-            if e.message == "IMAP authentication failed."
+            if e.message =~ /(A|a)uthentication failed/
+               UI::put_error e.message, false
                @password = UI::secret "Enter IMAP password for #{@username}" 
             else
                warn_delay
             end
-            UI::put_error e.message
+            UI::put_error e.message, false
          rescue StandardError => e
             warn_delay
-            UI::put_error e.message
+            UI::put_error e.message, false
          ensure
             if imap
                imap.logout

@@ -68,11 +68,11 @@ module CARPS
                with_attempt_connection &todo
                return
             rescue Net::SMTPAuthenticationError => e
-               UI::put_error e.message
+               UI::put_error e.message, false
                @password = UI::secret "Enter SMTP password for #{@username}:"
             rescue StandardError => e
                UI::warn "Could not connect to SMTP server", "Attempting to reconnect in 10 seconds."
-               UI::put_error e.message
+               UI::put_error e.message, false
                sleep 10
             end
          end
