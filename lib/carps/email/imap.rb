@@ -16,6 +16,8 @@
 # along with CARPS.  If not, see <http://www.gnu.org/licenses/>.
 
 
+require "carps/email"
+
 require "carps/protocol/message"
 
 require "carps/ui/warn"
@@ -96,7 +98,7 @@ module CARPS
             yield imap
          rescue Net::IMAP::NoResponseError => e
             if e.message == "IMAP authentication failed."
-               @password = UI::secret "Enter IMAP password for #{@username}"
+               @password = UI::secret "Enter IMAP password for #{@username}" 
             else
                warn_delay
             end

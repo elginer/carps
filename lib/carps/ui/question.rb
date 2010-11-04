@@ -40,9 +40,12 @@ module CARPS
          res.untaint
       end
       # Ask a question and don't echo what is typed.
+      #
+      # Calls untaint on the password
       def UI::secret msg
          h = HighLine.new
          h.ask(h.color(msg, :green)) {|q| q.echo = "*"}
+         h.untaint
       end
 
    end
