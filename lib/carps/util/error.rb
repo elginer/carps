@@ -37,7 +37,7 @@ module CARPS
       begin
          yield
       rescue StandardError => e
-         UI::put_error e.message + "\n" + e.backtrace.join("\n")
+         UI::put_error "CRASHED!\n#{e.class} reports:\n   #{e.message}\n\nStack trace:\n#{e.backtrace.join("\n")}", false
          CARPS::enter_quit         
       end
    end

@@ -22,9 +22,16 @@ module CARPS
    module UI
 
       # Output an error message
-      def UI::put_error msg
+      #
+      # If the second parameter is true, the error message will begin with
+      # "Error:"
+      def UI::put_error msg, default_error=true
          h = HighLine.new
-         $stderr.write h.color("Error:  #{msg}", :error)
+         prelude = ""
+         if default_error
+            prelude = "Error:  "
+         end
+         $stderr.write h.color("#{prelude}#{msg}", :error)
          puts "\a"
       end
 
