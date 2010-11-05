@@ -90,9 +90,6 @@ module CARPS
                end
             end
          end
-         if $DEBUG
-            puts "Read mail."
-         end
          mails
       end
 

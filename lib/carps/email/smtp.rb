@@ -44,14 +44,11 @@ module CARPS
       # Send an email message
       def send to, message
          if $DEBUG
-            puts "Sending #{message.class} to #{to}"
+            puts "Sending mail to #{to}"
          end
          with_connection do |smtp|
             message = to_mail "Content-Type: application/octet-stream\r\n" + message
             smtp.send_message message, @username, [to]
-         end
-         if $DEBUG
-            puts "Message sent."
          end
       end
 
