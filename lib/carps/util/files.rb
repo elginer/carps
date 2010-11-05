@@ -37,7 +37,7 @@ module CARPS
       path = $CONFIG + dir + "/" + (self.class.to_s + t.to_f.to_s).gsub(/(\.|@, \?!#'"~\(\))/, "")
       until valid_path
          path += "_"
-         valid_path = not File.exists?(path)
+         valid_path = not(File.exists?(path))
       end
       file = File.new path, "w"
       file.write contents
