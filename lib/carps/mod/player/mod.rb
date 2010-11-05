@@ -60,9 +60,9 @@ module CARPS
                tu = @mailer.check ClientTurn
                if tu
                   @turn = tu
-                  sheet = @turn.sheet
-                  unless sheet.dump.empty?
-                     @sheet = sheet
+                  stats = @turn.sheet.dump
+                  unless stats.empty
+                     @sheet = Sheet::Character.new stats
                      UI::highlight "Received new character sheet."
                   end
                   @answers = @turn.take
