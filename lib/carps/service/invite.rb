@@ -70,7 +70,11 @@ module CARPS
          end
       end
 
-      def emit 
+      def emit
+         puts "dm: #{@dm}"
+         puts "mod: #{@mod}"
+         puts "about: #{@about}"
+         puts "session: #{@session}"
          V.master(@dm) + V.mod(@mod) + V.about(@about) + V.session(@session)
       end
 

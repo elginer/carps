@@ -93,6 +93,7 @@ end
 
 Then /^test all inputs to interface$/ do
    commands = []
+   commands.push [:invite, "carps@killersmurf.com"]
    commands.push [:mail]
    commands.push [:done]
    commands.push [:players]

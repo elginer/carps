@@ -18,7 +18,7 @@ end
 
 Then /^the crash reporter will report a crash$/ do
    begin
-      CARPS::with_crash_report do
+      CARPS::with_crash_report true do
          $proc.call
       end
    rescue SystemExit => e

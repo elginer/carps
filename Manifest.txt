@@ -10,6 +10,7 @@ bin/carps_ipc_test
 bin/carps_mod_saver_test
 bin/carps_mod_test
 features/character_sheet.feature
+features/crash.feature
 features/crypt.feature
 features/dice.feature
 features/dm.feature
@@ -32,6 +33,7 @@ features/start_dm.feature
 features/start_player.feature
 features/step_definitions/common_steps.rb
 features/steps/character_sheet.rb
+features/steps/crash.rb
 features/steps/crypt.rb
 features/steps/dice.rb
 features/steps/dm.rb
@@ -131,7 +133,6 @@ lib/carps/ui/warn.rb
 lib/carps/util.rb
 lib/carps/util/config.rb
 lib/carps/util/editor.rb
-lib/carps/util/enter_quit.rb
 lib/carps/util/error.rb
 lib/carps/util/files.rb
 lib/carps/util/init.rb
@@ -146,5 +147,6 @@ permission
 script/console
 script/destroy
 script/generate
+tasks/setup_carps_dir.rake
 test/test_carps.rb
 test/test_helper.rb

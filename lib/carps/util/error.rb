@@ -20,6 +20,13 @@ require "carps/util"
 
 module CARPS
 
+
+   # Press enter to quit
+   def CARPS::enter_quit status=0
+      UI::question "Press enter to quit."
+      CARPS::shutdown_properly status 
+   end
+
    # Output an error message and quit with exit code 1
    def CARPS::fatal msg
       h = HighLine.new
@@ -58,7 +65,7 @@ module CARPS
       rescue Exception => e
          UI::put_error "CRASHED!\n#{e.class} reports:\n   #{e.message}\n\nStack trace:\n#{e.backtrace.join("\n")}", false
          if wait
-            CARPS::press_enter 1
+            CARPS::enter_quit 1
          else
             CARPS::shutdown_properly 1
          end
