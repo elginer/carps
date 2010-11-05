@@ -252,6 +252,32 @@ module CARPS
 
          protected
 
+         # Perform an action with several entities.  Doesn't matter if the entity is a player or NPC.
+         #
+         # blk.arity must == names.length
+         def with_entities *names, &blk
+            entities = names.map {|name| find_entity_unsafe name}
+            if entities.all?
+               if blk.arity == entities.length
+                  blk.call *entities
+               else
+                  raise ArgumentError, "blk.arity != names.length"
+               end
+            else
+               UI::put_error "Some entities did not exist."
+               return
+            end
+         end
+
+         # Find an entity.  UNSAFE.
+         def find_entity_unsafe name
+            entity = nil
+            unless entity = @players[name]
+               entity = @npcs[name]
+            end
+            entity
+         end
+
          # Perform an action with an entity.  Doesn't matter if the entity is a player or NPC.
          def with_entity
             with_entity2 name,
