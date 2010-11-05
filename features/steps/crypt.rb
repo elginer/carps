@@ -164,7 +164,7 @@ end
 
 Then /^Alice initiates a handshake request and Bob accepts$/ do
    $alice.handshake $bob_address
-   $bob.expect_handshake.join
+   $bob.expect_handshake
 end
 
 Then /^a hacker pretending to be Alice sends a nefarious message to Bob$/ do

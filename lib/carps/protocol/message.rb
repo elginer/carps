@@ -104,9 +104,9 @@ module CARPS
             raise StandardError, "#{self} has already been saved!"
          else
             begin
-               @path = write_file_in ".mails/", blob
+               @path = write_file_in ".mail/", blob
             rescue StandardError => e
-               UI::put_error "Could not save #{self.class} in .mails/"
+               UI::put_error "Could not save #{self.class} in .mail/:\n#{e.message}"
             end
          end
          @path
