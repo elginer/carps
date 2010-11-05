@@ -22,7 +22,7 @@ module CARPS
       # Press enter to quit
       def CARPS::enter_quit status=0
          UI::question "Press enter to quit."
-         exit status 
+         CARPS::shutdown_properly status 
       end
 
 end

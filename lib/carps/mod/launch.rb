@@ -75,7 +75,7 @@ module CARPS
       # this method should take one parameter: the mod
       def Launcher::launch mod
 
-         CARPS::with_crash_report do
+         CARPS::with_crash_report true do
             # Should use optparse?
             if ARGV.empty?
                usage

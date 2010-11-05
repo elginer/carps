@@ -43,10 +43,12 @@ module CARPS
 
    # Catch errors and print out a stack trace if they occur.
    #
+   # If wait is true, then wait for the user to press enter.
+   #
    # Pass a block.
    #
    # Intented to be run at the top level (Eg by the binaries)
-   def CARPS::with_crash_report
+   def CARPS::with_crash_report, wait=false
       begin
          yield
       rescue SystemExit => e
@@ -55,7 +57,11 @@ module CARPS
          CARPS::shutdown_properly 1
       rescue Exception => e
          UI::put_error "CRASHED!\n#{e.class} reports:\n   #{e.message}\n\nStack trace:\n#{e.backtrace.join("\n")}", false
-         CARPS::shutdown_properly 1 
+         if wait
+            CARPS::press_enter 1
+         else
+            CARPS::shutdown_properly 1
+         end
       end
    end
 
