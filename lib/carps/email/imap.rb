@@ -66,7 +66,7 @@ module CARPS
       # Blocks until messages become available 
       def read
          if $DEBUG
-            pus "Reading mail."
+            puts "Reading mail."
          end
          mails = []
          # Block 'till we get one
