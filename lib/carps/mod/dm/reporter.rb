@@ -48,7 +48,6 @@ module CARPS
          unless sheet
             sheet = Sheet::Character.new({})
          end
-         # Hmmmm this looks silly
          stats = sheet.attributes
          new_sheet = Sheet::NewSheet.new stats
          ClientTurn.new new_sheet, status, questions 

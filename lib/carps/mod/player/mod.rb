@@ -82,7 +82,7 @@ module CARPS
             end
             if @edited
                @edited = false
-               @mailer.relay @sheet
+               @mailer.relay Sheet::NewSheet.new @sheet.attributes
                done = true
             end
             unless done
