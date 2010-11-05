@@ -87,6 +87,11 @@ def carps
          puts VERSION
          exit
       end
+
+      opts.on "-d", "--debug", "Debug mode." do
+         $DEBUG = true
+      end
+
    end
 
    begin

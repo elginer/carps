@@ -64,7 +64,10 @@ module CARPS
       # Return the a list of email message bodies
       #
       # Blocks until messages become available 
-      def read 
+      def read
+         if $DEBUG
+            pus "Reading mail."
+         end
          mails = []
          # Block 'till we get one
          while mails.empty?
@@ -86,6 +89,9 @@ module CARPS
                   imap.expunge
                end
             end
+         end
+         if $DEBUG
+            puts "Read mail."
          end
          mails
       end
