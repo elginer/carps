@@ -64,8 +64,7 @@ module CARPS
       def play mailer
          mod = load_mods[@mod]
          dm_mailer = DM::Mailer.new mailer, @conf, @session, @dm, @mod, @about
-         thrd = $process.launch dm_mailer, mod + " -h \"" + @campaign + "\""
-         thrd.join
+         Process.singleton.launch dm_mailer, mod + " -h \"" + @campaign + "\""
       end
 
    end
@@ -93,8 +92,7 @@ module CARPS
       def resume mailer
          mod = load_mods[@mod]
          player_mailer = Player::Mailer.new @dm, mailer, @conf
-         thrd = $process.launch player_mailer, mod + " -p"
-         thrd.join
+         Process.singleton.launch player_mailer, mod + " -p"
       end
 
    end

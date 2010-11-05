@@ -83,8 +83,6 @@ module CARPS
    #
    # Optionally set the config_dir at the same time
    #
-   # Initialize a CARPS::Process object into the global variable $process.
-   #
    # Sets $SAFE to safe, default 1
    #
    # FIXME:  instead of setting a global variable, should use the singleton pattern
@@ -94,7 +92,6 @@ module CARPS
       if dir
          config_dir dir
       end
-      $process = CARPS::Process.load
       CARPS::init_threading
    end 
 

@@ -29,6 +29,14 @@ module CARPS
    # Responsible for launching other CARP processes
    class Process < SystemConfig
 
+      # Get the process singleton
+      def Process.singleton
+         unless @process
+            @process = Process.load
+         end
+         @process
+      end
+
       def Process.filepath
          "process.yaml"
       end
@@ -69,29 +77,27 @@ module CARPS
       #
       # If already running, then the process will not launch until till the first process has completed.
       def ashare resource
-         Thread.fork do
-            @semaphore.synchronize do
-               begin
-                  local_only = ACL.new %w[deny all allow 127.0.0.1]
-                  DRb.install_acl local_only
-                  uri = "druby://localhost:" + @port.to_s 
-                  DRb.start_service uri, resource
-                  child = fork do
-                     begin
-                        DRb.start_service
-                     rescue StandardError => e
-                        UI::put_error "Problem starting inter-process communication in the sub-program: #{e}"
-                     end
-                     yield uri
+         @semaphore.synchronize do
+            begin
+               local_only = ACL.new %w[deny all allow 127.0.0.1]
+               DRb.install_acl local_only
+               uri = "druby://localhost:" + @port.to_s 
+               DRb.start_service uri, resource
+               child = fork do
+                  begin
+                     DRb.start_service
+                  rescue StandardError => e
+                     UI::put_error "Problem starting inter-process communication in the sub-program: #{e}"
                   end
-                  Object::Process.wait child
-                  if @confirm
-                     UI::question "Press enter when the sub-program has completed."
-                  end
-                  DRb.stop_service
-               rescue StandardError => e
-                  UI::put_error "Malfunction in inter-process communication: #{e}"
+                  yield uri
                end
+               Object::Process.wait child
+               if @confirm
+                  UI::question "Press enter when the sub-program has completed."
+               end
+               DRb.stop_service
+            rescue StandardError => e
+               UI::put_error "Malfunction in inter-process communication: #{e}"
             end
          end
       end
@@ -141,6 +147,5 @@ end
 
 # Test IPC
 def test_ipc process, mut
-   child = process.launch mut, "carps_ipc_test"
-   child.join
+   process.launch mut, "carps_ipc_test"
 end
