@@ -48,7 +48,7 @@ module CARPS
    # Pass a block.
    #
    # Intented to be run at the top level (Eg by the binaries)
-   def CARPS::with_crash_report, wait=false
+   def CARPS::with_crash_report wait=false
       begin
          yield
       rescue SystemExit => e
@@ -66,4 +66,3 @@ module CARPS
    end
 
 end
-

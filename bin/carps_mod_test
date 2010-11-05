@@ -18,8 +18,7 @@
 
 # Test CARPS mod launching.  Used for unit testing and as part of the wizard. 
 
-require "carps/mod"
-require "carps/util"
+require "carps"
 
 module TestMod
 

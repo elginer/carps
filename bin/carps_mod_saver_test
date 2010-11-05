@@ -18,8 +18,7 @@
 
 # Test that a mod running in another process can save its state via CARPS. 
 
-require "carps/mod"
-require "carps/util"
+require "carps"
 
 class Saver
 
