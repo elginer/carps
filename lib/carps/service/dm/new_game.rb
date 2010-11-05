@@ -82,6 +82,7 @@ module CARPS
                   mods = load_mods
                   session_id = @manager.generate @name + @mod + @campaign
                   config = @game_config.new @name, @mod, @campaign, @description, session_id, @mailer.address
+                  config.save
                   game = config.spawn
                   @continuation.call lambda {
                      game.start @mailer

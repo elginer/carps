@@ -40,6 +40,7 @@ module CARPS
             if invite
                if config = invite.ask
                   config.register_session @manager
+                  config.save
                   game = config.spawn
                   @continuation.call lambda {
                      game.join_game @mailer

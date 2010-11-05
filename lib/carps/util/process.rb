@@ -100,6 +100,7 @@ module CARPS
                UI::put_error "Malfunction in inter-process communication: #{e}"
             end
          end
+         UI::highlight "IPC HAS ENDED."
       end
 
       protected
