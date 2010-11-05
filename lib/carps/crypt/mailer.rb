@@ -78,6 +78,11 @@ module CARPS
          end
       end
 
+      # Shutdown the mailer
+      def shutdown
+         @mailbox.shutdown
+      end
+
       # Check for handshakes
       def check_handshake
          @mailbox.insecure_check Handshake

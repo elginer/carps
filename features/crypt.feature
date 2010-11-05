@@ -4,20 +4,18 @@ Feature: cryptography
    sign each message using strong public key cryptography
 
    Scenario: handshake
-      When threading starts
       Given two peers, Alice and Bob
       Then Alice initiates a handshake request and Bob accepts
       When the user presses enter, threading stops
 
    Scenario: hacker
-      When threading starts
       Given two peers, Alice and Bob
       Then Alice initiates a handshake request and Bob accepts
       Then a hacker pretending to be Alice sends a nefarious message to Bob
+      Then bob tries to receive the message
       When the user presses enter, threading stops
 
    Scenario: spoofer
-      When threading starts
       Given two peers, Alice and Bob
       Then Alice initiates a handshake request and Bob accepts
       Then a spoofer pretending to be Bob tries to make a handshake with Alice

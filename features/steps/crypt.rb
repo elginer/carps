@@ -59,10 +59,6 @@ class TwistedMailer < Mailer
       puts "Message sent to " + to
    end
 
-   def accept_handshake? from
-      true
-   end
-
    def forget person
       @mailbox.forget person
    end
@@ -101,36 +97,12 @@ class TestReceiver
 
 end
 
-def delete_keys
-   path = $CONFIG + "/.peers/*"
-   File.rm path
-end
-
-class ThreadList
-
-   def initialize
-      @semaphore = Mutex.new
-      @threads = []
+def delete_keys 
+   path = $CONFIG + "/.peers/"
+   paths = files path
+   paths.each do |path|
+      FileUtils.rm path
    end
-
-   def push t
-      @semaphore.synchronize do
-         @threads.push t
-      end
-   end
-
-   def kill
-      h = HighLine.new
-      h.ask h.color("PRESS ENTER TO SHUTDOWN THE SYSTEM", :magenta, :bold)
-      @threads.each do |t| 
-         begin
-            t.kill
-         rescue StandardError => e
-            puts "ThreadList testing utility: Couldn't kill thread: #{e}"
-         end
-      end
-   end
-
 end
 
 Given /^two peers, Alice and Bob$/ do
@@ -152,30 +124,33 @@ Given /^two peers, Alice and Bob$/ do
 
    # Bob's stuff
    CARPS::init 0, "test/client"
+   delete_keys
    $bob_box = TwistedMailbox.new send_alice, receive_alice, MessageParser.new(default_messages.push EvilMessage), SessionManager.new
    $bob = TwistedMailer.new $bob_address, $bob_box
 end
 
 Then /^Alice initiates a handshake request and Bob accepts$/ do
-   $alice.handshake $bob_address
+   Thread.fork { $alice.handshake $bob_address }
    $bob.expect_handshake
+end
+
+Then /^bob tries to receive the message$/ do
+   $bob.check EvilMessage 
 end
 
 Then /^a hacker pretending to be Alice sends a nefarious message to Bob$/ do
    $alice.evil $bob_address, EvilMessage.new
-   $thrs.push Thread.fork { $bob.read EvilMessage }
 end
 
 Then /^a spoofer pretending to be Bob tries to make a handshake with Alice$/ do
    $bob.forget $alice_address 
-   $bob.handshake $alice_address
-   $thrs.push $alice.expect_handshake
-end
-
-When /^threading starts$/ do
-   $thrs = ThreadList.new
+   Thread.fork { $bob.handshake $alice_address }
+   $alice.expect_handshake
 end
 
 When /^the user presses enter, threading stops$/ do
-   $thrs.kill
+   UI::highlight "PRESS ENTER TO STOP"
+   UI::question ""
+   $bob.shutdown
+   $alice.shutdown
 end
