@@ -38,9 +38,12 @@ module CARPS
 
          # Output information about the game, then run.
          def run
-            puts @mod.description
-            UI::question "Press enter when you are ready to fill in your character sheet."
-            edit
+            if @mod.first_time?
+               puts @mod.description
+               UI::question "Press enter when you are ready to fill in your character sheet."
+               edit
+               @mod.configured
+            end
             super
          end
 

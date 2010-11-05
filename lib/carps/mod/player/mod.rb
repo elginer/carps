@@ -34,6 +34,17 @@ module CARPS
 
          def initialize
             @sheet = Sheet::Character.new({})
+            @first_time = true
+         end
+
+         # This game has been configured
+         def configured
+            @first_time = false
+         end
+
+         # This game has never been run before
+         def first_time?
+            @first_time
          end
 
          # Edit the character sheet
