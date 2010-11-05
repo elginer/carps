@@ -54,8 +54,9 @@ module CARPS
 
          # Edit a sheet
          def edit_sheet name
-            char = find_entity name
-            editor.fill char
+            with_entity name do |char|
+               editor.fill char
+            end
          end
 
          # Ask a question of the player
@@ -188,7 +189,7 @@ module CARPS
 
          # Describe an entity
          def describe name
-            with_entity name,
+            with_entity2 name,
                lambda {unsafe_describe_player name},
                lambda {unsafe_describe_npc name}
          end
@@ -251,11 +252,11 @@ module CARPS
 
          protected
 
-         # Find an entity
-         def find_entity name
-            with_entity name,
-               lambda {@players[name]},
-               lambda {@npcs[name]}
+         # Perform an action with an entity.  Doesn't matter if the entity is a player or NPC.
+         def with_entity
+            with_entity2 name,
+               lambda {yield @players[name]},
+               lambda {yield @npcs[name]}
          end
 
          # Perform an action with an entity,
@@ -266,7 +267,7 @@ module CARPS
          # The first Proc is called if it's a Player
          #
          # The second is called if it's an NPC
-         def with_entity name, player_proc, npc_proc
+         def with_entity2 name, player_proc, npc_proc
             case @entities[name]
             when :player
                execute_sheet_proc player_proc, @players[name]
