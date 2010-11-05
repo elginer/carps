@@ -242,6 +242,7 @@ module CARPS
       def load_old_mails
          old_mails = files $CONFIG + "/.mail"
          old_mails.each do |fn|
+            fn = $CONFIG + "/.mail"
             blob = nil
             begin
                blob = File.read fn

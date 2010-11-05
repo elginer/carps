@@ -15,7 +15,9 @@
 # You should have received a copy of the GNU General Public License
 # along with CARPS.  If not, see <http://www.gnu.org/licenses/>.
 
-require "carps/ui/warn"
+require "carps/util"
+
+require "carps/ui"
 
 require "carps/protocol/keyword"
 
@@ -84,8 +86,14 @@ module CARPS
          end
       end
 
+      # Save as YAML file in .peers
       def save
-         save_file ".peers/" + @addr
+         y = emit.to_yaml 
+         begin
+            write_file_in ".peers/", y
+         rescue StandardError => e
+            UI::warn "Could not save Peer in .peers/"
+         end
       end
 
       protected

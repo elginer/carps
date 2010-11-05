@@ -96,21 +96,17 @@ module CARPS
          @path = path
       end
 
-      # Save the mail
+      # Save a blob, associated with this mail
       #
       # Only use once.  Raises exception if called multiple times.
       def save blob
          if @path
             raise StandardError, "#{self} has already been saved!"
          else
-            t = Time.new
-            @path = $CONFIG + ".mail/" + (self.class.to_s + t.to_f.to_s).gsub(/(\.|@)/, "")
             begin
-               file = File.new @path, "w"
-               file.write blob
-               file.close
+               @path = write_file_in ".mails/", blob
             rescue StandardError => e
-               UI::put_error "Could not save message: #{e}"
+               UI::put_error "Could not save #{self.class} in .mails/"
             end
          end
          @path

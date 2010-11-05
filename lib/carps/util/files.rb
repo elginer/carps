@@ -28,4 +28,21 @@ module CARPS
       end
    end
 
+   # Write contents into a new file in a directory with an arbitrary, unique name
+   #
+   # Returns the path
+   def write_file_in dir, contents
+      t = Time.now
+      valid_path = false
+      path = $CONFIG + dir + "/" + (self.class.to_s + t.to_f.to_s).gsub(/(\.|@, \?!#'"~\(\))/, "")
+      until valid_path
+         path += "_"
+         valid_path = not File.exists?(path)
+      end
+      file = File.new path, "w"
+      file.write contents
+      file.close
+      path
+   end
+
 end

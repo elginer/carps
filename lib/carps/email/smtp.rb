@@ -42,7 +42,11 @@ module CARPS
       end
 
       # Send an email message
+      #
+      # Untaints its arguments
       def send to, message
+         to.untaint
+         message.untaint
          if $DEBUG
             puts "Sending mail to #{to}"
          end
