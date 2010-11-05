@@ -23,7 +23,9 @@ require "yaml"
 
 module CARPS
 
-   # Load the available mods 
+   # Load the available mods
+   #
+   # Performs untaint
    def load_mods
       mod_file = CARPS::root_config + "/mods.yaml"
       mods = {}
@@ -31,6 +33,9 @@ module CARPS
          mods = YAML.load(File.read mod_file)
       rescue
          UI::warn "Cannot find mods: could not read #{mod_file}"
+      end
+      mods.each_value do |mod|
+         mod.untaint
       end
       mods
    end
