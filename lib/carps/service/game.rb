@@ -35,17 +35,14 @@ module CARPS
       # The third is the description.
       # The fourth is the session key
       # The fifth is the configuration file
-      def initialize mod, campaign, desc, session, conf
+      # The sixth is the DM's address
+      def initialize mod, campaign, desc, session, conf, dm
          @campaign = campaign
          @mod = mod
          @about = desc
          @session = session
          @conf = conf
-      end
-
-      # Set the dm
-      def dm= master
-         @dm = master
+         @dm = dm
       end
 
       # Invite players to this game and begin
@@ -66,7 +63,7 @@ module CARPS
 
       def play mailer
          mod = load_mods[@mod]
-         dm_mailer = DM::Mailer.new mailer, @conf, @session, @dm, @mod, @desc
+         dm_mailer = DM::Mailer.new mailer, @conf, @session, @dm, @mod, @about
          thrd = $process.launch dm_mailer, mod + " -h \"" + @campaign + "\""
          thrd.join
       end
@@ -86,6 +83,8 @@ module CARPS
       end
 
       # Join this game as a client
+      #
+      # FIXME: just use resume
       def join_game mailer
          resume mailer
       end

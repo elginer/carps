@@ -81,9 +81,8 @@ module CARPS
                if happy
                   mods = load_mods
                   session_id = @manager.generate @name + @mod + @campaign
-                  config = @game_config.new @name, @mod, @campaign, @description, session_id
+                  config = @game_config.new @name, @mod, @campaign, @description, session_id, @mailer.address
                   game = config.spawn
-                  game.dm = @mailer.address
                   @continuation.call lambda {
                      game.start @mailer
                   }

@@ -27,11 +27,12 @@ module CARPS
       class GameConfig < SessionConfig
 
          # Create a new GameConfig
-         def initialize filename, mod, campaign, about, session
+         def initialize filename, mod, campaign, about, session, dm
             super session, filename
             @campaign = campaign
             @mod = mod
             @about = about
+            @dm = dm
          end
 
          # Parse a game config file
@@ -40,6 +41,7 @@ module CARPS
             @campaign = read_conf conf, "campaign"
             @mod = read_conf conf, "mod"
             @about = read_conf conf, "about"
+            @dm = read_conf conf, "dm"
          end
 
          # Display information on this configuration
@@ -48,11 +50,12 @@ module CARPS
             puts "Campaign: " + @campaign
             puts "Description:"
             puts @about
+            puts "DM: " + @dm
          end
 
          # Return a GameServer object that can communicate with players 
          def spawn
-            GameServer.new @mod, @campaign, @about, @session, self
+            GameServer.new @mod, @campaign, @about, @session, self, @dm
          end
 
          protected
@@ -61,7 +64,8 @@ module CARPS
          def emit
             {"mod" => @mod, 
              "campaign" => @campaign, 
-             "about" => @about, 
+             "about" => @about,
+             "dm" => @dm
             }.merge super
          end
 

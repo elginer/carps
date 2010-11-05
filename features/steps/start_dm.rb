@@ -11,10 +11,6 @@ end
 
 class MockGame
 
-   def dm= dm
-      @dm = dm
-   end
-
    def start mailer
       puts "Starting game..."
    end
@@ -31,7 +27,7 @@ class MockConfig < DM::GameConfig
 end
 
 Then /^host a new game called (.+) with resource (.+) and mod (.+)$/ do |game_name, campaign, mod_name|
-   $game = DM::GameConfig.new game_name, mod_name, campaign, "A game about things", "session12345" 
+   $game = DM::GameConfig.new game_name, mod_name, campaign, "A game about things", "session12345", "dungeon_master@email.com" 
 end
 
 Then /^save the game as (.+)$/ do |filename|
