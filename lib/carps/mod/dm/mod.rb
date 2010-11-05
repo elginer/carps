@@ -279,7 +279,7 @@ module CARPS
          end
 
          # Perform an action with an entity.  Doesn't matter if the entity is a player or NPC.
-         def with_entity
+         def with_entity name
             with_entity2 name,
                lambda {yield @players[name]},
                lambda {yield @npcs[name]}
