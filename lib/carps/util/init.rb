@@ -38,6 +38,15 @@ end
 
 module CARPS
 
+   # Is this windows
+   def CARPS::windows?
+      if RUBY_PLATFORM.match(/(win|w)32/)
+         true
+      else
+         false
+      end
+   end
+
    # Set up multi-threading
    #
    # Can be called more than once
@@ -51,7 +60,7 @@ module CARPS
    def CARPS::root_config
       loc = nil
       # If it's windows
-      if RUBY_PLATFORM.match(/(win|w)32/)
+      if CARPS::windows?
          loc = ENV["USERPROFILE"]
       else
          # Otherwise assume it's a unix-like system

@@ -55,7 +55,7 @@ module CARPS
          CARPS::shutdown_properly 1
       rescue Exception => e
          UI::put_error "CRASHED!\n#{e.class} reports:\n   #{e.message}\n\nStack trace:\n#{e.backtrace.join("\n")}", false
-         CARPS::enter_quit         
+         CARPS::shutdown_properly 1 
       end
    end
 

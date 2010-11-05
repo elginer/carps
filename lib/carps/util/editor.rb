@@ -44,14 +44,17 @@ module CARPS
 
       # Edit a string
       #
+      # Performs an untaint operation
+      #
       # Not re-entrant
       def edit msg
          begin
-            file = Tempfile.new "carp_edit"
+            file = Tempfile.new "carp_edit", Dir.tmpdir.untaint
             path = file.path
             file.write "# Lines starting with # will be ignored.\n" + msg 
             file.close
             contents = edit_file path
+            contents.untaint
             lines = contents.split /\n/
                lines.reject! do |line|
                line[0] == '#'
