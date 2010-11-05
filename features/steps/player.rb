@@ -58,7 +58,8 @@ Given /^a player test mailer$/ do
 end
 
 Given /^a player mod$/ do
-   $mod = PlayerTestMod.new $mailer
+   $mod = PlayerTestMod.new
+   $mod.mailer = $mailer
 end
 
 When /^the player receives turn information$/ do

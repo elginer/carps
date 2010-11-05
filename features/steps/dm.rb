@@ -60,7 +60,8 @@ end
 Given /^a DM mod$/ do
    resource = Resource.new "resource"
    $mailer = TestMailer.new
-   $mod = TestMod.new resource, $mailer
+   $mod = TestMod.new resource
+   $mod.mailer = $mailer
 end
 
 $email = "barry@doodah.xxx"

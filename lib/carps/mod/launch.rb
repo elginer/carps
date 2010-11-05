@@ -40,22 +40,20 @@ module CARPS
       # Either get the mod from the mailer or create a new one
       def Launcher::launch_player_mod role, mailer, *args 
          mod = nil
-         if mod = mailer.load
-            mod.mailer = mailer
-         else
-            mod = role.create_mod mailer
+         unless mod = mailer.load
+            mod = role.create_mod
          end
+         mod.mailer = mailer
          role.launch mod
       end
 
       # Either get the mod from the mailer or create a new one
       def Launcher::launch_dm_mod role, campaign, mailer
          mod = nil
-         if mod = mailer.load
-            mod.mailer = mailer
-         else
-            mod = role.create_mod campaign, mailer
+         unless mod = mailer.load
+            mod = role.create_mod campaign
          end
+         mod.mailer = mailer
          role.launch mod
       end
 

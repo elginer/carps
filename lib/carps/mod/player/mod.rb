@@ -32,8 +32,7 @@ module CARPS
       # are appropriate facts.
       class Mod < CARPS::Mod
 
-         def initialize pmailer
-            @mailer = pmailer
+         def initialize
             @sheet = Sheet::Character.new({})
          end
 

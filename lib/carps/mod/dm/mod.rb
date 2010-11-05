@@ -31,9 +31,8 @@ module CARPS
       # FIXME: This class is WAY too big
       class Mod < CARPS::Mod
 
-         # Initialize with a resource manager, and a mailer 
-         def initialize resource, mailer
-            @mailer = mailer
+         # Initialize with a resource manager
+         def initialize resource
             @resource = resource
             new_reporter
             @players = {}

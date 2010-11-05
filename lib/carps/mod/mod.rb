@@ -25,6 +25,11 @@ module CARPS
    # schema, semantic_verifier
    class Mod
 
+      # Give a mailer
+      def mailer= mail
+         @mailer = mail
+      end
+
       protected
 
       # The semantic verifier
