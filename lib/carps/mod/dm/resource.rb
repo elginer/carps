@@ -69,7 +69,7 @@ module CARPS
       
       # Load a room
       def load_room room
-         room_loc = @dir + "/rooms/" + room + ".room"
+         room_loc = @dir + "/rooms/" + room + ".txt"
          begin
             return Room.new room_loc
          rescue Exception => e

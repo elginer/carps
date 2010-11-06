@@ -17,7 +17,6 @@
 
 require "carps/util/config"
 require "carps/util/editor"
-require "carps/util/enter_quit"
 require "carps/util/files"
 require "carps/util/init"
 require "carps/util/process"

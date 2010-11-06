@@ -4,7 +4,7 @@ require "carps/service/player/config"
 require "carps/service/start/mailer"
 
 Given /^a dm game config, for mod (.+)$/ do |mod|
-   $game_config = DM::GameConfig.new "save_test", mod, "fun campaign", "game about stuff", $session.key
+   $game_config = DM::GameConfig.new "save_test", mod, "fun campaign", "game about stuff", $session.key, "dm@dm.dm"
 end
 
 Then /^resume the mod$/ do

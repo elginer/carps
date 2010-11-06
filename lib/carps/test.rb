@@ -22,7 +22,11 @@ module CARPS
 
          # There can sometimes be more than one reason why the test has failed.
          def Test::multi_fail *reasons
-            test_failed "Either:\n\t" + reasons.join("\nor\t")
+            Test::test_failed "Either:\n\t" + reasons.join("\nor\t")
+         end
+
+         def Test::test_failed msg
+            UI::put_error msg
          end
 
    end

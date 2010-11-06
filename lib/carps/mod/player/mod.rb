@@ -72,7 +72,7 @@ module CARPS
                if tu
                   @turn = tu
                   stats = @turn.sheet.dump
-                  unless stats.empty
+                  unless stats.empty?
                      @sheet = Sheet::Character.new stats
                      UI::highlight "Received new character sheet."
                   end

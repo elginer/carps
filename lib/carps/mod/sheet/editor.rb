@@ -35,7 +35,7 @@ module CARPS
          end
 
          # Fill in the sheet
-         def fill sheet=Character.new
+         def fill sheet
             edit sheet
             validate sheet
          end

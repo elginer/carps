@@ -1,5 +1,7 @@
 # Test cryptography mechanism
 
+require "carps/service"
+
 require "carps/crypt/mailer"
 require "carps/crypt/mailbox"
 require "carps/crypt/default_messages"
@@ -54,7 +56,7 @@ class TwistedMailer < Mailer
       puts "sent digest (as part of an evil scheme): " + digest
       new_key = OpenSSL::PKey::DSA.new 2048
       sig = new_key.syssign digest
-      mail = (V.addr @addr) + (V.sig sig) + text + K.end
+      mail = (V.addr @addr) + (V.sig sig) + (V.session "") + text + K.end
       @mailbox.send to, mail
       puts "Message sent to " + to
    end
@@ -135,7 +137,15 @@ Then /^Alice initiates a handshake request and Bob accepts$/ do
 end
 
 Then /^bob tries to receive the message$/ do
-   $bob.check EvilMessage 
+   thrd = Thread.fork do
+      loop do
+         $bob.check EvilMessage
+         sleep 1
+      end
+   end
+   UI::highlight "PRESS ENTER TO STOP CHECKING BOB'S MAIL"
+   UI::question ""
+   thrd.kill
 end
 
 Then /^a hacker pretending to be Alice sends a nefarious message to Bob$/ do

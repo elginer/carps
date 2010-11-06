@@ -469,7 +469,7 @@ module CARPS
             if mandatory
                pass = CARPS::Test::editor @editor
                if pass
-                  editor.save
+                  @editor.save
                   test_passed
                end
             end

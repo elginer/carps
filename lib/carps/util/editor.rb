@@ -102,12 +102,12 @@ module CARPS
       # Testing for editor
       module Editor
 
-         def load_fail
-            test_failed "The editor did not load the file correctly."
+         def Editor::load_fail
+            Editor::test_failed "The editor did not load the file correctly."
          end
 
-         def save_fail
-            test_failed "The editor did not save the file correctly."
+         def Editor::save_fail
+            Editor::test_failed "The editor did not save the file correctly."
          end
 
       end
@@ -115,7 +115,7 @@ module CARPS
       # Test the editor
       def Test::editor editor
          puts "The editor should launch, then you should edit this paragraph:"
-         before = "What ho Jeeves!"
+         before = "Please edit me."
          puts before
          puts "Once you are done editing, save the file and close the editor."
          if after = editor.edit(before)

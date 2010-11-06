@@ -77,7 +77,12 @@ module CARPS
       # Perform a verification on an email
       def verify mail
          sig, dig = mail.crypt 
-         pass = @peer_key.sysverify dig, sig
+         begin
+            pass = @peer_key.sysverify dig, sig
+         rescue OpenSSL::PKey::DSAError => e
+            UI::warn "Someone sent you an invalid signature: #{e.message}"
+            return false
+         end
          if pass
             return true
          else

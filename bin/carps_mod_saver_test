@@ -26,8 +26,7 @@ class Saver
       @mailer = mailer
    end
 
-   def initialize mailer
-      @mailer = mailer
+   def initialize
       @state = 99
    end
 
@@ -43,8 +42,8 @@ module SaverMod
 
    module Player      
       
-      def Player::create_mod mailer
-         Saver.new mailer
+      def Player::create_mod
+         Saver.new
       end
 
       def Player::launch mod
@@ -55,8 +54,8 @@ module SaverMod
 
    module DM
 
-      def DM::create_mod campaign, mailer
-         Saver.new mailer
+      def DM::create_mod campaign
+         Saver.new
       end
 
       def DM::launch mod

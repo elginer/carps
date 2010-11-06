@@ -24,12 +24,12 @@ module TestMod
 
    module Player      
       
-      class Mod
+      class Mod < CARPS::Player::Mod
 
       end
 
-      def Player::create_mod mailer
-         puts "Creating Player mod with #{mailer}"
+      def Player::create_mod
+         puts "Creating Player mod with"
          Mod.new
       end
 
@@ -41,12 +41,12 @@ module TestMod
 
    module DM
 
-      class Mod
+      class Mod < CARPS::DM::Mod
       end
 
-      def DM::create_mod campaign, mailer
-         puts "Creating DM mod with #{mailer}, running campaign: #{campaign}"
-         Mod.new
+      def DM::create_mod campaign
+         puts "Creating DM mod running campaign: #{campaign}"
+         Mod.new CARPS::Resource.new campaign
       end
 
       def DM::launch mod

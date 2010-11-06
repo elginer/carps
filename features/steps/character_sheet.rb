@@ -13,7 +13,8 @@ Given /^a sheet editor$/ do
 end
 
 Then /^fill in the character sheet$/ do
-   $sheet = $editor.fill
+   $sheet = Sheet::Character.new 
+   $editor.fill $sheet
 end
 
 Then /^edit the character sheet again$/ do
@@ -81,7 +82,7 @@ Then /^do not parse the sheet$/ do
 end
 
 Then /^accept the valid sheet$/ do
-   valid = $editor.validate $sheet
+   valid = $editor.valid? $sheet
    unless valid
       raise StandardError, "Failed valid sheet."
    end
