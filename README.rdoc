@@ -9,17 +9,21 @@
 CARPS, the Computer Assisted Role-Playing Game System,
 is a tool for playing pen and paper RPGs over the internet.
 
-CARPS is a highly customizable system with many features.
+CARPS differs from other such systems because CARPS is not a 'real-time' system.  It suits people who want to log on once or twice a day, take a turn, and then log out again.  While OpenRPG could be described as being similar to a chat-room, CARPS is more similar to an email client.
 
-Game rules are provided by 'mods': extensions to CARPS.
+CARPS is an extensible system: game rules are provided by 'mods'.
 
 CARPS supports these mods by providing:
 
 * Text-mode user interfaces for the players and the dungeon master.
 
-* Automated character sheet verification, according to a schema defined as part of the game's rules.  For example, a game might require your strength to be an integer.  CARPS can be configured to support this, and alerts the user if invalid values are entered.
+* An easy to use probabalistic API which not only rolls the dice, but can report the probability of various game events occuring.
 
-* Support for the semantic validation of character sheets according to game rules.  For example, a game might require the sum of character's attributes to be below a certain maximum value.  CARPS supports this, by alerting the user if the character sheet is invalid. 
+* Automated static character sheet verification, according to a schema defined in YAML.  For example, a game might require your strength to be an integer.  
+
+* Support for the semantic validation of character sheets according to game rules.  For example, a game might require the sum of character's attributes to be below a certain maximum value.
+
+* Together the validation features allow a mod writer to encode game rules cleanly, as they do not need to consider the possibility of receiving an invalid sheet.
 
 CARPS has other strengths:
 
@@ -30,6 +34,18 @@ CARPS has other strengths:
 * You can instruct CARPS to use your favourite text editor and terminal emulator.
 
 * CARPS is easy to configure because it includes a wizard.
+
+However, CARPS is new and the following features, which you might take for granted, are not yet supported:
+
+* No GUI
+
+* No support for maps
+
+* No chat - all communication goes through the Game Master.
+
+* Games are currently invite only, at the discretion of the Game Master.
+
+* Security mechanisms are not well audited.
 
 == REQUIREMENTS:
 
@@ -57,7 +73,11 @@ For developing CARPS, you will also need:
 
 == INSTALL:
 
+# Install the gem
 sudo rake install_gem
+
+# Create the CARPS data directory
+rake setup_carps_dir
 
 == LICENSE:
 

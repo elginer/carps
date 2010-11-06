@@ -74,9 +74,13 @@ module CARPS
       # Send a message
       def send to, message
          @ssemaphore.synchronize do
-            message = @manager.tag message
             @sender.send to, message
          end
+      end
+
+      # Tag some text
+      def tag text
+         @manager.tag text
       end
 
       # Securely read a message.  Block until one occurs.
@@ -193,14 +197,6 @@ module CARPS
       # Read a new mail message from a blob of text
       def decode_mail blob, persistence = {:save_mail => true}
          input = blob
-         # Find the message's session
-         session = nil
-         begin
-            session, blob = find K.session, blob
-         rescue Expected
-            UI::warn "Mail message did not contain session.", blob
-            return
-         end
          who = nil
 
          begin
@@ -213,6 +209,15 @@ module CARPS
 
          # Get the security information from the mail
          delayed_crypt, blob = security_info blob
+
+         # Find the message's session
+         session = nil
+         begin
+            session, blob = find K.session, blob
+         rescue Expected
+            UI::warn "Mail message did not contain session.", blob
+            return
+         end
 
          # Parse a message
          msg = @parser.parse blob

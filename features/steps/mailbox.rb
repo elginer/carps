@@ -27,6 +27,7 @@ class MailboxTestMessage < Message
 
    def emit
       text = "uhh"
+      text = $mailbox.tag text
       addr = "bobby"
       sig = "hiya"
       mail = (V.addr addr) + (V.sig sig) + text + K.end

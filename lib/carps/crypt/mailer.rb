@@ -123,6 +123,8 @@ module CARPS
       # Send a message
       def send to, message
          text = message.emit
+         # The mailbox tags the message with a session key
+         text = @mailbox.tag text
          # Sign the message
          digest = Digest::MD5.digest text
          sig = @private_key.syssign digest
