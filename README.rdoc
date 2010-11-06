@@ -74,11 +74,13 @@ For developing CARPS, you will also need:
 == INSTALL:
 
 # Install the gem
+
 sudo rake install_gem
 
 # Create the CARPS data directory
-#
+
 # Installed into your home directory (/home/user/carps)
+
 rake setup_carps_dir
 
 == CAMPAIGNS (For the DM):
@@ -90,8 +92,11 @@ This allows you to create game resources prior to starting a game.
 For example, the following applies if your mod is called foo, the campaign is called bar, and your carps user data directory is /home/user/carps
 
 You should create the following directories
+
 the campaign directory: /home/user/carps/dm/campaigns/foo/bar
+
 the NPCSs directory: /home/user/carps/dm/campaigns/foo/bar/npcs
+
 the rooms directory: /home/user/carps/dm/campaigns/foo/bar/rooms
 
 NPCs can be defined as YAML files, according to the mod's schema.  Put them in the NPCs directory.  They MUST have the .yaml extension.
