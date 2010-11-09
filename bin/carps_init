@@ -18,7 +18,7 @@
 
 # Create the user directory for carps
 
-require "carps/util/init"
+require "carps"
 
 require "fileutils"
 

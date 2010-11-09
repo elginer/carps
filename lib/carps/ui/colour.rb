@@ -17,5 +17,12 @@
 
 require "highline"
 
+require "carps/util"
+
+# If it's windows, we need ansi support
+if CARPS::windows?
+   require "Win32/Console/ANSI"
+end
+
 # Set up highline colours
 HighLine.color_scheme = HighLine::SampleColorScheme.new
