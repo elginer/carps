@@ -1,0 +1,271 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+<title>CARPS 0.2.1</title>
+<style type="text/css">
+body
+{
+font-family:"DejaVu Sans", "Arial";
+}
+</style>
+</head>
+<body>
+<h1>CARPS, the Computer Assisted Role-Playing Game System</h1>
+<h2>CARPS is hosted on github:</h2>
+<ul>
+<li><p>
+<a href="http://github.com/elginer/carps">github.com/elginer/carps</a>
+</p>
+</li>
+</ul>
+<h2>Description:</h2>
+<p>
+CARPS, the Computer Assisted Role-Playing Game System, is a tool for
+playing pen and paper RPGs over the internet.
+</p>
+<p>
+CARPS differs from other such systems because CARPS is not a
+&#8216;real-time&#8217; system.  It suits people who want to log on once or
+twice a day, take a turn, and then log out again.  While <em>OpenRPG</em>
+could be described as being similar to a chat-room, CARPS is more similar
+to an email client.
+</p>
+<p>
+CARPS is an extensible system: game rules are provided by
+&#8216;mods&#8217;.
+</p>
+<p>
+CARPS supports these mods by providing:
+</p>
+<ul>
+<li><p>
+Text-mode user interfaces for the players and the dungeon master.
+</p>
+</li>
+<li><p>
+An easy to use probabalistic API which not only rolls the dice, but can
+report the probability of various game events occuring.
+</p>
+</li>
+<li><p>
+Automated static character sheet verification, according to a schema
+defined in YAML.  For example, a game might require your strength to be an
+integer.  
+</p>
+</li>
+<li><p>
+Support for the semantic validation of character sheets according to game
+rules.  For example, a game might require the sum of character&#8217;s
+attributes to be below a certain maximum value.
+</p>
+</li>
+<li><p>
+Together the validation features allow a mod writer to encode game rules
+cleanly, as they do not need to consider the possibility of receiving an
+invalid sheet.
+</p>
+</li>
+</ul>
+<p>
+CARPS has other strengths:
+</p>
+<ul>
+<li><p>
+<b>Anyone</b> can play or host a CARPS game because CARPS&#8217; protocol
+is implemented on top of email. 
+</p>
+</li>
+<li><p>
+CARPS is designed to be secure.  Multiple email security options are
+supported, and all CARPS messages are cryptographically signed to prevent
+spoofing.
+</p>
+</li>
+<li><p>
+You can instruct CARPS to use your favourite text editor and terminal
+emulator.
+</p>
+</li>
+<li><p>
+CARPS is easy to configure because it includes a wizard.
+</p>
+</li>
+</ul>
+<p>
+<b>However</b>, CARPS is new and the following features, which you might
+take for granted, are not yet supported:
+</p>
+<ul>
+<li><p>
+No GUI
+</p>
+</li>
+<li><p>
+No support for maps
+</p>
+</li>
+<li><p>
+No chat - all communication goes through the Game Master.
+</p>
+</li>
+<li><p>
+Games are currently invite only, at the discretion of the Game Master.
+</p>
+</li>
+<li><p>
+Security mechanisms are <b>not</b> well audited.
+</p>
+</li>
+</ul>
+<h2>Requirements:</h2>
+<p>
+For users:
+</p>
+<ul>
+<li><p>
+ruby 1.9
+</p>
+</li>
+<li><p>
+rubygems
+</p>
+</li>
+<li><p>
+openssl
+</p>
+</li>
+<li><p>
+highline
+</p>
+</li>
+</ul>
+<p>
+For developing CARPS, you will also need:
+</p>
+<ul>
+<li><p>
+hoe
+</p>
+</li>
+<li><p>
+rake
+</p>
+</li>
+<li><p>
+newgem
+</p>
+</li>
+<li><p>
+cucumber
+</p>
+</li>
+</ul>
+<h2>To Install:</h2>
+<p>
+<tt># Install the gem</tt>
+</p>
+<p>
+<tt>sudo gem install carps</tt>
+</p>
+<p>
+<tt># Initialize the carps user directory.  Run this as your everyday
+user.</tt>
+</p>
+<p>
+<tt>carps_init</tt>
+</p>
+<h2>Basic Instructions:</h2>
+<p>
+Run carps -h for help
+</p>
+<p>
+The first time CARPS is run, it will launch a wizard to help you configure
+your email settings, and choose a text editor and a terminal emulator.
+</p>
+<p>
+It is a good idea to specify a terminal emulator, as then CARPS can launch
+a mod in a new window (or similar).  Then the first CARPS window will act
+as an email logger, letting you see when you receive mails, without
+interfering with the text you type into the new window.
+</p>
+<p>
+You&#8217;re also going to need to install a mod to play CARPS.  See the
+example &#8216;fools&#8217; mod:
+</p>
+<ul>
+<li><p>
+<a href="http://fools.rubyforge.org">fools.rubyforge.org</a>
+</p>
+</li>
+</ul>
+<h2>Campaigns (For the DM):</h2>
+<p>
+When you set up a new game, CARPS will ask for you to enter the name of a
+campaign.
+</p>
+<p>
+This allows you to create game resources prior to starting a game.
+</p>
+<p>
+For example, the following applies if your mod is called foo, the campaign
+is called bar, and your carps user data directory is /home/user/carps
+</p>
+<p>
+You should create the following directories
+</p>
+<p>
+the campaign directory: 
+</p>
+<p>
+<tt>/home/user/carps/dm/campaigns/foo/bar</tt>
+</p>
+<p>
+the NPCSs directory: 
+</p>
+<p>
+<tt>/home/user/carps/dm/campaigns/foo/bar/npcs</tt>
+</p>
+<p>
+the rooms directory: 
+</p>
+<p>
+<tt>/home/user/carps/dm/campaigns/foo/bar/rooms</tt>
+</p>
+<p>
+NPCs are defined as YAML files, according to the mod&#8217;s schema.  Put
+them in the NPCs directory.  They MUST have the <tt>.yaml</tt> extension.
+</p>
+<p>
+Rooms are defined as text files.  These are just predefined pieces of prose
+that the DM will send to the players when they enter a room, for instance. 
+Put them in the rooms directory.  They MUST have the <tt>.txt</tt>
+extension.
+</p>
+<h2>License:</h2>
+<p>
+Copyright 2010 John Morrice
+</p>
+<pre>
+ 
+</pre>
+<p>
+CARPS is free software: you can redistribute it and/or modify it under the
+terms of the GNU General Public License as published by the Free Software
+Foundation, either version 3 of the License, or (at your option) any later
+version.
+</p>
+<p>
+CARPS is distributed in the hope that it will be useful, but WITHOUT ANY
+WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more
+details.
+</p>
+<p>
+You should have received a copy of the GNU General Public License along
+with CARPS.  If not, see <a
+href="http://www.gnu.org/licenses">www.gnu.org/licenses</a>/.
+</p>
+
+</body>
+</html>

@@ -4,12 +4,12 @@
 
 * http://github.com/elginer/carps
 
-== DESCRIPTION:
+== Description:
 
 CARPS, the Computer Assisted Role-Playing Game System,
 is a tool for playing pen and paper RPGs over the internet.
 
-CARPS differs from other such systems because CARPS is not a 'real-time' system.  It suits people who want to log on once or twice a day, take a turn, and then log out again.  While OpenRPG could be described as being similar to a chat-room, CARPS is more similar to an email client.
+CARPS differs from other such systems because CARPS is not a 'real-time' system.  It suits people who want to log on once or twice a day, take a turn, and then log out again.  While _OpenRPG_ could be described as being similar to a chat-room, CARPS is more similar to an email client.
 
 CARPS is an extensible system: game rules are provided by 'mods'.
 
@@ -27,7 +27,7 @@ CARPS supports these mods by providing:
 
 CARPS has other strengths:
 
-* Anyone can play or host a CARPS game because CARPS' protocol is implemented on top of email. 
+* *Anyone* can play or host a CARPS game because CARPS' protocol is implemented on top of email. 
 
 * CARPS is designed to be secure.  Multiple email security options are supported, and all CARPS messages are cryptographically signed to prevent spoofing.
 
@@ -35,7 +35,7 @@ CARPS has other strengths:
 
 * CARPS is easy to configure because it includes a wizard.
 
-However, CARPS is new and the following features, which you might take for granted, are not yet supported:
+*However*, CARPS is new and the following features, which you might take for granted, are not yet supported:
 
 * No GUI
 
@@ -45,9 +45,9 @@ However, CARPS is new and the following features, which you might take for grant
 
 * Games are currently invite only, at the discretion of the Game Master.
 
-* Security mechanisms are not well audited.
+* Security mechanisms are *not* well audited.
 
-== REQUIREMENTS:
+== Requirements:
 
 For users:
 
@@ -69,15 +69,17 @@ For developing CARPS, you will also need:
 
 * cucumber
 
-== INSTALL:
+== To Install:
 
-sudo gem install carps
+<tt># Install the gem</tt>
 
-# Initialize the carps user directory.  Run this as your everyday user.
+<tt>sudo gem install carps</tt>
 
-carps_init
+<tt># Initialize the carps user directory.  Run this as your everyday user.</tt>
 
-== BASIC INSTRUCTIONS:
++carps_init+
+
+== Basic Instructions:
 
 Run carps -h for help
 
@@ -87,14 +89,14 @@ your email settings, and choose a text editor and a terminal emulator.
 It is a good idea to specify a terminal emulator, as then CARPS can launch a
 mod in a new window (or similar).  Then the first CARPS window will act as an
 email logger, letting you see when you receive mails, without interfering with
-your typing into the second window.
+the text you type into the new window.
 
 You're also going to need to install a mod to play CARPS.  See the example 'fools' mod:
 
 * http://fools.rubyforge.org
 
 
-== CAMPAIGNS (For the DM):
+== Campaigns (For the DM):
 
 When you set up a new game, CARPS will ask for you to enter the name of a campaign.
 
@@ -104,18 +106,24 @@ For example, the following applies if your mod is called foo, the campaign is ca
 
 You should create the following directories
 
-the campaign directory: /home/user/carps/dm/campaigns/foo/bar
+the campaign directory: 
 
-the NPCSs directory: /home/user/carps/dm/campaigns/foo/bar/npcs
++/home/user/carps/dm/campaigns/foo/bar+
 
-the rooms directory: /home/user/carps/dm/campaigns/foo/bar/rooms
+the NPCSs directory: 
 
-NPCs can be defined as YAML files, according to the mod's schema.  Put them in the NPCs directory.  They MUST have the .yaml extension.
++/home/user/carps/dm/campaigns/foo/bar/npcs+
 
-Rooms can be defined as text files.  These are just predefined pieces of prose that the DM will send to the players when they enter a room, for instance.  Put them in the rooms directory.  They MUST have the .txt extension.
+the rooms directory: 
+
++/home/user/carps/dm/campaigns/foo/bar/rooms+
+
+NPCs are defined as YAML files, according to the mod's schema.  Put them in the NPCs directory.  They MUST have the +.yaml+ extension.
+
+Rooms are defined as text files.  These are just predefined pieces of prose that the DM will send to the players when they enter a room, for instance.  Put them in the rooms directory.  They MUST have the +.txt+ extension.
 
 
-== LICENSE:
+== License:
 
 Copyright 2010 John Morrice
  
@@ -130,4 +138,4 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License
-along with CARPS.  If not, see <http://www.gnu.org/licenses/>.
+along with CARPS.  If not, see http://www.gnu.org/licenses/.
