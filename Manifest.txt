@@ -6,6 +6,7 @@ PostInstall.txt
 README.rdoc
 Rakefile
 bin/carps
+bin/carps_init
 bin/carps_ipc_test
 bin/carps_mod_saver_test
 bin/carps_mod_test
@@ -147,6 +148,7 @@ permission
 script/console
 script/destroy
 script/generate
-tasks/setup_carps_dir.rake
+tasks/readme_site.rake
 test/test_carps.rb
 test/test_helper.rb
+website/index.html

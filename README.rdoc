@@ -27,7 +27,7 @@ CARPS supports these mods by providing:
 
 CARPS has other strengths:
 
-* *Anyone* can play or host a CARPS game because CARPS' protocol is implemented on top of email. 
+* *Anyone* can play or host a CARPS game!  All you need is an email account.
 
 * CARPS is designed to be secure.  Multiple email security options are supported, and all CARPS messages are cryptographically signed to prevent spoofing.
 
@@ -77,7 +77,7 @@ For developing CARPS, you will also need:
 
 <tt># Initialize the carps user directory.  Run this as your everyday user.</tt>
 
-+carps_init+
+<tt>carps_init</tt>
 
 == Basic Instructions:
 
@@ -108,19 +108,19 @@ You should create the following directories
 
 the campaign directory: 
 
-+/home/user/carps/dm/campaigns/foo/bar+
+<tt>/home/user/carps/dm/campaigns/foo/bar</tt>
 
 the NPCSs directory: 
 
-+/home/user/carps/dm/campaigns/foo/bar/npcs+
+<tt>/home/user/carps/dm/campaigns/foo/bar/npcs</tt>
 
 the rooms directory: 
 
-+/home/user/carps/dm/campaigns/foo/bar/rooms+
+<tt>/home/user/carps/dm/campaigns/foo/bar/rooms</tt>
 
-NPCs are defined as YAML files, according to the mod's schema.  Put them in the NPCs directory.  They MUST have the +.yaml+ extension.
+NPCs are defined as YAML files, according to the mod's schema.  Put them in the NPCs directory.  They MUST have the <tt>.yaml</tt> extension.
 
-Rooms are defined as text files.  These are just predefined pieces of prose that the DM will send to the players when they enter a room, for instance.  Put them in the rooms directory.  They MUST have the +.txt+ extension.
+Rooms are defined as text files.  These are just predefined pieces of prose that the DM will send to the players when they enter a room, for instance.  Put them in the rooms directory.  They MUST have the <tt>.txt</tt> extension.
 
 
 == License:
