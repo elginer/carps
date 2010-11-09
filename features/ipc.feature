@@ -3,12 +3,6 @@ Feature:  Interprocess Communication
    CARPS should be able to
    fork subprograms and communicate with them
 
-   Scenario: fork subprogram
-      Given carps is initialized with test/client
-      Given an object to be mutated 
-      When the Process.ashare method is run with a computation to mutate the object
-      Then I should see 'It works' from the server side
-
    Scenario: fork subprogram in another shell
       Given carps is initialized with test/client
       Given an object to be mutated

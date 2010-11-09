@@ -23,6 +23,8 @@ require "highline"
 
 require "carps/util"
 
+DRb.start_service
+
 url = ARGV.shift
 
 puts "Listening on " + url

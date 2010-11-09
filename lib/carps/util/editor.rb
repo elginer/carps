@@ -69,10 +69,7 @@ module CARPS
       protected
 
       def edit_file filepath
-         child = fork do
-            exec @editor.gsub "%f", filepath
-         end
-         Object::Process.wait child
+         system @editor.gsub("%f", filepath)
 
          if @wait_confirm
             UI::question "Press enter when you are done editing."

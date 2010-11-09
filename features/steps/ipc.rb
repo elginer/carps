@@ -8,14 +8,6 @@ Given /an object to be mutated/ do
    $mut = Mutate.new
 end
 
-When /^the Process.ashare method is run with a computation to mutate the object$/ do
-   CARPS::Process.singleton.ashare $mut do |uri|
-      mut = DRbObject.new nil, uri
-      mut.mutate!
-      puts "In sub-program: " + mut.works?
-   end
-end
-
 Then /^I should see 'It works' from the server side$/ do
    puts "On server side:"
    puts "\t" + $mut.works?

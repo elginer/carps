@@ -61,44 +61,42 @@ module CARPS
 
       # Launch a ruby program in another terminal window, which can access the resource over drb
       def launch resource, program
-         ashare resource do |uri|
-            program = program + " " + uri 
-            cmd = shell_cmd program 
-            puts "Launching: #{cmd}"
-            begin
-               exec cmd
-            rescue StandardError => e
-               UI::put_error "Problem launching sub-program: #{e}"
+         @semaphore.synchronize do
+            uri = share resource
+            if uri
+               cmd = shell_cmd program, uri 
+               puts "Launching: #{cmd}"
+               system cmd
+               stop_sharing
             end
+         end
+      end
+
+      # Stop sharing a resource.
+      def stop_sharing
+         if @confirm
+            UI::question "Press enter when the sub-program has completed."
+         end
+         begin
+            DRb.stop_service
+         rescue StandardError => e
+            UI::put_error "Could not stop IPC: #{e}"
          end
       end
 
       # Run a block in a new process, allowing access the first argument by passing it a URI referring to a DRb object.
       #
       # If already running, then the process will not launch until till the first process has completed.
-      def ashare resource
-         @semaphore.synchronize do
-            begin
-               local_only = ACL.new %w[deny all allow 127.0.0.1]
-               DRb.install_acl local_only
-               uri = "druby://localhost:" + @port.to_s 
-               DRb.start_service uri, resource
-               child = fork do
-                  begin
-                     DRb.start_service
-                  rescue StandardError => e
-                     UI::put_error "Problem starting inter-process communication in the sub-program: #{e}"
-                  end
-                  yield uri
-               end
-               Object::Process.wait child
-               if @confirm
-                  UI::question "Press enter when the sub-program has completed."
-               end
-               DRb.stop_service
-            rescue StandardError => e
-               UI::put_error "Malfunction in inter-process communication: #{e}"
-            end
+      def share resource
+         begin
+            local_only = ACL.new %w[deny all allow 127.0.0.1]
+            DRb.install_acl local_only
+            uri = "druby://localhost:" + @port.to_s 
+            DRb.start_service uri, resource
+            return uri
+         rescue StandardError => e
+            UI::put_error "Error beginning CARPS-side IPC: #{e}"
+            return nil
          end
       end
 
@@ -110,7 +108,8 @@ module CARPS
       end
 
       # The command which would open a new window running the given command
-      def shell_cmd program
+      def shell_cmd program, uri
+         program = program + " " + uri
          @term.gsub "%cmd", program
       end
 

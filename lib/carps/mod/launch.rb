@@ -74,6 +74,8 @@ module CARPS
       def Launcher::launch mod
 
          CARPS::with_crash_report true do
+            # Start DRB
+            DRB.start_service
             # Should use optparse?
             if ARGV.empty?
                usage
