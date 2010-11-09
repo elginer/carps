@@ -51,9 +51,7 @@ However, CARPS is new and the following features, which you might take for grant
 
 For users:
 
-* ruby
-
-* rake
+* ruby 1.9
 
 * rubygems
 
@@ -61,11 +59,11 @@ For users:
 
 * highline
 
-* cucumber
-
 For developing CARPS, you will also need:
 
 * hoe
+
+* rake
 
 * newgem
 
