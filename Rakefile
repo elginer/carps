@@ -2,10 +2,11 @@ require 'rubygems'
 gem 'hoe', '>= 2.1.0'
 require 'hoe'
 require 'fileutils'
+$IN_RAKE = true
 require './lib/carps'
 
 Hoe.plugin :newgem
-# Hoe.plugin :website
+Hoe.plugin :website
 Hoe.plugin :cucumberfeatures
 
 # Generate all the Rake tasks

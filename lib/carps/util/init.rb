@@ -20,20 +20,23 @@ require "carps/util/config"
 
 require "erb"
 
-# Requiring this file cripples ERB 
-#
-# This is because it does not work with $SAFE = 1
-# and this is not checked by highline
-class ERB
+# Don't do this if you're building the program
+unless $IN_RAKE
+   # Requiring this file cripples ERB 
+   #
+   # This is because it does not work with $SAFE = 1
+   # and this is not checked by highline
+   class ERB
 
-   def initialize str, *args
-      @res = str
+      def initialize str, *args
+         @res = str
+      end
+
+      def result *args
+         @res
+      end
+
    end
-
-   def result *args
-      @res
-   end
-
 end
 
 module CARPS
