@@ -41,5 +41,5 @@ require "carps/wizard"
 #
 # The CARPS module which functions as a namespace for CARPS classes.
 module CARPS
-  VERSION = '0.2.0'
+  VERSION = '0.2.1'
 end
