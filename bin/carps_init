@@ -23,7 +23,7 @@ require "carps"
 require "fileutils"
 
 root = CARPS::root_config
-mkdir root
-mkdir root + "player/"
-mkdir root + "dm/"
-touch root + "mods.yaml"
+FileUtils.mkdir root
+FileUtils.mkdir root + "player/"
+FileUtils.mkdir root + "dm/"
+FileUtils.touch root + "mods.yaml"

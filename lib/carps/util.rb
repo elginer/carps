@@ -15,6 +15,7 @@
 # You should have received a copy of the GNU General Public License
 # along with CARPS.  If not, see <http://www.gnu.org/licenses/>.
 
+require "carps/windows"
 require "carps/util/config"
 require "carps/util/editor"
 require "carps/util/files"
