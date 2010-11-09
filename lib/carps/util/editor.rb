@@ -21,6 +21,8 @@ require "carps/ui/error"
 
 require "carps/test"
 
+require "fileutils"
+
 require "tempfile"
 
 module CARPS
@@ -49,7 +51,11 @@ module CARPS
       # Not re-entrant
       def edit msg
          begin
-            file = Tempfile.new "carp_edit", Dir.tmpdir.untaint
+            dir = Dir.tmpdir.untaint
+            unless File.exists?(dir)
+               FileUtils.mkdir dir
+            end
+            file = Tempfile.new "carp_edit", dir
             path = file.path
             file.write "# Lines starting with # will be ignored.\n" + msg 
             file.close
