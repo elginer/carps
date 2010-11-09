@@ -75,7 +75,7 @@ module CARPS
 
          CARPS::with_crash_report true do
             # Start DRB
-            DRB.start_service
+            DRb.start_service
             # Should use optparse?
             if ARGV.empty?
                usage
