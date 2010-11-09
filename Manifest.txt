@@ -10,6 +10,7 @@ bin/carps_init
 bin/carps_ipc_test
 bin/carps_mod_saver_test
 bin/carps_mod_test
+config/website.yml
 features/character_sheet.feature
 features/crash.feature
 features/crypt.feature
@@ -139,6 +140,7 @@ lib/carps/util/files.rb
 lib/carps/util/init.rb
 lib/carps/util/process.rb
 lib/carps/util/timeout.rb
+lib/carps/util/windows.rb
 lib/carps/wizard.rb
 lib/carps/wizard/dm.rb
 lib/carps/wizard/player.rb

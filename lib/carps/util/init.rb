@@ -15,6 +15,7 @@
 # You should have received a copy of the GNU General Public License
 # along with CARPS.  If not, see <http://www.gnu.org/licenses/>.
 
+require "carps/util/windows"
 require "carps/util/process"
 require "carps/util/config"
 
@@ -40,15 +41,6 @@ unless $IN_RAKE
 end
 
 module CARPS
-
-   # Is this windows
-   def CARPS::windows?
-      if RUBY_PLATFORM.match(/(win|w)32/)
-         true
-      else
-         false
-      end
-   end
 
    # Set up multi-threading
    #

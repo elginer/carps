@@ -1,5 +1,5 @@
 # Copyright 2010 John Morrice
- 
+
 # This file is part of CARPS.
 
 # CARPS is free software: you can redistribute it and/or modify
@@ -15,14 +15,15 @@
 # You should have received a copy of the GNU General Public License
 # along with CARPS.  If not, see <http://www.gnu.org/licenses/>.
 
-require "highline"
+module CARPS
 
-require "carps/util/windows"
+   # Is this windows?
+   def CARPS::windows?
+      if RUBY_PLATFORM.match(/(win|w)32/)
+         true
+      else
+         false
+      end
+   end
 
-# If it's windows, we need ansi support
-if CARPS::windows?
-   require "Win32/Console/ANSI"
 end
-
-# Set up highline colours
-HighLine.color_scheme = HighLine::SampleColorScheme.new
