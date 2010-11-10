@@ -34,7 +34,7 @@ module CARPS
    def write_file_in dir, contents
       t = Time.now
       valid_path = false
-      path = $CONFIG + dir + "/" + (self.class.to_s + t.to_f.to_s).gsub(/(\.|@, \?!#'"~\(\))/, "")
+      path = $CONFIG + dir + "/" + t.to_f.to_s.gsub(/(\.|@, \?!#'"~\(\))/, "")
       until valid_path
          path += "_"
          valid_path = not(File.exists?(path))
