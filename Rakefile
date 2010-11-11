@@ -15,7 +15,7 @@ $hoe = Hoe.spec 'carps' do
   self.developer 'John Morrice', 'spoon@killersmurf.com'
   self.post_install_message = File.read 'PostInstall.txt'
   self.rubyforge_name       = self.name
-  self.homepage             = "http://github.com/elginer/carps"
+  self.url                  = "http://github.com/elginer/carps"
   self.description          = File.read "GEM_DESCRIPTION"
   self.summary              = "Computer Assisted Role-Playing Game System" 
   self.extra_deps           = [['highline','>= 1.6.1']]
