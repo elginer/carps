@@ -77,7 +77,11 @@ module CARPS
             # Send our key
             send to, PublicKey.new(@public_key)
             # Receive an okay message
-            read AcceptHandshake, to
+            #
+            # Has to be insecure for now... :(
+            #
+            # This is because the client may not know the session yet.
+            @mailbox.insecure_read AcceptHandshake, to
             puts "Established spoof-proof communications with #{to}"
          end
       end
@@ -103,19 +107,21 @@ module CARPS
             # See if the user accepts the handshake.
             accept = accept_handshake? from
             if accept
-               @current_handshakes.add from
-               # Send our key to the peer
-               send from, PublicKey.new(@public_key)
-               # Get their key
-               peer_key = @mailbox.insecure_read PublicKey, from
-               # Create a new peer
-               peer = Peer.new from
-               @mailbox.add_peer peer
-               peer.your_key peer_key.key
-               peer.save
-               # Send an okay message
-               send from, AcceptHandshake.new
-               puts "Established spoof-proof communications with #{from}."
+               Thread.fork do
+                  @current_handshakes.add from
+                  # Send our key to the peer
+                  send from, PublicKey.new(@public_key)
+                  # Get their key
+                  peer_key = @mailbox.insecure_read PublicKey, from
+                  # Create a new peer
+                  peer = Peer.new from
+                  @mailbox.add_peer peer
+                  peer.your_key peer_key.key
+                  peer.save
+                  # Send an okay message
+                  send from, AcceptHandshake.new
+                  puts "Established spoof-proof communications with #{from}."
+               end
             end
          end
       end

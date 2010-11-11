@@ -130,7 +130,7 @@ module CARPS
                      remove_mail index
                      next
                   end
-                  pass = appropriate?(mail, type, must_be_from)
+                  pass = appropriate? mail, type, must_be_from 
                   if pass
                      remove_mail index
                      return mail
@@ -150,6 +150,16 @@ module CARPS
          pass and @manager.belong? mail
       end
 
+      # Was the mail message appropriate?  (To a degree)
+      def insecure_appropriate? mail, type, must_be_from
+         pass = mail.class == type
+         if must_be_from
+            pass = pass and mail.from == must_be_from
+         end
+         pass
+      end
+
+
       # Remove a mail message
       def remove_mail index
          @mail[index].delete
@@ -161,7 +171,7 @@ module CARPS
          @rsemaphore.synchronize do
             @mail.each_index do |index|
                mail = @mail[index]
-               pass = appropriate?(mail, type, must_be_from)
+               pass = insecure_appropriate? mail, type, must_be_from 
                if pass
                   remove_mail index
                   return mail
