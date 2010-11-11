@@ -93,7 +93,7 @@ the text you type into the new window.
 
 You're also going to need to install a mod to play CARPS.  See the example 'fools' mod:
 
-* http://fools.rubyforge.org
+* http://github.com/elginer/fools
 
 
 == Campaigns (For the DM):
