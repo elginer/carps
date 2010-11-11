@@ -4,10 +4,20 @@
 
 * http://github.com/elginer/carps
 
+== To Install:
+
+<tt># Install the gem</tt>
+
+<tt>sudo gem install carps</tt>
+
+<tt># Initialize the carps user directory.  Run this as your everyday user.</tt>
+
+<tt>carps_init</tt>
+
 == Description:
 
 CARPS, the Computer Assisted Role-Playing Game System,
-is a tool for playing pen and paper RPGs over the internet.
+is a tool for playing pen and paper RPGs over the Internet.
 
 CARPS differs from other such systems because CARPS is not a 'real-time' system.  It suits people who want to log on once or twice a day, take a turn, and then log out again.  While _OpenRPG_ could be described as being similar to a chat-room, CARPS is more similar to an email client.
 
@@ -69,59 +79,11 @@ For developing CARPS, you will also need:
 
 * cucumber
 
-== To Install:
+== Instructions
 
-<tt># Install the gem</tt>
+Instructions are present in the CARPS wiki
 
-<tt>sudo gem install carps</tt>
-
-<tt># Initialize the carps user directory.  Run this as your everyday user.</tt>
-
-<tt>carps_init</tt>
-
-== Basic Instructions:
-
-Run carps -h for help
-
-The first time CARPS is run, it will launch a wizard to help you configure
-your email settings, and choose a text editor and a terminal emulator.
-
-It is a good idea to specify a terminal emulator, as then CARPS can launch a
-mod in a new window (or similar).  Then the first CARPS window will act as an
-email logger, letting you see when you receive mails, without interfering with
-the text you type into the new window.
-
-You're also going to need to install a mod to play CARPS.  See the example 'fools' mod:
-
-* http://github.com/elginer/fools
-
-
-== Campaigns (For the DM):
-
-When you set up a new game, CARPS will ask for you to enter the name of a campaign.
-
-This allows you to create game resources prior to starting a game.
-
-For example, the following applies if your mod is called foo, the campaign is called bar, and your carps user data directory is /home/user/carps
-
-You should create the following directories
-
-the campaign directory: 
-
-<tt>/home/user/carps/dm/campaigns/foo/bar</tt>
-
-the NPCSs directory: 
-
-<tt>/home/user/carps/dm/campaigns/foo/bar/npcs</tt>
-
-the rooms directory: 
-
-<tt>/home/user/carps/dm/campaigns/foo/bar/rooms</tt>
-
-NPCs are defined as YAML files, according to the mod's schema.  Put them in the NPCs directory.  They MUST have the <tt>.yaml</tt> extension.
-
-Rooms are defined as text files.  These are just predefined pieces of prose that the DM will send to the players when they enter a room, for instance.  Put them in the rooms directory.  They MUST have the <tt>.txt</tt> extension.
-
+ * http://github.com/elginer/carps/wiki
 
 == License:
 
