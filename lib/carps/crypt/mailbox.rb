@@ -45,7 +45,6 @@ module CARPS
          @sender = sender
          @mail = []
          @peers = {}
-         @secure = false
          # Semaphore to make sure only one thread can send mail at any one time
          @ssemaphore = Mutex.new
          # Semaphore to make sure only one thread can receive mail at any one time 
@@ -125,16 +124,17 @@ module CARPS
             @mail.each_index do |index|
                mail = @mail[index]
                from = mail.from
-               if secure from
-                  unless @peers[from].verify mail
+               peer = @peers[from]
+               if peer
+                  unless peer.verify mail
                      remove_mail index
                      next
                   end
-               end
-               pass = appropriate?(mail, type, must_be_from)
-               if pass
-                  remove_mail index
-                  return mail
+                  pass = appropriate?(mail, type, must_be_from)
+                  if pass
+                     remove_mail index
+                     return mail
+                  end
                end
             end
             nil
@@ -154,11 +154,6 @@ module CARPS
       def remove_mail index
          @mail[index].delete
          @mail.delete_at index
-      end
-
-      # Communication with someone is secure if there is a peer for them
-      def secure addr
-         @peers.member? addr
       end
 
       # Insecurely see if there is an appropriate message in the mail box

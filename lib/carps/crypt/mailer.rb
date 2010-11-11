@@ -33,6 +33,8 @@ require "digest/md5"
 
 require "openssl"
 
+require "set"
+
 module CARPS
 
    # High level CARPS mail client supporting strong cryptographic message signing.
@@ -51,6 +53,7 @@ module CARPS
          @mailbox = mailbox
          @private_key = get_keys
          @public_key = @private_key.public_key
+         @current_handshakes = Set.new 
          # Load the old peers
          load_peers
       end
@@ -61,6 +64,7 @@ module CARPS
             puts "No need for handshake: " + to + " is already a known peer."
          else
             puts "Offering cryptographic handshake to #{to}"
+            @current_handshakes.add to
             # Create a new peer
             peer = Peer.new to
             @mailbox.add_peer peer
@@ -99,6 +103,7 @@ module CARPS
             # See if the user accepts the handshake.
             accept = accept_handshake? from
             if accept
+               @current_handshakes.add from
                # Send our key to the peer
                send from, PublicKey.new(@public_key)
                # Get their key
@@ -122,6 +127,11 @@ module CARPS
 
       # Send a message
       def send to, message
+         unless @mailbox.peer?(to) or @current_handshakes.include?(to)
+            Thread.fork do
+               handshake to
+            end
+         end
          text = message.emit
          # The mailbox tags the message with a session key
          text = @mailbox.tag text
