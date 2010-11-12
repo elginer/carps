@@ -6,21 +6,21 @@
 
 == To Install:
 
-* Windows users:
+= Windows users:
 
 download the installer from 
 
 http://rubyforge.org/frs/download.php/73276/install_carps.exe
 
-* Windows developers:
+= Windows developers:
 
-First install win32console
+First install win32console:
 
 <tt>gem install win32console</tt>
 
 Then follow the instructions for 'Using gem'.
 
-* Using gem:
+= Using gem:
 
 <tt>#</tt>
 <tt># Install the gem</tt>
