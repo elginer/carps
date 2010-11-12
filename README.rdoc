@@ -1,18 +1,18 @@
 = CARPS, the Computer Assisted Role-Playing Game System
 
-== CARPS is hosted on github:
+= CARPS is hosted on github:
 
 * http://github.com/elginer/carps
 
-== To Install:
+= To Install:
 
-= Windows users:
+== Windows users:
 
 download the installer from 
 
 http://rubyforge.org/frs/download.php/73276/install_carps.exe
 
-= Windows developers:
+== Windows developers:
 
 First install win32console:
 
@@ -20,7 +20,7 @@ First install win32console:
 
 Then follow the instructions for 'Using gem'.
 
-= Using gem:
+== Using gem:
 
 <tt>#</tt>
 <tt># Install the gem</tt>
@@ -31,7 +31,7 @@ Then follow the instructions for 'Using gem'.
 
 <tt>carps_init</tt>
 
-== Description:
+= Description:
 
 CARPS, the Computer Assisted Role-Playing Game System,
 is a tool for playing pen and paper RPGs over the Internet.
@@ -76,7 +76,7 @@ CARPS has other strengths:
 
 * Security mechanisms are *not* well audited.
 
-== Requirements:
+= Requirements:
 
 For users:
 
@@ -98,13 +98,13 @@ For developing CARPS, you will also need:
 
 * cucumber
 
-== Instructions
+= Instructions
 
 Instructions are present in the CARPS wiki
 
  * http://github.com/elginer/carps/wiki
 
-== License:
+= License:
 
 Copyright 2010 John Morrice
  
