@@ -6,6 +6,23 @@
 
 == To Install:
 
+* Windows users:
+
+download the installer from 
+
+http://rubyforge.org/frs/download.php/73276/install_carps.exe
+
+* Windows developers:
+
+First install win32console
+
+<tt>gem install win32console</tt>
+
+Then follow the instructions for 'Using gem'.
+
+* Using gem:
+
+<tt>#</tt>
 <tt># Install the gem</tt>
 
 <tt>sudo gem install carps</tt>
@@ -38,6 +55,8 @@ CARPS supports these mods by providing:
 CARPS has other strengths:
 
 * *Anyone* can play or host a CARPS game!  All you need is an email account.
+
+* As a consequence of this, CARPS is completely decentralized.  No-one can stop you using CARPS once you download it.
 
 * CARPS is designed to be secure.  Multiple email security options are supported, and all CARPS messages are cryptographically signed to prevent spoofing.
 
