@@ -5,7 +5,7 @@
                                          o
                               ><> ><> ><>
 
-                  Thank you for installing CARPS 0.3.0
+                  Thank you for installing CARPS 0.3.1
 
                              For help, run:
 

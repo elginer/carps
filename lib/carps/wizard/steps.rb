@@ -440,7 +440,7 @@ module CARPS
 
          def initialize
             super
-            add_raw_command :editor, "Specify a text editor.\n\tUse %f in place of the filepath.\n\t\tExample:\n\t\tvim %f", "COMMAND"
+            add_raw_command :editor, "Specify a text editor.\n\tUse %f in place of the filepath.\n\t\tExample:\n\t\tgvim --nofork %f", "COMMAND"
             add_command :wait, "Wait until the user says the editor is finished.  This may be useful if your editor forks into the background.\nDefault: no", "yes/no"
             @confirm = false
          end

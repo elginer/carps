@@ -66,7 +66,13 @@ Then /^clean the wizard directory$/ do
 end
 
 Then /^run the wizard$/ do
-   $wizard.run
+   begin
+      $wizard.run
+   rescue SystemExit => e
+      unless e.status == 0
+         exit e.status
+      end
+   end
 end
 
 Given /^a sweet wizard$/ do

@@ -54,6 +54,7 @@ module CARPS
             puts ""
          end
          UI::highlight "Tada!  Wizard complete."
+         CARPS::enter_quit
       end
 
       # Would this be the first time the wizard has run?
