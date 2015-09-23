@@ -25,9 +25,9 @@ module CARPS
       protoword :accept_handshake 
 
       # Parse from the void
-      def AcceptHandshake.parse blob
+      def self.parse(blob)
          forget, blob = find K.accept_handshake, blob
-         [AcceptHandshake.new, blob]
+         [new, blob]
      end
 
       # Emit
